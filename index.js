@@ -82,7 +82,7 @@ client.on('messageCreate', async (message) => {
 	} //if !rank
 	else {
 		if (infectedChannels.includes(message.channelId)) { //user says not !rank in a valid channel
-			if (words.includes(infectedWord)) { //user says infected word
+			if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 				if (!message.member.roles.cache.some(role => role.name === 'zombbblob')) { //user meets infection criteria
 					message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
 					message.member.roles.add('1024787443951611974'); //add zombbblob role
