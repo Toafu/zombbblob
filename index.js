@@ -78,17 +78,17 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank
-	// else {
-	// 	if (infectedChannels.includes(message.channelId)) { //user says not !rank in a valid channel
-	// 		console.log(`checking for infected word: ${regenerate.regen}`);
-	// 		if (words.includes(regenerate.regen)) { //user says infected word
-	// 			if (!message.member.roles.cache.some(role => role.name === 'zombbblob')) { //user meets infection criteria
-	// 				message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
-	// 				message.member.roles.add('1024787443951611974'); //add zombbblob role
-	// 			}
-	// 		}
-	// 	}
-	// }
+	else {
+		if (infectedChannels.includes(message.channelId)) { //user says not !rank in a valid channel
+			console.log(`checking for infected word: ${regenerate.regen}`);
+			if (words.includes(regenerate.regen)) { //user says infected word
+				if (!message.member.roles.cache.some(role => role.name === 'zombbblob')) { //user meets infection criteria
+					message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
+					message.member.roles.add('1024787443951611974'); //add zombbblob role
+				}
+			}
+		}
+	}
 })
 
 client.login(process.env.TOKEN);

@@ -15,7 +15,7 @@ module.exports = {
 	description: 'generates a new word',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ args, interaction: msgInt }) => {
-		index = Math.ceil(Math.random() * 221) - 1;
+		index = Math.ceil(Math.random() * 222) - 1;
 		await msgInt.reply(`The new infection word is \`${words[index]}\``);
 	},
 };
