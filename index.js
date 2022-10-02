@@ -1,20 +1,29 @@
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require("path");
+const regenerate = require('./commands/regenerate');
 require('dotenv').config();
 
-const topTen = ['140505365669347328', //slime
-				'267813494949150721', //brian
-				'485284869841092623', //nikhil
-				'734971051037032569', //amadeus
-				'731640258399305749', //daniel
-				'270054605960773643', //ian smith
-				'438790451500285953', //harrison
-				'269910487133716480', //toafu
-				'143534297674940418', //gavin
-				'752750967862198439', //pbb
-				//'383714960498229250', //iamr
-			];
+const topTen = [
+	'140505365669347328', //slime
+	'267813494949150721', //brian
+	'485284869841092623', //nikhil
+	'734971051037032569', //amadeus
+	'731640258399305749', //daniel
+	'270054605960773643', //ian smith
+	'438790451500285953', //harrison
+	'269910487133716480', //toafu
+	'143534297674940418', //gavin
+	'752750967862198439', //pbb
+	//'383714960498229250', //iamr
+];
+
+const infectedChannels = [
+	'1008983306374754344', //general
+	'1008983311680544879', //random
+	'928132642308759563', //cs-general
+	'1023026145169514586' //piano-gang
+];
 
 const client = new Client({
 	intents: [
@@ -46,16 +55,15 @@ client.on('ready', () => {
 	client.user.setPresence({ activities: [{ name: 'Patient Zero of the Outbbbreak' }], status: 'online' });
 });
 
-
 client.on('messageCreate', async (message) => {
+	const words = message.content.split(' ');
 	if ( (message.content.startsWith('!rank'))) { //if person types !rank
 		const filter = m => (m.author.id.toString() === '159985870458322944');
 		const collector = message.channel.createMessageCollector({filter, time: 5000, max: 1});
-		let args = message.content.split(' ');
 		collector.on('collect', m => { //collected following MEE6 message
-			if (args.length > 1) { //assumes user is querying another user
-				if (args[1].match(/\d+/)) {
-					if (topTen.includes(args[1].match(/\d+/)[0])) {
+			if (words.length > 1) { //assumes user is querying another user
+				if (words[1].match(/\d+/)) {
+					if (topTen.includes(words[1].match(/\d+/)[0])) {
 						m.react('<:blobL:1023692287185801376>'); //react blobL
 					} else {
 						m.react('<:blobW:1023691935552118945>'); //react blobW
@@ -69,7 +77,18 @@ client.on('messageCreate', async (message) => {
 				}
 			}
 		});
-	}
+	} //if !rank
+	// else {
+	// 	if (infectedChannels.includes(message.channelId)) { //user says not !rank in a valid channel
+	// 		console.log(`checking for infected word: ${regenerate.regen}`);
+	// 		if (words.includes(regenerate.regen)) { //user says infected word
+	// 			if (!message.member.roles.cache.some(role => role.name === 'zombbblob')) { //user meets infection criteria
+	// 				message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
+	// 				message.member.roles.add('1024787443951611974'); //add zombbblob role
+	// 			}
+	// 		}
+	// 	}
+	// }
 })
 
 client.login(process.env.TOKEN);
