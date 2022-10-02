@@ -1,5 +1,7 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const WOK = require('wokcommands');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
+//const WOK = require('wokcommands');
+//const path = require("path");
+require('dotenv').config();
 
 const topTen = ['140505365669347328', //slime
 				'267813494949150721', //brian
@@ -19,32 +21,46 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
-	],
+	  ],
 	partials: [Partials.Channel],
 });
 
 client.on('ready', () => {
 	console.log("zombbblob has awoken");
-	new WOK({
-		client,
-		testServers: ['734492640216744017'],
+	// new WOK({
+	// 	client,
+	// 	testServers: ['734492640216744017'],
+	// 	commandsDir: path.join(__dirname, 'commands'),
+	// });
+	process.on('unhandledRejection', error => {
+		console.error('Unhandled promise rejection:', error);
 	});
 });
 
 
 client.on('messageCreate', async (message) => {
-	if ( (message.content === '!rank')) { //if person types !rank
+	if ( (message.content.startsWith('!rank'))) { //if person types !rank
 		const filter = m => (m.author.id.toString() === '159985870458322944');
 		const collector = message.channel.createMessageCollector({filter, time: 5000, max: 1});
+		let args = message.content.split(' ');
 		collector.on('collect', m => { //collected following MEE6 message
-			if ( (topTen.includes(message.author.id.toString())) ) { //if user is in top 10
-				m.react('<:blobL:1023692287185801376>'); //react blobL
+			if (args.length > 1) { //assumes user is querying another user
+				if (args[1].match(/\d+/)) {
+					if (topTen.includes(args[1].match(/\d+/)[0])) {
+						m.react('<:blobL:1023692287185801376>'); //react blobL
+					} else {
+						m.react('<:blobW:1023691935552118945>'); //react blobW
+					}
+				}
 			} else {
-				m.react('<:blobW:1023691935552118945>'); //react blobW
+				if ( (topTen.includes(message.author.id.toString())) ) { //if user is in top 10
+					m.react('<:blobL:1023692287185801376>'); //react blobL
+				} else {
+					m.react('<:blobW:1023691935552118945>'); //react blobW
+				}
 			}
 		});
 	}
 })
 
-
-client.login(token); //TOKEN ISN'T REAL YET
+client.login(process.env.TOKEN);
