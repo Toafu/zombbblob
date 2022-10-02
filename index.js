@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require("path");
-const regenerate = require('./commands/regenerate');
+const fs = require('fs');
 require('dotenv').config();
 
 const topTen = [
@@ -22,7 +22,8 @@ const infectedChannels = [
 	'1008983306374754344', //general
 	'1008983311680544879', //random
 	'928132642308759563', //cs-general
-	'1023026145169514586' //piano-gang
+	'1023026145169514586', //piano-gang
+	'1024801253257130005', //zombbblob
 ];
 
 const client = new Client({
@@ -52,11 +53,12 @@ client.on('ready', () => {
 	process.on('unhandledRejection', error => {
 		console.error('Unhandled promise rejection:', error);
 	});
-	client.user.setPresence({ activities: [{ name: 'Patient Zero of the Outbbbreak' }], status: 'online' });
+	client.user.setPresence({ activities: [{ name: 'Dawn of the Outbbbreak' }], status: 'online' });
 });
 
 client.on('messageCreate', async (message) => {
-	const words = message.content.split(' ');
+	let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
+	const words = message.content.toLowerCase().split(' ');
 	if ( (message.content.startsWith('!rank'))) { //if person types !rank
 		const filter = m => (m.author.id.toString() === '159985870458322944');
 		const collector = message.channel.createMessageCollector({filter, time: 5000, max: 1});
@@ -80,14 +82,13 @@ client.on('messageCreate', async (message) => {
 	} //if !rank
 	else {
 		if (infectedChannels.includes(message.channelId)) { //user says not !rank in a valid channel
-			console.log(`checking for infected word: ${regenerate.regen}`);
-			if (words.includes(regenerate.regen)) { //user says infected word
+			if (words.includes(infectedWord)) { //user says infected word
 				if (!message.member.roles.cache.some(role => role.name === 'zombbblob')) { //user meets infection criteria
 					message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
 					message.member.roles.add('1024787443951611974'); //add zombbblob role
-				}
-			}
-		}
+				} //if user is not zombbblob'd
+			} //if infection trigger
+		} // if ~!rank
 	}
 })
 

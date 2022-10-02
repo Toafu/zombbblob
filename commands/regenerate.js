@@ -15,8 +15,12 @@ module.exports = {
 	description: 'generates a new word',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ args, interaction: msgInt }) => {
-		index = Math.ceil(Math.random() * 222) - 1;
+		index = Math.ceil(Math.random() * words.length) - 1;
 		await msgInt.reply(`The new infection word is \`${words[index]}\``);
+		fs.writeFile('infectedWord.txt', words[index], (err) => {
+			if (err) throw err;
+			//console.log(fs.readFileSync("infectedWord.txt", "utf8"));
+		})
 	},
 };
 
