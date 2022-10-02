@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
-//const WOK = require('wokcommands');
-//const path = require("path");
+const WOK = require('wokcommands');
+const path = require("path");
 require('dotenv').config();
 
 const topTen = ['140505365669347328', //slime
@@ -27,14 +27,23 @@ const client = new Client({
 
 client.on('ready', () => {
 	console.log("zombbblob has awoken");
-	// new WOK({
-	// 	client,
-	// 	testServers: ['734492640216744017'],
-	// 	commandsDir: path.join(__dirname, 'commands'),
-	// });
+	new WOK(client, {
+		testServers: ['734492640216744017'],
+		commandsDir: path.join(__dirname, 'commands'),
+		disabledDefaultCommands: [
+			"channelcommand",
+			"customcommand",
+			"delcustomcommand",
+			"prefix",
+			"requiredpermissions",
+			"requiredroles",
+			"togglecommand",
+		  ],
+	});
 	process.on('unhandledRejection', error => {
 		console.error('Unhandled promise rejection:', error);
 	});
+	client.user.setPresence({ activities: [{ name: 'Patient Zero of the Outbbbreak' }], status: 'online' });
 });
 
 
