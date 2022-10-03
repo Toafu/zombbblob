@@ -21,11 +21,11 @@ const topTen = [
 ];
 let topTenUpdated = null;
 
-function updateTopTen() {
+async function updateTopTen() {
     if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
         return;  // no
     }
-    fetch("https://mee6.xyz/api/plugins/levels/leaderboard/734492640216744017", {
+    await fetch("https://mee6.xyz/api/plugins/levels/leaderboard/734492640216744017", {
         "headers": {
             "accept": "application/json",
         },
