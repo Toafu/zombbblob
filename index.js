@@ -1,23 +1,25 @@
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require("path");
+const fetch = require('node-fetch');
 const fs = require('fs');
+
 require('dotenv').config();
 
 const topTen = [
-	'140505365669347328', //slime
-	'267813494949150721', //brian
-	'485284869841092623', //nikhil
-	'734971051037032569', //amadeus
-	'731640258399305749', //daniel
-	'270054605960773643', //ian smith
-	'438790451500285953', //harrison
-	'269910487133716480', //toafu
-	'143534297674940418', //gavin
-	'752750967862198439', //pbb
-	//'383714960498229250', //iamr
+	// '140505365669347328', //slime
+	// '267813494949150721', //brian
+	// '485284869841092623', //nikhil
+	// '734971051037032569', //amadeus
+	// '731640258399305749', //daniel
+	// '270054605960773643', //ian smith
+	// '438790451500285953', //harrison
+	// '269910487133716480', //toafu
+	// '143534297674940418', //gavin
+	// '752750967862198439', //pbb
+	// //'383714960498229250', //iamr
 ];
-const topTenUpdated = null;
+let topTenUpdated = null;
 
 function updateTopTen() {
     if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
