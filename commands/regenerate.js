@@ -19,7 +19,6 @@ module.exports = {
 		await msgInt.reply(`The new infection word is \`${words[index]}\``);
 		fs.writeFile('infectedWord.txt', words[index], (err) => {
 			if (err) throw err;
-			//console.log(fs.readFileSync("infectedWord.txt", "utf8"));
 		})
 	},
 };

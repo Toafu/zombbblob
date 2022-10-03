@@ -23,7 +23,7 @@ const infectedChannels = [
 	'1008983311680544879', //random
 	'928132642308759563', //cs-general
 	'1023026145169514586', //piano-gang
-	'1024801253257130005', //zombbblob
+	'1024801253257130005', //zombbblob FOR DEBUGGING PURPOSES
 ];
 
 const client = new Client({
@@ -31,7 +31,7 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
-	  ],
+	],
 	partials: [Partials.Channel],
 });
 
@@ -48,7 +48,7 @@ client.on('ready', () => {
 			"requiredpermissions",
 			"requiredroles",
 			"togglecommand",
-		  ],
+		],
 	});
 	process.on('unhandledRejection', error => {
 		console.error('Unhandled promise rejection:', error);
@@ -59,24 +59,25 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 	let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	const words = message.content.toLowerCase().split(' ');
-	if ( (message.content.startsWith('!rank'))) { //if person types !rank
+	if ((message.content.startsWith('!rank'))) { //if person types !rank
 		const filter = m => (m.author.id.toString() === '159985870458322944');
-		const collector = message.channel.createMessageCollector({filter, time: 5000, max: 1});
-		collector.on('collect', m => { //collected following MEE6 message
+		const collector = message.channel.createMessageCollector({ filter, time: 5000, max: 1 });
+		collector.on('collect', async (m) => { //collected following MEE6 message
+			let rankQuery = message.author.id.toString();
 			if (words.length > 1) { //assumes user is querying another user
 				if (words[1].match(/\d+/)) {
-					if (topTen.includes(words[1].match(/\d+/)[0])) {
-						m.react('<:blobL:1023692287185801376>'); //react blobL
-					} else {
-						m.react('<:blobW:1023691935552118945>'); //react blobW
-					}
+					rankQuery = words[1].match(/\d+/)[0];
 				}
+			}
+			if ((topTen.includes(rankQuery))) { //if user is in top 10
+				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
-				if ( (topTen.includes(message.author.id.toString())) ) { //if user is in top 10
-					m.react('<:blobL:1023692287185801376>'); //react blobL
-				} else {
-					m.react('<:blobW:1023691935552118945>'); //react blobW
-				}
+				m.react('<:blobW:1023691935552118945>'); //react blobW
+			}
+			if (rankQuery === topTen[0]) { //per request of slime
+				await m.react('🤡');
+				await m.react('💀');
+				await m.react('👎');
 			}
 		});
 	} //if !rank
@@ -90,6 +91,6 @@ client.on('messageCreate', async (message) => {
 			} //if infection trigger
 		} // if ~!rank
 	}
-})
+});
 
 client.login(process.env.TOKEN);
