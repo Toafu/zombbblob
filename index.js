@@ -17,6 +17,27 @@ const topTen = [
 	'752750967862198439', //pbb
 	//'383714960498229250', //iamr
 ];
+const topTenUpdated = null;
+
+function updateTopTen() {
+    if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
+        return;  // no
+    }
+    fetch("https://mee6.xyz/api/plugins/levels/leaderboard/734492640216744017", {
+        "headers": {
+            "accept": "application/json",
+        },
+        "body": null,
+        "method": "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            for (let i = 0; i < 10; ++i) {
+                topTen[i] = data['players'][i]['id'];
+            }
+        });
+    topTenUpdated = Date.now();
+}
 
 const infectedChannels = [
 	'1008983306374754344', //general
@@ -69,6 +90,7 @@ client.on('messageCreate', async (message) => {
 					rankQuery = words[1].match(/\d+/)[0];
 				}
 			}
+            updateTopTen();
 			if ((topTen.includes(rankQuery))) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
