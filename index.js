@@ -92,7 +92,7 @@ client.on('messageCreate', async (message) => {
 					rankQuery = words[1].match(/\d+/)[0];
 				}
 			}
-            updateTopTen();
+            await updateTopTen();
 			if ((topTen.includes(rankQuery))) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
