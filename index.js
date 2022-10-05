@@ -6,7 +6,7 @@ const fs = require('fs');
 
 require('dotenv').config();
 
-const topTen = [
+const topTen = [];
 	// '140505365669347328', //slime
 	// '267813494949150721', //brian
 	// '485284869841092623', //nikhil
@@ -17,8 +17,7 @@ const topTen = [
 	// '269910487133716480', //toafu
 	// '143534297674940418', //gavin
 	// '752750967862198439', //pbb
-	// //'383714960498229250', //iamr
-];
+	// '383714960498229250', //iamr
 let topTenUpdated = null;
 
 async function updateTopTen() {
@@ -47,7 +46,7 @@ async function updateTopTen() {
 const infectedChannels = [
 	'1008983306374754344', //general
 	'1008983311680544879', //random
-	'928132642308759563', //cs-general
+	'928132642308759563',  //cs-general
 	'1023026145169514586', //piano-gang
 	'1024801253257130005', //zombbblob FOR DEBUGGING PURPOSES
 ];
@@ -106,18 +105,17 @@ client.on('messageCreate', async (message) => {
 				}
 			}
 			await updateTopTen();
-			if (topTen.includes(rankQuery)) {
-				//if user is in top 10
+			if (rankQuery === topTen[0]) { //per request of slime
+				await m.react('<:burgerKingBlobL:1026644796703510599>');
+				await m.react('🤡');
+				await m.react('💀');
+				await m.react('👎');
+			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
 				m.react('<:blobW:1023691935552118945>'); //react blobW
 			}
-			if (rankQuery === topTen[0]) {
-				//per request of slime
-				await m.react('🤡');
-				await m.react('💀');
-				await m.react('👎');
-			}
+
 		});
 	} //if !rank
 	else {
@@ -125,12 +123,12 @@ client.on('messageCreate', async (message) => {
 			//user says not !rank in a valid channel
 			if (message.content.toLowerCase().search(infectedWord) != -1) {
 				//user says infected word
-				if (
-					!message.member.roles.cache.some((role) => role.name === 'zombbblob')
-				) {
+				if (!message.member.roles.cache.some((role) => role.name === 'zombbblob')) {
 					//user meets infection criteria
 					message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
 					message.member.roles.add('1024787443951611974'); //add zombbblob role
+					client.channels.cache.get('1024801253257130005')
+						.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>`);
 				} //if user is not zombbblob'd
 			} //if infection trigger
 		} // if ~!rank
