@@ -8,7 +8,7 @@ module.exports = {
 	options: [
 		{
 		  name: 'user',
-		  description: 'Mention a user',
+		  description: 'Provide a userID, mention, or username',
 		  required: true,
 		  type: 3,
 		},
@@ -36,30 +36,44 @@ module.exports = {
 		if (!member) {
 			member = guild.members.cache.get(userMention); //See if it's a mention
 		};
-		if (!member) {
+		if (!member) { //Username
 			guild.members.search({query: userQuery, limit: 5}).then(async result => { //returns a map of [userID, GuildMember]
-				let targets = [];
+				const keys = result.keys();
 				if (result.size > 1) { //yaaay duplicates
-					const keys = result.keys();
+					let targets = [];
 					for (let i = 0; i < result.size; ++i) {
 						let keyID = keys.next().value;
 						targets.push(`<@${keyID}> - ${keyID}`);
 					}
 					targets = targets.join(`\n`);
 					msgInt.reply(`I found more than one user. Please reassign the role with the desired user's ID:\n${targets}`);
-					const collector = msgInt.channel.createMessageCollector({ time: 15000, max: 1 });
+					const filter = m => m.author.id === msgInt.user.id;
+					const collector = msgInt.channel.createMessageCollector({ filter, time: 30000, max: 1 });
 					collector.on('collect', m => {
-						member = guild.members.cache.get(m);
+						member = guild.members.cache.get(m.content);
 					});
+					collector.on('end', () => {
+						if (!member) {
+							msgInt.editReply(`Could not find user ${userQuery}`);
+							return;
+						} else {
+							member.roles.add(role);
+							msgInt.editReply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
+						}
+					})
+				} else { //At most one exists
+					member = guild.members.cache.get(keys.next().value);
 					if (!member) {
-						await msgInt.edit(`Could not find user ${userQuery}`);
-						return;
+						msgInt.reply(`Could not find user ${userQuery}`);
+					} else {
+						await member.roles.add(role);
+						await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
 					}
 				}
 			});
+		} else { //Mention or ID
+			await member.roles.add(role);
+			await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
 		}
-		
-		await member.roles.add(role);
-		await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
 	},
 };
