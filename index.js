@@ -7,17 +7,6 @@ const fs = require('fs');
 require('dotenv').config();
 
 const topTen = [];
-	// '140505365669347328', //slime
-	// '267813494949150721', //brian
-	// '485284869841092623', //nikhil
-	// '734971051037032569', //amadeus
-	// '731640258399305749', //daniel
-	// '270054605960773643', //ian smith
-	// '438790451500285953', //harrison
-	// '269910487133716480', //toafu
-	// '143534297674940418', //gavin
-	// '752750967862198439', //pbb
-	// '383714960498229250', //iamr
 let topTenUpdated = null;
 
 async function updateTopTen() {
@@ -43,14 +32,6 @@ async function updateTopTen() {
 	topTenUpdated = Date.now();
 }
 
-const infectedChannels = [
-	'1008983306374754344', //general
-	'1008983311680544879', //random
-	'928132642308759563',  //cs-general
-	'1023026145169514586', //piano-gang
-	'1024801253257130005', //zombbblob FOR DEBUGGING PURPOSES
-];
-
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -74,7 +55,11 @@ client.on('ready', () => {
 			'requiredroles',
 			'togglecommand',
 		],
-	});
+		botOwners: ['269910487133716480', 	//toafu
+					'730205193408479242', 	//ajzhou
+				],
+	})
+		.setDefaultPrefix('z!');
 	process.on('unhandledRejection', (error) => {
 		console.error('Unhandled promise rejection:', error);
 	});
@@ -87,8 +72,7 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 	let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	const words = message.content.toLowerCase().split(' ');
-	if (message.content.startsWith('!rank')) {
-		//if person types !rank
+	if (message.content.startsWith('!rank')) { //if person types !rank
 		const filter = (m) => m.author.id.toString() === '159985870458322944';
 		const collector = message.channel.createMessageCollector({
 			filter,
@@ -115,7 +99,6 @@ client.on('messageCreate', async (message) => {
 			} else {
 				m.react('<:blobW:1023691935552118945>'); //react blobW
 			}
-
 		});
 	} //if !rank
 	else {
