@@ -47,20 +47,7 @@ module.exports = {
 					}
 					targets = targets.join(`\n`);
 					msgInt.reply(`I found more than one user. Please reassign the role with the desired user's ID:\n${targets}`);
-					const filter = m => m.author.id === msgInt.user.id;
-					const collector = msgInt.channel.createMessageCollector({ filter, time: 30000, max: 1 });
-					collector.on('collect', m => {
-						member = guild.members.cache.get(m.content);
-					});
-					collector.on('end', () => {
-						if (!member) {
-							msgInt.editReply(`Could not find user ${userQuery}`);
-							return;
-						} else {
-							member.roles.add(role);
-							msgInt.editReply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
-						}
-					})
+					return;
 				} else { //At most one exists
 					member = guild.members.cache.get(keys.next().value);
 					if (!member) {
@@ -72,8 +59,8 @@ module.exports = {
 				}
 			});
 		} else { //Mention or ID
-			await member.roles.add(role);
-			await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
+			member.roles.add(role);
+			msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
 		}
 	},
 };
