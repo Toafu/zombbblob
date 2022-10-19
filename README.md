@@ -2,7 +2,7 @@
 ## The goal is to eventually merge this with PotatoBot.
 
 ## PotatoBot Specs  
-✅  a way for staff to assign/remove roles (it might be easier to use a universal syntax for all roles like "/assign staff" instead of $staff, which is not as efficient
+✅  a way for staff to assign/remove roles (it might be easier to use a universal syntax for all roles like "/assign staff" instead of $staff, which is not as efficient  
 ✅  the ability to create invites with number of uses (e.g., /invite N)  
 ✅  the ability to create channels for a semester (e.g. /create F22) - the current configured channels are general, labs, project-1, project-2, project-3, project-4, midterm-exam, final-exam, and random (still needs archiving)  
 ✅  the ability to role react to the message in update-role (the message ID is 926654292524404817)  
