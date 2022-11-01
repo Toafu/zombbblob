@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
-const fs = require('fs');
+//const fs = require('fs');
 
 require('dotenv').config();
 
@@ -67,7 +67,7 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'Dawn of the Outbbbreak' }],
+		activities: [{ name: 'End of the Outbbbreak' }],
 		status: 'online',
 	});
 	client.channels.cache.get('926277044487200798').messages.fetch('1031778422881534033');
@@ -75,7 +75,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
-	let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
+	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
 		const filter = (m) => m.author.id.toString() === '159985870458322944';
@@ -106,6 +106,7 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank
+	/*
 	else {
 		if (message.content.toLowerCase().search(infectedWord) != -1) {
 			//user says infected word
@@ -118,6 +119,7 @@ client.on('messageCreate', async (message) => {
 			} //if user is not zombbblob'd
 		} //if infection trigger
 	} // if ~!rank
+	*/
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
