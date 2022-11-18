@@ -1,0 +1,5 @@
+services:
+  bot:
+    image: ghcr.io/toafdaloaf/zombbblob:latest
+    environment:
+      TOKEN: ${TOKEN}
