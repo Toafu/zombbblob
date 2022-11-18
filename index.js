@@ -11,6 +11,9 @@ let topTenUpdated = null;
 const roleStudent = '926186372572799037'; //Student role
 const roleStudentAlum = '748920659626950737'; //Student Alumni role
 
+process.on("SIGINT", () => process.exit(0));
+process.on("SIGTERM", () => process.exit(0));
+
 async function updateTopTen() {
 	if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
 		return; //no
