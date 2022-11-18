@@ -1,7 +1,9 @@
 # zombbblob
+
 ## The goal is to eventually merge this with PotatoBot.
 
-## PotatoBot Specs  
+## PotatoBot Specs
+
 ✅ a way for staff to assign/remove roles (it might be easier to use a universal syntax for all roles like "/assign staff" instead of $staff, which is not as efficient  
 ✅ the ability to create invites with number of uses (e.g., /invite N)  
 ✅ the ability to create channels for a semester (e.g. /create F22) - the current configured channels are general, labs, project-1, project-2, project-3, project-4, midterm-exam, final-exam, and random (still needs archiving)  
@@ -13,6 +15,15 @@
 
 ulgut and slime are working on a verification feature
 
-## (Low Priority) Discord Office Hours  
+## (Low Priority) Discord Office Hours
+
 let student = { ID, position, priority };  
 Create a channel where students can react to join the queue, and their nickname will have their relative position?
+
+## Deploy
+
+Clone the repo, put the `TOKEN=` in a `.env` file in the project directory, then
+
+```bash
+docker compose up -d
+```
