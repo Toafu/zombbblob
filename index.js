@@ -2,14 +2,14 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
-//const fs = require('fs');
+// const fs = require('fs'); //Uncomment during zombbblob event
 
 require('dotenv').config();
 
 const topTen = [];
 let topTenUpdated = null;
-const roleStudent = '926186372572799037'; //Student role
-const roleStudentAlum = '748920659626950737'; //Student Alumni role
+const studentRole = '926186372572799037'; //Student role
+const studentAlumRole = '748920659626950737'; //Student Alumni role
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
@@ -71,11 +71,10 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'End of the Outbbbreak' }],
+		activities: [{ name: 'There is another?' }],
 		status: 'online',
 	});
-	client.channels.cache.get('926277044487200798').messages.fetch('1031778422881534033');
-	//REAL ONE				  '926625772595191859'				   '926654292524404817'
+	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
 });
 
 client.on('messageCreate', async (message) => {
@@ -112,13 +111,12 @@ client.on('messageCreate', async (message) => {
 	} //if !rank
 	/*
 	else {
-		if (message.content.toLowerCase().search(infectedWord) != -1) {
-			//user says infected word
-			if (!message.member.roles.cache.some((role) => role.name === 'zombbblob')) {
-				//user meets infection criteria
+		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
+			//TODO: Make sure to update the role and channel IDs below
+			if (!message.member.roles.cache.some((role) => role.id === '1024787443951611974')) { //user meets infection criteria
 				message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
 				message.member.roles.add('1024787443951611974'); //add zombbblob role
-				client.channels.cache.get('1024801253257130005')
+				client.channels.cache.get('1024801253257130005') //get infected channel
 				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 			} //if user is not zombbblob'd
 		} //if infection trigger
@@ -127,19 +125,19 @@ client.on('messageCreate', async (message) => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
-	if (reaction.message.id === '1031778422881534033') { //THIS IS NOT THE REAL ONE
+	if (reaction.message.id === '926654292524404817') {
 		const { guild } = reaction.message; //Extract EECS281 server
 		await guild.members.fetch(user.id).then(async member => {
 			//Reacting to one role should remove the other
 			if (reaction.emoji.name === '🧠') { // '\u{0001F9E0}'
-				guild.roles.fetch(roleStudentAlum).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(roleStudent).then(r => { member.roles.add(r); });
+				guild.roles.fetch(studentAlumRole).then(r => { member.roles.remove(r); });
+				await guild.roles.fetch(studentRole).then(r => { member.roles.add(r); });
 			} else { //reaction.emoji.name === '🎓'
-				guild.roles.fetch(roleStudent).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(roleStudentAlum).then(r => { member.roles.add(r); });
+				guild.roles.fetch(studentRole).then(r => { member.roles.remove(r); });
+				await guild.roles.fetch(studentAlumRole).then(r => { member.roles.add(r); });
 			}
 		});
 	} //if reaction is added to reaction role message
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.DEV_TOKEN);

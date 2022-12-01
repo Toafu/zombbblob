@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType } = require("discord.js");
 const studentRole = '926186372572799037';
+const studentAlumRole = '748920659626950737';
 /*
 the ability to autoassign students the alumni role at the end of a semester. 
 Currently, the bot goes through all the users with a student role and assigns them with the alumni role on 
@@ -61,14 +62,18 @@ module.exports = {
 			msgInt.reply(`Please make sure dates are of the form YYYY-MM-DD`);
 			return;
 		} else {
-			const start = new Date(args[0] += "T12:00");
-			const end = new Date(args[1] += "T12:00");
+			const start = new Date(args[0] + "T12:00");
+			const end = new Date(args[1] + "T12:00");
+			if (start.toString() == "Invalid Date" || end.toString() == "Invalid Date") {
+				msgInt.reply("Failed to detect date. Please make sure dates are of the form YYYY-MM-DD.");
+				return;
+			}
 			let count = 0;
 			guild.members.fetch().then(u => { //Cache all members
-				guild.roles.fetch('749343797623783575').then(r => { //Extract members with the Student role
+				guild.roles.fetch(studentRole).then(r => { //Extract members with the Student role
 					r.members.each(user => { //r.members is a Collection<userID, GuildMember>
 						if (user.joinedAt > start && user.joinedAt < end) {
-							user.roles.add('748920659626950737'); //Targets bots for safety
+							user.roles.add(studentAlumRole);
 							++count;
 						}
 					});
