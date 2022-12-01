@@ -71,7 +71,7 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'There is another?' }],
+		activities: [{ name: 'The Era of Peace is Among Us' }],
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
@@ -140,4 +140,4 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 	} //if reaction is added to reaction role message
 });
 
-client.login(process.env.DEV_TOKEN);
+client.login(process.env.TOKEN);
