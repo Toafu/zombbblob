@@ -1,5 +1,6 @@
 services:
   bot:
     image: ghcr.io/toafdaloaf/zombbblob:latest
+    restart: unless-stopped
     environment:
       TOKEN: ${TOKEN}
