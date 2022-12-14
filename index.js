@@ -10,9 +10,9 @@ let recentMessages = [];
 let topTenUpdated = null;
 
 const topTen = [];
+const mutedRole = '1051989604972113990'; //muted test role
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
-const mutedRole = '1051989604972113990'; //muted test role
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
