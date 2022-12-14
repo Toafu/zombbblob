@@ -81,18 +81,18 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
-	if (recentMessages.filter((x) => x === message.content).length > 10) {
-		// Spam detector (if same message sent over 10 times in a row)
-		let userQuery = message.author.id;
-		let role = message.guild.roles.cache.find(role => role.id === mutedRole);
-		message.member.roles.add(mutedRole);
-		client.channels.cache.get('926277044487200798') //get infected channel
-		.send(`<@${message.author.id}> was marked for spamming`);
-	}
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
 	}
 	recentMessages.push(message.content);
+	if (recentMessages.filter((x) => x === message.content).length === 10) {
+		// Spam detector (if same message sent over 10 times in a row)
+		let userQuery = message.author.id;
+		message.member.roles.add(mutedRole);
+		client.channels.cache.get('734554759662665909') // server log channel
+		.send(`<@${message.author.id}> was marked for spamming; timing out for 5 seconds`);
+		message.member.timeout(5 * 1000); // timeout for 5 seconds
+	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
 		const filter = (m) => m.author.id.toString() === '159985870458322944';
