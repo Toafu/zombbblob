@@ -7,9 +7,11 @@ const fetch = require('node-fetch');
 require('dotenv').config();
 
 const topTen = [];
+let recentMessages = [];
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
+const mutedRole = '1051989604972113990'; //muted test role
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
@@ -79,6 +81,18 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
+	if (recentMessages.filter((x) => x === message.content).length > 10) {
+		// Spam detector (if same message sent over 10 times in a row)
+		let userQuery = message.author.id;
+		let role = message.guild.roles.cache.find(role => role.id === mutedRole);
+		message.member.roles.add(mutedRole);
+		client.channels.cache.get('926277044487200798') //get infected channel
+		.send(`<@${message.author.id}> was marked for spamming`);
+	}
+	if (recentMessages.length > 100) {
+		recentMessages.shift();
+	}
+	recentMessages.push(message.content);
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
 		const filter = (m) => m.author.id.toString() === '159985870458322944';
