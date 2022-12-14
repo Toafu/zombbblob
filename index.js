@@ -6,12 +6,13 @@ const fetch = require('node-fetch');
 
 require('dotenv').config();
 
-const topTen = [];
 let recentMessages = [];
 let topTenUpdated = null;
+
+const topTen = [];
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
-const mutedRole = '1052422464300392448'; //muted test role
+const mutedRole = '1051989604972113990'; //muted test role
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
@@ -84,6 +85,12 @@ client.on('messageCreate', async (message) => {
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
 	}
+
+	// removal of muted role
+	if (message.member.roles.cache.has(mutedRole) && message.content.toLowerCase() === "sowwy") {
+		message.member.roles.remove(mutedRole)
+	}
+
 	recentMessages.push(message.content);
 	if (recentMessages.filter((x) => x === message.content).length === 10) {
 		// Spam detector (if same message sent over 10 times in a row)
