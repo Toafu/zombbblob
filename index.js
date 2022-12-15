@@ -134,6 +134,9 @@ client.on('messageCreate', async (message) => {
 				await m.react('<:blobEveryone:1026656071856685117>'); 
 				await m.react('<:D_:1029092005416009748>');
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
+				if (rankQuery === topTen[1]) { // if user is ranked 2
+					await m.react('🇱');	
+				}
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
 				m.react('<:blobW:1023691935552118945>'); //react blobW
