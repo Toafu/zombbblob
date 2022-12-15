@@ -84,13 +84,15 @@ client.on('messageCreate', async (message) => {
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
 	}
-	recentMessages.push(message.content);
-	if (recentMessages.filter((x) => x === message.content).length === 10) {
-		// Spam detector (if same message sent over 10 times in a row)
+	recentMessages.push(message);
+	if (recentMessages.filter((x) => {
+		return x.content === message.content && message.createdAt - x.createdAt < 10
+	}).length === 10) {
+		// Spam detector (if same message sent over 10 times in a row within 10 seconds)
 		let userQuery = message.author.id;
 		message.member.roles.add(mutedRole);
 		client.channels.cache.get('734554759662665909') // server log channel
-		.send(`<@${message.author.id}> was marked for spamming; timing out for 5 seconds`);
+		.send(`<@${message.author.id}> was marked for spamming; timing out for 5 seconds\n${message.url}`);
 		message.member.timeout(5 * 1000); // timeout for 5 seconds
 	}
 	const words = message.content.toLowerCase().split(' ');
@@ -116,6 +118,17 @@ client.on('messageCreate', async (message) => {
 				await m.react('🤡');
 				await m.react('💀');
 				await m.react('👎');
+				await m.react('📉');
+				await m.react('🇱');
+				await m.react('<:blobL:1023692287185801376>');
+				await m.react('<:blobsweats:1052600617568317531>');
+				await m.react('<:notlikeblob:1027966505922592779>'); 
+				await m.react('<:blobdisapproval:1039016273343951009>'); 
+				await m.react('<:blobyikes:1046967593132630056>'); 
+				await m.react('<:blobbruh:936493734592380988>'); 
+				await m.react('<:blobRecursive:1026705949605507093>'); 
+				await m.react('<:blobEveryone:1026656071856685117>'); 
+				await m.react('<:D_:1029092005416009748>');
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
