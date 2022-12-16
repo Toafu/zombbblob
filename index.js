@@ -160,4 +160,4 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 	} //if reaction is added to reaction role message
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.DEV_TOKEN);
