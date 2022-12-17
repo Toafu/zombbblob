@@ -32,18 +32,13 @@ module.exports = {
 			msgInt.reply("Please make sure you are providing a valid message link.");
 			return;
 		}
-
-		//console.log(guild.emojis.resolveId(args[1]));
-		guild.channels.fetch(IDs[5]).then(c => {
-			c.messages.fetch(IDs[6])
-				.then(async m => {
-					await m.react(args[1]).then(msgInt.reply(`Reacted ${args[1]} to ${m.url}`)).catch(() => {
-						msgInt.reply(`Error: Emoji not found --> ${args[1]}`);
-						return;
-					});
-				})
-				.catch(() => { msgInt.reply(`Unable to find message. Please verify that the message link is valid.`) })
+		guild.channels.fetch(IDs[5]).then(c => { //Extract channel and ignore guild part of link
+			c.messages.fetch(IDs[6]).then(async m => { //Extract message from channel
+				await m.react(args[1]).then(() => { msgInt.reply(`Reacted ${args[1]} to ${m.url}`); })
+					.catch(() => { msgInt.reply(`Unable to find emoji \`${args[1]}\`.`); return; });
+			})
+				.catch(() => { msgInt.reply(`Unable to find message. Please verify that the message link is valid.`); });
 		})
-			.catch(() => { msgInt.reply(`Unable to react to message. Please verify that the message link is valid.`) });
+			.catch(() => { msgInt.reply(`Unable to react to message. Please verify that the message link is valid.`); });
 	}
 };
