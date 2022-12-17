@@ -11,7 +11,9 @@ let recentMessages = [];
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
-const mutedRole = '1052422464300392448'; //muted test role
+const mutedRole = '1052422464300392448'; //Muted role
+exports.studentRole = studentRole;
+exports.studentAlumRole = studentAlumRole;
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
