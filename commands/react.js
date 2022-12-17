@@ -32,6 +32,7 @@ module.exports = {
 			msgInt.reply("Please make sure you are providing a valid message link.");
 			return;
 		}
+
 		//console.log(guild.emojis.resolveId(args[1]));
 		guild.channels.fetch(IDs[5]).then(c => {
 			c.messages.fetch(IDs[6])
