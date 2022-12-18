@@ -27,3 +27,7 @@ Clone the repo, put the `TOKEN=` in a `.env` file in the project directory, then
 ```bash
 docker compose up -d
 ```
+## zombbblob 2
+
+DO NOT PUT ANY EXISTING COMMANDS INTO THE COMMANDS FOLDER FOR THIS BRANCH.  
+In addition, transfer all complete commands to zombbblob upon their completion
