@@ -66,8 +66,8 @@ client.on('ready', () => {
 			'togglecommand',
 		],
 		botOwners: ['269910487133716480', 	//toafu
-					'730205193408479242', 	//ajzhou
-				],
+			'730205193408479242', 	//ajzhou
+		],
 	})
 		.setDefaultPrefix('z!');
 	process.on('unhandledRejection', (error) => {
@@ -88,7 +88,6 @@ client.on('messageCreate', async (message) => {
 	recentMessages.push(message.content);
 	if (recentMessages.filter((x) => x === message.content).length === 10) {
 		// Spam detector (if same message sent over 10 times in a row)
-		message.member.roles.add(mutedRole);
 		client.channels.cache.get('734554759662665909') // server log channel
 			.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
 		message.member.timeout(30 * 1000); // timeout for 30 seconds
@@ -117,6 +116,17 @@ client.on('messageCreate', async (message) => {
 				await m.react('🤡');
 				await m.react('💀');
 				await m.react('👎');
+				await m.react('📉');
+				await m.react('🇱');
+				await m.react('<:blobL:1023692287185801376>');
+				await m.react('<:blobsweats:1052600617568317531>');
+				await m.react('<:notlikeblob:1027966505922592779>'); 
+				await m.react('<:blobdisapproval:1039016273343951009>'); 
+				await m.react('<:blobyikes:1046967593132630056>'); 
+				await m.react('<:blobbruh:936493734592380988>'); 
+				await m.react('<:blobRecursive:1026705949605507093>'); 
+				await m.react('<:blobEveryone:1026656071856685117>'); 
+				await m.react('<:D_:1029092005416009748>');
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
