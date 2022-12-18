@@ -11,7 +11,6 @@ let recentMessages = [];
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
-//const mutedRole = '1052422464300392448'; //Muted role
 exports.studentRole = studentRole;
 exports.studentAlumRole = studentAlumRole;
 
@@ -118,6 +117,17 @@ client.on('messageCreate', async (message) => {
 				await m.react('🤡');
 				await m.react('💀');
 				await m.react('👎');
+				await m.react('📉');
+				await m.react('🇱');
+				await m.react('<:blobL:1023692287185801376>');
+				await m.react('<:blobsweats:1052600617568317531>');
+				await m.react('<:notlikeblob:1027966505922592779>'); 
+				await m.react('<:blobdisapproval:1039016273343951009>'); 
+				await m.react('<:blobyikes:1046967593132630056>'); 
+				await m.react('<:blobbruh:936493734592380988>'); 
+				await m.react('<:blobRecursive:1026705949605507093>'); 
+				await m.react('<:blobEveryone:1026656071856685117>'); 
+				await m.react('<:D_:1029092005416009748>');
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
