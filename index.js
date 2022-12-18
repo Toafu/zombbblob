@@ -67,8 +67,8 @@ client.on('ready', () => {
 			'togglecommand',
 		],
 		botOwners: ['269910487133716480', 	//toafu
-					'730205193408479242', 	//ajzhou
-				],
+			'730205193408479242', 	//ajzhou
+		],
 	})
 		.setDefaultPrefix('z!');
 	process.on('unhandledRejection', (error) => {
@@ -84,23 +84,23 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	// removal of muted role
-    	if (message.member.roles.cache.has(mutedRole) && message.content.toLowerCase() === "sowwy") {
-        	message.member.roles.remove(mutedRole);
-			await message.react('🤫');
-    	} else {
-        	if (recentMessages.length > 100) {
-            		recentMessages.shift();
-        	}
-        	recentMessages.push(message.content);
-        	if (recentMessages.filter((x) => x === message.content).length === 10) {
-            		// Spam detector (if same message sent over 10 times in a row)
-            		message.member.roles.add(mutedRole);
-            		client.channels.cache.get('734554759662665909') // server log channel
-            		.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
-           		message.member.timeout(30 * 1000); // timeout for 30 seconds
-            		recentMessages = [];
-       		}
-    	}
+	if (message.member.roles.cache.has(mutedRole) && message.content.toLowerCase() === "UNMUTE") {
+		message.member.roles.remove(mutedRole);
+		await message.react('🤫');
+	} else {
+		if (recentMessages.length > 100) {
+			recentMessages.shift();
+		}
+		recentMessages.push(message.content);
+		if (recentMessages.filter((x) => x === message.content).length === 10) {
+			// Spam detector (if same message sent over 10 times in a row)
+			message.member.roles.add(mutedRole);
+			client.channels.cache.get('734554759662665909') // server log channel
+				.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
+			message.member.timeout(30 * 1000); // timeout for 30 seconds
+			recentMessages = [];
+		}
+	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
 		const filter = (m) => m.author.id.toString() === '159985870458322944';
