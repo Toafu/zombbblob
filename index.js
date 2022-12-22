@@ -81,6 +81,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
+	if (message.author.bot) return false; //if message is from a bot
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
@@ -148,7 +149,6 @@ client.on('messageCreate', async (message) => {
 	
 		//Automatically reply to a message when it includes key phrases
 		if (message.channel.id === '1008983311063973978') {
-			if (message.author.bot) return false;
 			if (message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores")) {
 				message.reply("We are experiencing some delays with grading but are almost done! Thank you for your patience!")
 			}
