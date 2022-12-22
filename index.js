@@ -165,4 +165,15 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 	} //if reaction is added to reaction role message
 });
 
+/* Template to automatically reply to a message when it includes key phrases
+
+//react to anyone asking about exam grades
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return false;
+    if (message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores")) {
+      message.reply("We are experiencing some delays with grading but are almost done! Thank you for your patience!")
+    }
+});
+*/
+
 client.login(process.env.TOKEN);
