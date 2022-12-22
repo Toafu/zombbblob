@@ -81,6 +81,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
+	if (message.author.bot) return false; //if message is from a bot
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
@@ -133,7 +134,7 @@ client.on('messageCreate', async (message) => {
 				m.react('<:blobW:1023691935552118945>'); //react blobW
 			}
 		});
-	} //if !rank
+	} //if !rank command
 	/*
 	else {
 		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
@@ -145,7 +146,15 @@ client.on('messageCreate', async (message) => {
 				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 			} //if user is not zombbblob'd
 		} //if infection trigger
-	} // if ~!rank
+	
+		//Automatically reply to a message when it includes key phrases
+		if (message.channel.id === '1008983311063973978') {
+			if (message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores")) {
+				message.reply("We are experiencing some delays with grading but are almost done! Thank you for your patience!")
+			}
+		}
+		
+	} // if not !rank command
 	*/
 });
 
