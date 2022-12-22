@@ -35,10 +35,10 @@ module.exports = {
 			let categoryChannel;
 			category.then(c => {categoryChannel = c; c.setPosition(3)}); //Staff-Only Channels is at Position 0
 			const channels = ['general', 'labs', 'random', 'project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
-			for (let i = 0; i < channels.size; ++i) {
+			for (let i = 0; i < channels.length; ++i) {
 				guild.channels.create({ name: channels[i], type: ChannelType.GuildText })
 				.then(channel => {channel.setParent(categoryChannel)})
-				.catch(console.error);
+				.catch(() => { msgInt.reply("Unable to create category"); return; });
 			}
 			msgInt.reply(`${categoryName} successfully created`);
 		} else {
