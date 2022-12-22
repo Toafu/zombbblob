@@ -81,7 +81,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
-	if (message.author.bot) return false; //if message is from a bot
+	if (message.author.bot) return; //if message is from a bot
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	if (recentMessages.length > 100) {
 		recentMessages.shift();
@@ -121,12 +121,12 @@ client.on('messageCreate', async (message) => {
 				await m.react('🇱');
 				await m.react('<:blobL:1023692287185801376>');
 				await m.react('<:blobsweats:1052600617568317531>');
-				await m.react('<:notlikeblob:1027966505922592779>'); 
-				await m.react('<:blobdisapproval:1039016273343951009>'); 
-				await m.react('<:blobyikes:1046967593132630056>'); 
-				await m.react('<:blobbruh:936493734592380988>'); 
-				await m.react('<:blobRecursive:1026705949605507093>'); 
-				await m.react('<:blobEveryone:1026656071856685117>'); 
+				await m.react('<:notlikeblob:1027966505922592779>');
+				await m.react('<:blobdisapproval:1039016273343951009>');
+				await m.react('<:blobyikes:1046967593132630056>');
+				await m.react('<:blobbruh:936493734592380988>');
+				await m.react('<:blobRecursive:1026705949605507093>');
+				await m.react('<:blobEveryone:1026656071856685117>');
 				await m.react('<:D_:1029092005416009748>');
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
@@ -135,8 +135,8 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank command
-	/*
 	else {
+		/*
 		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 			//TODO: Make sure to update the role and channel IDs below
 			if (!message.member.roles.cache.some((role) => role.id === '1024787443951611974')) { //user meets infection criteria
@@ -146,16 +146,14 @@ client.on('messageCreate', async (message) => {
 				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 			} //if user is not zombbblob'd
 		} //if infection trigger
-	
+		*/
 		//Automatically reply to a message when it includes key phrases
-		if (message.channel.id === '1008983311063973978') {
+		if (message.channel.id === '1008983311063973978') { //#final-exam in Fall 2022
 			if (message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores")) {
-				message.reply("We are experiencing some delays with grading but are almost done! Thank you for your patience!")
+				message.reply("We are currently waiting for grades to be published! Thank you for your patience!");
 			}
 		}
-		
 	} // if not !rank command
-	*/
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles

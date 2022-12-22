@@ -40,6 +40,7 @@ module.exports = {
 				.then(channel => {channel.setParent(categoryChannel)})
 				.catch(() => { msgInt.reply("Unable to create category"); return; });
 			}
+			//FIGURE OUT IF YOU CAN SET PERMISSIONS HERE
 			msgInt.reply(`${categoryName} successfully created`);
 		} else {
 			msgInt.reply('Invalid semester format');
