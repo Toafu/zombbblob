@@ -149,8 +149,9 @@ client.on('messageCreate', async (message) => {
 		*/
 		//Automatically reply to a message when it includes key phrases
 		if (message.channel.id === '1008983311063973978') { //#final-exam in Fall 2022
-			if (message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores")) {
-				message.reply("We are currently waiting for grades to be published! Thank you for your patience!");
+			if ((message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores"))
+			 && (message.content.includes("when") || message.content.includes("will"))) {
+				message.reply("We are currently waiting for grades to be published! <:blobsleepless:966863492831391754>");
 			}
 		}
 	} // if not !rank command
