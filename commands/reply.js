@@ -20,7 +20,7 @@ module.exports = {
 			type: ApplicationCommandOptionType.String,
 		}
 	],
-	expectedArgs: "<message_link> <reply text>",
+	expectedArgs: "<message link> <reply text>",
 	description: 'replies to a message as the bot',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, args, interaction: msgInt }) => {
