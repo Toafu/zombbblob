@@ -136,6 +136,7 @@ client.on('messageCreate', async (message) => {
 		});
 	} //if !rank command
 	else {
+		message.content = message.content.toLowerCase();
 		/*
 		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 			//TODO: Make sure to update the role and channel IDs below
@@ -150,7 +151,7 @@ client.on('messageCreate', async (message) => {
 		//Automatically reply to a message when it includes key phrases
 		if (message.channel.id === '1008983311063973978') { //#final-exam in Fall 2022
 			if ((message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores"))
-			 && (message.content.includes("when") || message.content.includes("will"))) {
+			 && (message.content.includes("when are") || message.content.includes("when will"))) {
 				message.reply("We are currently waiting for grades to be published! <:blobsleepless:966863492831391754>");
 			}
 		}
