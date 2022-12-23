@@ -74,7 +74,7 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'The Era of Peace is Among Us' }],
+		activities: [{ name: 'May Grades Drop Today' }],
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');

@@ -21,7 +21,7 @@ module.exports = {
 			type: ApplicationCommandOptionType.String,
 		}
 	],
-	expectedArgs: "<message> <reaction emote>",
+	expectedArgs: "<message link> <reaction emote>",
 	description: 'reacts with an emote to a specified message',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, args, interaction: msgInt }) => {
