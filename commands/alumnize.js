@@ -39,6 +39,9 @@ module.exports = {
 			const currMonth = beforeThreshold.getMonth();
 			if (beforeThreshold.getDate() == 1 && (currMonth == 0 || currMonth == 4 || currMonth == 6)) {
 				//getDate() is 1-indexed but getMonth() is 0-indexed
+				if (currMonth == 0) { //Decrement year if checking on New Year's
+					beforeThreshold.setFullYear(beforeThreshold.getFullYear() - 1);
+				}
 				let count = 0;
 				//Use beforeMap to get the desired target join threshold
 				beforeThreshold.setMonth(beforeMap[currMonth].month);

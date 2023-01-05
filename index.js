@@ -66,7 +66,7 @@ client.on('ready', () => {
 			'togglecommand',
 		],
 		botOwners: ['269910487133716480', 	//toafu
-			'730205193408479242', 	//ajzhou
+					'730205193408479242', 	//ajzhou
 		],
 	})
 		.setDefaultPrefix('z!');
@@ -74,10 +74,11 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'May Grades Drop Today' }],
+		activities: [{ name: 'Welcome to 281!' }],
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
+	client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
 });
 
 client.on('messageCreate', async (message) => {

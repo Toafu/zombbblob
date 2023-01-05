@@ -30,7 +30,13 @@ module.exports = {
 		let member = guild.members.cache.get(userQuery);
 		let role = guild.roles.cache.get(roleID);
 		if (!role) {
-			msgInt.reply(`Could not find role with ID ${roleID}`);
+			await guild.roles.fetch().then(roles => roles.find(role => role.name === args[1])).then(r => {
+				if (r) { //We use 'r' to differentiate from 'role' within .find(), even though they're in different scopes
+					msgInt.reply(`Did you mean <@&${r.id}>? Make sure it's mentioned in the argument.`);
+				} else {
+					msgInt.reply(`Unable to find role with ID/name: \`${args[1]}\``);
+				}
+			});
 			return;
 		}
 		if (!member) {
