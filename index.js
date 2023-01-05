@@ -136,9 +136,9 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank command
+	/*
 	else {
 		message.content = message.content.toLowerCase();
-		/*
 		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 			//TODO: Make sure to update the role and channel IDs below
 			if (!message.member.roles.cache.some((role) => role.id === '1024787443951611974')) { //user meets infection criteria
@@ -148,15 +148,16 @@ client.on('messageCreate', async (message) => {
 				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 			} //if user is not zombbblob'd
 		} //if infection trigger
-		*/
-		//Automatically reply to a message when it includes key phrases
-		if (message.channel.id === '1008983311063973978') { //#final-exam in Fall 2022
+		
+		Automatically reply to a message when it includes key phrases
+		if (message.channel.id === '1055562256705929288') { //#final-exam in Winter 2023
 			if ((message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores"))
 			 && (message.content.includes("when are") || message.content.includes("when will"))) {
 				message.reply("We are currently waiting for grades to be published! <:blobsleepless:966863492831391754>");
 			}
 		}
 	} // if not !rank command
+	*/
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
