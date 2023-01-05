@@ -114,21 +114,22 @@ client.on('messageCreate', async (message) => {
 			}
 			await updateTopTen();
 			if (rankQuery === topTen[0]) { //per request of slime
-				await m.react('<:burgerKingBlobL:1026644796703510599>');
-				await m.react('🤡');
-				await m.react('💀');
-				await m.react('👎');
-				await m.react('📉');
-				await m.react('🇱');
-				await m.react('<:blobL:1023692287185801376>');
-				await m.react('<:blobsweats:1052600617568317531>');
-				await m.react('<:notlikeblob:1027966505922592779>');
-				await m.react('<:blobdisapproval:1039016273343951009>');
-				await m.react('<:blobyikes:1046967593132630056>');
-				await m.react('<:blobbruh:936493734592380988>');
-				await m.react('<:blobRecursive:1026705949605507093>');
-				await m.react('<:blobEveryone:1026656071856685117>');
-				await m.react('<:D_:1029092005416009748>');
+				const arayL = ['<:burgerKingBlobL:1026644796703510599>',
+				'🤡',
+				'💀',
+				'👎',
+				'📉',
+				'🇱',
+				'<:blobL:1023692287185801376>',
+				'<:blobsweats:1052600617568317531>',
+				'<:notlikeblob:1027966505922592779>',
+				'<:blobdisapproval:1039016273343951009>',
+				'<:blobyikes:1046967593132630056>',
+				'<:blobbruh:936493734592380988>',
+				'<:blobRecursive:1026705949605507093>',
+				'<:blobEveryone:1026656071856685117>',
+				'<:D_:1029092005416009748>'];
+				arayL.forEach(async emote => {await m.react(emote)});
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
