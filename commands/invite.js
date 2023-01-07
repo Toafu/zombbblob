@@ -9,12 +9,12 @@ module.exports = {
 	maxArgs: 1,
 	options: [
 		{
-		  name: 'n',
-		  description: 'Number of invite uses',
-		  required: false,
-		  type: ApplicationCommandOptionType.Integer,
+			name: 'n',
+			description: 'Number of invite uses',
+			required: false,
+			type: ApplicationCommandOptionType.Integer,
 		}
-	  ],
+	],
 	expectedArgs: "<N>",
 	description: 'creates an invite with a set number of uses (default unlimited)',
 	testOnly: true, //so the slash command updates instantly

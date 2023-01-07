@@ -7,18 +7,18 @@ module.exports = {
 	maxArgs: 2,
 	options: [
 		{
-		  name: 'user',
-		  description: 'Provide a userID, mention, or username',
-		  required: true,
-		  type: 3,
+			name: 'user',
+			description: 'Provide a userID, mention, or username',
+			required: true,
+			type: 3,
 		},
 		{
-		  name: 'role',
-		  description: 'Mention a role',
-		  required: true,
-		  type: 3,
+			name: 'role',
+			description: 'Mention a role',
+			required: true,
+			type: 3,
 		},
-	  ],
+	],
 	expectedArgs: "<user> <role>",
 	description: 'removes from a user the specified role',
 	testOnly: true, //so the slash command updates instantly
@@ -43,7 +43,7 @@ module.exports = {
 			member = guild.members.cache.get(userMention); //See if it's a mention
 		};
 		if (!member) { //Username
-			guild.members.search({query: userQuery, limit: 5}).then(async result => { //returns a map of [userID, GuildMember]
+			guild.members.search({ query: userQuery, limit: 5 }).then(async result => { //returns a map of [userID, GuildMember]
 				const keys = result.keys();
 				if (result.size > 1) { //yaaay duplicates
 					let targets = [];
