@@ -3,7 +3,7 @@ const darkMode = '1065432906111135784';
 
 module.exports = {
 	slash: true,
-	name: 'starwar',
+	name: 'join',
 	category: 'potatobot',
 	maxArgs: 0,
 	description: 'Join the war!',
