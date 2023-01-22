@@ -1,7 +1,4 @@
-const lightMode = '1065432702431526932';
-const darkMode = '1065432906111135784';
-exports.lightMode = lightMode;
-exports.darkMode = darkMode;
+const { lightMode, darkMode } = require('../index');
 
 module.exports = {
 	slash: true,

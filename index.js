@@ -13,6 +13,12 @@ const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
 exports.studentRole = studentRole;
 exports.studentAlumRole = studentAlumRole;
+// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+const lightMode = '1065432702431526932'; //Light Mode role
+const darkMode = '1065432906111135784'; //Dark Mode role
+exports.lightMode = lightMode;
+exports.darkMode = darkMode;
+// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
