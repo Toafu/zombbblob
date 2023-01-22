@@ -1,5 +1,7 @@
 const lightMode = '1065432702431526932';
 const darkMode = '1065432906111135784';
+exports.lightMode = lightMode;
+exports.darkMode = darkMode;
 
 module.exports = {
 	slash: true,
