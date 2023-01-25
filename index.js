@@ -84,7 +84,7 @@ client.on('ready', () => {
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
-	// client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
+	client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
 	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	client.guilds.fetch('734492640216744017').then(g => {
 		g.members.fetch(); //Caches all users so we can count how many users have a role later
@@ -188,4 +188,4 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 	} //if reaction is added to reaction role message
 });
 
-client.login(process.env.DEV_TOKEN);
+client.login(process.env.TOKEN);
