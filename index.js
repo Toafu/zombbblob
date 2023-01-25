@@ -13,6 +13,12 @@ const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
 exports.studentRole = studentRole;
 exports.studentAlumRole = studentAlumRole;
+// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+const lightMode = '1065432702431526932'; //Light Mode role
+const darkMode = '1065432906111135784'; //Dark Mode role
+exports.lightMode = lightMode;
+exports.darkMode = darkMode;
+// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
@@ -79,6 +85,11 @@ client.on('ready', () => {
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
 	client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
+	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+	client.guilds.fetch('734492640216744017').then(g => {
+		g.members.fetch(); //Caches all users so we can count how many users have a role later
+	});
+	// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 });
 
 client.on('messageCreate', async (message) => {
