@@ -132,3 +132,4 @@ dist
 # zombbblob specific stuff
 testing
 *.txt
+!locations.txt
