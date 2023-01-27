@@ -58,87 +58,88 @@ module.exports = {
 							.addComponents(atkButton, defButton);
 						let lightATK = 0;
 						let darkATK = 0;
-						let lightDEF = 0;
-						let darkDEF = 0;
+						let lightDEF = 2;
+						let darkDEF = 2;
 						c.send({
 							embeds: [embed],
 							content: `Please make your choice <t:${Date.parse(new Date) / 1000 + (0.5 * 60)}:R>`, components: [row]
-						});
-						const collector = c.createMessageComponentCollector({ time: 0.5 * 60000 });
-						const fighters = new Set();
-						collector.on('collect', async i => {
-							//Each user only gets one interaction (i)
-							if (!fighters.has(i.user.id)) {
-								fighters.add(i.user.id);
-								//Distinguish between Light and Dark mode user
-								if (i.member._roles.some(r => r === lightMode)) {
-									if (i.customId == 'ATK') {
-										++lightATK;
-									} else { //Must be 'DEF'
-										++lightDEF;
+						}).then(m => { //m is the message sent
+							const collector = c.createMessageComponentCollector({ time: 0.5 * 60000 });
+							const fighters = new Set();
+							collector.on('collect', async i => {
+								//Each user only gets one interaction (i)
+								if (!fighters.has(i.user.id)) {
+									fighters.add(i.user.id);
+									//Distinguish between Light and Dark mode user
+									if (i.member._roles.some(r => r === lightMode)) {
+										if (i.customId == 'ATK') {
+											++lightATK;
+										} else { //Must be 'DEF'
+											++lightDEF;
+										}
+									} else if (i.member._roles.some(r => r === darkMode)) {
+										if (i.customId == 'ATK') {
+											++darkATK;
+										} else { //Must be 'DEF'
+											++darkDEF;
+										}
 									}
-								} else if (i.member._roles.some(r => r === darkMode)) {
-									if (i.customId == 'ATK') {
-										++darkATK;
-									} else { //Must be 'DEF'
-										++darkDEF;
-									}
+									i.reply({ content: `Your action has been logged.`, ephemeral: true });
+								} else {
+									i.reply({ content: `You have already taken action >:(`, ephemeral: true });
 								}
-								i.reply({ content: `Your action has been logged.`, ephemeral: true });
-							} else {
-								i.reply({ content: `You have already taken action >:(`, ephemeral: true });
-							}
-						});
-						collector.on('end', collected => {
-							embed.setTitle('Battle Concluded');
-							atkButton.setDisabled(true);
-							defButton.setDisabled(true);
-							embed.addFields({
-								name: `Battle Results`,
-								value: `Total Light Mode Attack: **${lightATK}**\n`
-									+ `Total Light Mode Defense: **${lightDEF}**\n`
-									+ `Total Dark Mode Attack: **${darkATK}**\n`
-									+ `Total Dark Mode Defense: **${darkDEF}**`
 							});
-							if (darkATK > lightDEF) { //Successful Dark Mode Attack
+							collector.on('end', collected => {
+								embed.setTitle('Battle Concluded');
+								atkButton.setDisabled(true);
+								defButton.setDisabled(true);
 								embed.addFields({
-									name: `${lightLocations.pop()} Destroyed!`,
-									value: `The Light Mode has **${lightLocations.length}** bases left.`
+									name: `Battle Results`,
+									value: `Total Light Mode Attack: **${lightATK}**\n`
+										+ `Total Light Mode Defense: **${lightDEF}**\n`
+										+ `Total Dark Mode Attack: **${darkATK}**\n`
+										+ `Total Dark Mode Defense: **${darkDEF}**`
 								});
-							}
-							if (lightATK > darkDEF) { //Successful Light Mode Attack
-								embed.addFields({
-									name: `${darkLocations.pop()} Destroyed!`,
-									value: `The Dark Mode has **${darkLocations.length}** bases left.`
+								if (darkATK > lightDEF) { //Successful Dark Mode Attack
+									embed.addFields({
+										name: `${lightLocations.pop()} Destroyed!`,
+										value: `The Light Mode has **${lightLocations.length}** bases left.`
+									});
+								}
+								if (lightATK > darkDEF) { //Successful Light Mode Attack
+									embed.addFields({
+										name: `${darkLocations.pop()} Destroyed!`,
+										value: `The Dark Mode has **${darkLocations.length}** bases left.`
+									});
+								}
+								const endEmbed = new EmbedBuilder()
+									.setTitle('War has ended!')
+									.setColor(0x00FF5B)
+									.setFooter({ text: 'This will be awkward if you both lost...' });
+								//TODO: Insert emojis for end of game
+								if (lightLocations.length === 0) {
+									endEmbed.addFields({
+										name: 'Light Mode Defeat!',
+										value: 'The Dark Mode have proven themselves as the **superior** mode.'
+									});
+								}
+								if (darkLocations.length === 0) {
+									endEmbed.addFields({
+										name: 'Dark Mode Defeat!',
+										value: 'The Light Mode have proven themselves as the **superior** mode.'
+									});
+								}
+								m.edit({ embeds: [embed], components: [row], content: `` });
+								if (lightLocations.length == 0 || darkLocations == 0) {
+									c.send({ embeds: [endEmbed] });
+								}
+								let outstring = `${lightLocations.length}\n`;
+								lightLocations.forEach(l => outstring += `${l}\n`);
+								outstring += `${darkLocations.length}\n`;
+								darkLocations.forEach(l => outstring += `${l}\n`);
+								fs.writeFile('locations.txt', outstring, (err) => {
+									if (err) throw err;
 								});
-							}
-							const endEmbed = new EmbedBuilder()
-								.setTitle('War has ended!')
-								.setColor(0x00FF5B)
-								.setFooter({ text: 'This will be awkward if you both lost...' });
-							//TODO: Insert emojis for end of game
-							if (lightLocations.length === 0) {
-								endEmbed.addFields({
-									name: 'Light Mode Defeat!',
-									value: 'The Dark Mode have proven themselves as the **superior** mode.'
-								});
-							}
-							if (darkLocations.length === 0) {
-								endEmbed.addFields({
-									name: 'Dark Mode Defeat!',
-									value: 'The Light Mode have proven themselves as the **superior** mode.'
-								});
-							}
-							c.send({ embeds: [embed], components: [row] });
-							if (lightLocations.length == 0 || darkLocations == 0) {
-								c.send({ embeds: [endEmbed] });
-							}
-							let outstring = `${lightLocations.length}\n`;
-							lightLocations.forEach(l => outstring += `${l}\n`);
-							outstring += `${darkLocations.length}\n`;
-							darkLocations.forEach(l => outstring += `${l}\n`);
-							fs.writeFile('locations.txt', outstring, (err) => {
-								if (err) throw err;
 							});
 						});
 					});
