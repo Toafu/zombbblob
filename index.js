@@ -28,9 +28,10 @@ function addMessage(messageContent, author) {
 	// Send at least some # of messages in this time period (ms)
 	const MESSAGE_TIMEOUT_CRITICAL_TIME = 60 * 1000;
 
-	while (Date.now() - recentMessages[0] < MESSAGE_TIMEOUT_CRITICAL_TIME) {
+	while (Date.now() - recentMessages[0].time > MESSAGE_TIMEOUT_CRITICAL_TIME) {
 		recentMessages.shift();
 	}
+	console.log(recentMessages)
 }
 
 function isSpam(messageContent, author) {
@@ -129,10 +130,6 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 	if (message.author.bot) return; //if message is from a bot
 	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
-	if (recentMessages.length > 100) {
-		recentMessages.shift();
-	}
-	recentMessages.push(message.content);
 	if (isSpam(message.content, message.author.id)) {
 		// Spam detector (if same message sent over 10 times in a row)
 		client.channels.cache.get('734554759662665909') // server log channel
@@ -221,4 +218,4 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 	} //if reaction is added to reaction role message
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.DEV_TOKEN);
