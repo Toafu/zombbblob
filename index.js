@@ -31,7 +31,6 @@ function addMessage(messageContent, author) {
 	while (Date.now() - recentMessages[0].time > MESSAGE_TIMEOUT_CRITICAL_TIME) {
 		recentMessages.shift();
 	}
-	console.log(recentMessages)
 }
 
 function isSpam(messageContent, author) {
