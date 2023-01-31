@@ -8,6 +8,40 @@ require('dotenv').config();
 
 const topTen = [];
 let recentMessages = [];
+
+function preprocessMessageForSpam(messageContent) {
+	return messageContent.toLowerCase().replace(/\s/g, '');
+}
+
+function addMessage(messageContent, author) {
+	recentMessages.push({
+		content: messageContent,
+		author: author,
+		time: Date.now()
+	});
+
+	const MESSAGE_TIMEOUT_MAX_COUNT = 100;
+	if (recentMessages.length > MESSAGE_TIMEOUT_MAX_COUNT) {
+		recentMessages.shift();
+	}
+
+	// Send at least some # of messages in this time period (ms)
+	const MESSAGE_TIMEOUT_CRITICAL_TIME = 60 * 1000;
+
+	while (Date.now() - recentMessages[0] < MESSAGE_TIMEOUT_CRITICAL_TIME) {
+		recentMessages.shift();
+	}
+}
+
+function isSpam(messageContent, author) {
+	messageContent = preprocessMessageForSpam(messageContent);
+	addMessage(messageContent, author);
+	// Send at least this number of messages in some time period
+	const MESSAGE_TIMEOUT_CRITICAL_COUNT = 10;
+	return recentMessages.filter((x) => x.content === messageContent && 
+		x.author === author).length >= MESSAGE_TIMEOUT_CRITICAL_COUNT;
+}
+
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
@@ -99,12 +133,11 @@ client.on('messageCreate', async (message) => {
 		recentMessages.shift();
 	}
 	recentMessages.push(message.content);
-	if (recentMessages.filter((x) => x === message.content).length === 10) {
+	if (isSpam(message.content, message.author.id)) {
 		// Spam detector (if same message sent over 10 times in a row)
 		client.channels.cache.get('734554759662665909') // server log channel
 			.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
 		message.member.timeout(30 * 1000); // timeout for 30 seconds
-		recentMessages = [];
 	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
