@@ -62,9 +62,9 @@ module.exports = {
 						let darkDEF = 2;
 						c.send({
 							embeds: [embed],
-							content: `Please make your choice <t:${Date.parse(new Date) / 1000 + (0.5 * 60)}:R>`, components: [row]
+							content: `<@&1068940763792158720> Please make your choice <t:${Date.parse(new Date) / 1000 + (10 * 60)}:R>`, components: [row]
 						}).then(m => { //m is the message sent
-							const collector = c.createMessageComponentCollector({ time: 0.5 * 60000 });
+							const collector = c.createMessageComponentCollector({ time: 10 * 60000 });
 							const fighters = new Set();
 							collector.on('collect', async i => {
 								//Each user only gets one interaction (i)
@@ -116,20 +116,19 @@ module.exports = {
 									.setTitle('War has ended!')
 									.setColor(0x00FF5B)
 									.setFooter({ text: 'This will be awkward if you both lost...' });
-								//TODO: Insert emojis for end of game
 								if (lightLocations.length === 0) {
 									endEmbed.addFields({
-										name: 'Light Mode Defeat!',
+										name: 'Light Mode Defeat! <:swfjediflipdeathstar:1069843674416037938>',
 										value: 'The Dark Mode have proven themselves as the **superior** mode.'
 									});
 								}
 								if (darkLocations.length === 0) {
 									endEmbed.addFields({
-										name: 'Dark Mode Defeat!',
+										name: 'Dark Mode Defeat! <:swfsithsad:1069843673031921685>',
 										value: 'The Light Mode have proven themselves as the **superior** mode.'
 									});
 								}
-								m.edit({ embeds: [embed], components: [row], content: `` });
+								m.edit({ embeds: [embed], components: [row], content: `<@&1068940763792158720>` });
 								if (lightLocations.length == 0 || darkLocations == 0) {
 									c.send({ embeds: [endEmbed] });
 								}
@@ -154,7 +153,7 @@ module.exports = {
 	callback: async ({ channel, interaction: msgInt }) => {
 		const lightLocations = [];
 		const darkLocations = [];
-		// //Input file is of the form
+		// Input file is of the form:
 		/*
 			numLightLocations
 			LightLocation1
@@ -208,7 +207,7 @@ module.exports = {
 			let darkDEF = 2;
 			msgInt.reply({
 				embeds: [embed],
-				content: `Please make your choice <t:${Date.parse(new Date) / 1000 + (0.5 * 60)}:R>`, components: [row]
+				content: `<@&1068940763792158720> Please make your choice <t:${Date.parse(new Date) / 1000 + (0.5 * 60)}:R>`, components: [row]
 			});
 			const collector = channel.createMessageComponentCollector({ time: 0.5 * 60000 });
 			const fighters = new Set();
@@ -262,16 +261,15 @@ module.exports = {
 					.setTitle('War has ended!')
 					.setColor(0x00FF5B)
 					.setFooter({ text: 'This will be awkward if you both lost...' });
-				//TODO: Insert emojis for end of game
 				if (lightLocations.length === 0) {
 					endEmbed.addFields({
-						name: 'Light Mode Defeat!',
+						name: 'Light Mode Defeat! <:swfjediflipdeathstar:1069843674416037938>',
 						value: 'The Dark Mode have proven themselves as the **superior** mode.'
 					});
 				}
 				if (darkLocations.length === 0) {
 					endEmbed.addFields({
-						name: 'Dark Mode Defeat!',
+						name: 'Dark Mode Defeat! <:swfsithsad:1069843673031921685>',
 						value: 'The Light Mode have proven themselves as the **superior** mode.'
 					});
 				}
@@ -285,7 +283,7 @@ module.exports = {
 				fs.writeFile('locations.txt', outstring, (err) => {
 					if (err) throw err;
 				});
-				msgInt.editReply({ embeds: [embed], components: [row], content: `` });
+				msgInt.editReply({ embeds: [embed], components: [row], content: `<@&1068940763792158720>` });
 			});
 		});
 	}

@@ -50,6 +50,7 @@ exports.studentAlumRole = studentAlumRole;
 // ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 const lightMode = '1065432702431526932'; //Light Mode role
 const darkMode = '1065432906111135784'; //Dark Mode role
+const galacticNews = '1068940763792158720';
 exports.lightMode = lightMode;
 exports.darkMode = darkMode;
 // ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
@@ -120,6 +121,7 @@ client.on('ready', () => {
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
 	client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
 	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+	client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
 	client.guilds.fetch('734492640216744017').then(g => {
 		g.members.fetch(); //Caches all users so we can count how many users have a role later
 	});
@@ -215,6 +217,25 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 			}
 		});
 	} //if reaction is added to reaction role message
+	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+	else if (reaction.message.id === '1069347684059709532') {
+		const { guild } = reaction.message; //Extract EECS281 server
+		await guild.members.fetch(user.id).then(async member => {
+			await guild.roles.fetch(galacticNews).then(r => { member.roles.add(r); });
+		});
+	}
+	// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 });
+
+// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+client.on('messageReactionRemove', async (reaction, user) => {
+	if (reaction.message.id === '1069347684059709532') {
+		const { guild } = reaction.message; //Extract EECS281 server
+		await guild.members.fetch(user.id).then(async member => {
+			await guild.roles.fetch(galacticNews).then(r => { member.roles.remove(r); });
+		});
+	}
+});
+// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 
 client.login(process.env.TOKEN);
