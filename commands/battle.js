@@ -144,9 +144,9 @@ module.exports = {
 					});
 				});
 			});
-			const newTime = Math.floor(10 + (Math.random() * 13));
+			const newTime = 10 + Math.floor(Math.random() * 13);
 			const d = new Date;
-			setTimeout(continueGame, (1000 * 60 * 60) * (24 - d.getHours() + newTime));
+			setTimeout(continueGame, (1000 * 60 * 60) * (24 + 5 - d.getHours() + newTime));
 		};
 		continueGame();
 	},
@@ -207,9 +207,9 @@ module.exports = {
 			let darkDEF = 2;
 			msgInt.reply({
 				embeds: [embed],
-				content: `<@&1068940763792158720> Please make your choice <t:${Date.parse(new Date) / 1000 + (0.5 * 60)}:R>`, components: [row]
+				content: `<@&1068940763792158720> Please make your choice <t:${Date.parse(new Date) / 1000 + (1 * 60)}:R>`, components: [row]
 			});
-			const collector = channel.createMessageComponentCollector({ time: 0.5 * 60000 });
+			const collector = channel.createMessageComponentCollector({ time: 1 * 60000 });
 			const fighters = new Set();
 			collector.on('collect', async i => {
 				//Each user only gets one interaction (i)
