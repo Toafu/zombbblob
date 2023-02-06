@@ -44,7 +44,6 @@ module.exports = {
 		await guild.members.fetch(user.id).then(u => {
 			if (u.roles.highest.position < role.position && !u.permissions.has(PermissionsBitField.Flags.Administrator)) {
 				msgInt.reply(`<:blobdisapproval:1039016273343951009> You cannot assign yourself a role higher than what you have (Administrators can bypass).`);
-			} else {
 				throw `${user.tag} attempted to gain power.`;
 			}
 		}).then(() => {
