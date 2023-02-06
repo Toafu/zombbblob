@@ -44,37 +44,39 @@ module.exports = {
 		await guild.members.fetch(user.id).then(u => {
 			if (u.roles.highest.position < role.position && !u.permissions.has(PermissionsBitField.Flags.Administrator)) {
 				msgInt.reply(`<:blobdisapproval:1039016273343951009> You cannot assign yourself a role higher than what you have (Administrators can bypass).`);
+			} else {
+				throw `${user.tag} attempted to gain power.`;
 			}
-			return;
-		});
-		if (!member) {
-			member = guild.members.cache.get(userMention); //See if it's a mention
-		};
-		if (!member) { //Username
-			guild.members.search({ query: userQuery, limit: 5 }).then(async result => { //returns a map of [userID, GuildMember]
-				const keys = result.keys();
-				if (result.size > 1) { //yaaay duplicates
-					let targets = [];
-					for (let i = 0; i < result.size; ++i) {
-						let keyID = keys.next().value;
-						targets.push(`<@${keyID}> - ${keyID}`);
+		}).then(() => {
+			if (!member) {
+				member = guild.members.cache.get(userMention); //See if it's a mention
+			};
+			if (!member) { //Username
+				guild.members.search({ query: userQuery, limit: 5 }).then(async result => { //returns a map of [userID, GuildMember]
+					const keys = result.keys();
+					if (result.size > 1) { //yaaay duplicates
+						let targets = [];
+						for (let i = 0; i < result.size; ++i) {
+							let keyID = keys.next().value;
+							targets.push(`<@${keyID}> - ${keyID}`);
+						}
+						targets = targets.join(`\n`);
+						msgInt.reply(`I found more than one user. Please reassign the role with the desired user's ID:\n${targets}`);
+						return;
+					} else { //At most one exists
+						member = guild.members.cache.get(keys.next().value);
+						if (!member) {
+							msgInt.reply(`Could not find user ${userQuery}`);
+						} else {
+							await member.roles.add(role);
+							await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
+						}
 					}
-					targets = targets.join(`\n`);
-					msgInt.reply(`I found more than one user. Please reassign the role with the desired user's ID:\n${targets}`);
-					return;
-				} else { //At most one exists
-					member = guild.members.cache.get(keys.next().value);
-					if (!member) {
-						msgInt.reply(`Could not find user ${userQuery}`);
-					} else {
-						await member.roles.add(role);
-						await msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
-					}
-				}
-			});
-		} else { //Mention or ID
-			member.roles.add(role);
-			msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
-		}
+				});
+			} else { //Mention or ID
+				member.roles.add(role);
+				msgInt.reply(`Successfully assigned the ${role.name} role to ${member.user.username}`);
+			}
+		}).catch(e => {console.log(e)});
 	},
 };
