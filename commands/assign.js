@@ -1,3 +1,5 @@
+const { PermissionsBitField } = require("discord.js");
+
 //a way for staff to assign/remove roles (it might be easier to use a universal syntax for all roles like "/assign staff" instead of $staff, which is not as efficient
 module.exports = {
 	slash: true,
@@ -22,7 +24,7 @@ module.exports = {
 	expectedArgs: "<user> <role>",
 	description: 'assigns a user the specified role',
 	testOnly: true, //so the slash command updates instantly
-	callback: async ({ guild, args, interaction: msgInt }) => {
+	callback: async ({ guild, args, user, interaction: msgInt }) => {
 		let userQuery = args[0]; //Try just ID first
 		let userMention = userQuery.slice(2, userQuery.length - 1);
 		let roleID = args[1];
@@ -39,6 +41,12 @@ module.exports = {
 			});
 			return;
 		}
+		await guild.members.fetch(user.id).then(u => {
+			if (u.roles.highest.position < role.position && !u.permissions.has(PermissionsBitField.Flags.Administrator)) {
+				msgInt.reply(`<:blobdisapproval:1039016273343951009> You cannot assign yourself a role higher than what you have (Administrators can bypass).`);
+			}
+			return;
+		});
 		if (!member) {
 			member = guild.members.cache.get(userMention); //See if it's a mention
 		};
