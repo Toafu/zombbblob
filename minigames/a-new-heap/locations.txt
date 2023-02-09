@@ -2,6 +2,4 @@
 Ross Eisley Cantina
 Millennium Falconstructor
 Tatqueine
-2
-The Depth (First Search) Star
-git clone Factory
+0
