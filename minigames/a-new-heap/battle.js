@@ -10,6 +10,7 @@ module.exports = {
 	description: 'Rally the troops!',
 	testOnly: true, //so the slash command updates instantly
 	//Assumes command won't be run manually when game ends
+	/*
 	init: (client) => {
 		const continueGame = () => {
 			client.guilds.fetch('734492640216744017').then(g => {
@@ -150,6 +151,7 @@ module.exports = {
 		};
 		continueGame();
 	},
+	*/
 	callback: async ({ channel, interaction: msgInt }) => {
 		const lightLocations = [];
 		const darkLocations = [];
