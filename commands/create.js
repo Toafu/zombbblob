@@ -1,4 +1,4 @@
-const { ChannelType } = require("discord.js");
+const { ChannelType, PermissionsBitField } = require("discord.js");
 
 //the ability to create channels for a semester (e.g. /create F22)
 module.exports = {
@@ -14,7 +14,6 @@ module.exports = {
 			required: true,
 			type: 3,
 		}
-		//TODO: Add an optional archive argument (adds ARCHIVED after category name and disables new messages)
 	],
 	expectedArgs: "<[F/S/W][Last two digits of year]>",
 	description: 'creates a category for channels of this semester',
@@ -35,12 +34,29 @@ module.exports = {
 			let categoryChannel;
 			category.then(c => { categoryChannel = c; c.setPosition(3); }); //Staff-Only Channels is at Position 0
 			const channels = ['general', 'labs', 'random', 'project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
-			for (let i = 0; i < channels.length; ++i) {
+			// Create the public channels normally
+			for (let i = 0; i <= 2; ++i) {
 				guild.channels.create({ name: channels[i], type: ChannelType.GuildText })
 					.then(channel => { channel.setParent(categoryChannel); })
-					.catch(() => { msgInt.reply("Unable to create category"); return; });
+					.catch(() => { msgInt.reply("Unable to create category's public channels"); return; });
 			}
-			//FIGURE OUT IF YOU CAN SET PERMISSIONS HERE
+			// Create the private channels with permissions already constructed
+			for (let i = 3; i < channels.length; ++i) {
+				guild.channels.create({ name: channels[i],
+										type: ChannelType.GuildText,
+										permissionOverwrites: [
+											{	// Disabling @everyone makes channel private
+												id: guild.roles.everyone,
+												deny: [PermissionsBitField.Flags.ViewChannel]
+											},
+											{	// Staff role
+												id: "734552983261675691",
+												allow: [PermissionsBitField.Flags.ViewChannel]
+											},
+										]})
+					.then(channel => { channel.setParent(categoryChannel, { lockPermissions: false }); })
+					.catch(() => { msgInt.reply("Unable to create category's private channels"); return; });
+			}
 			msgInt.reply(`${categoryName} successfully created`);
 		} else {
 			msgInt.reply('Invalid semester format');
