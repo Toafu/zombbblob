@@ -32,7 +32,7 @@ module.exports = {
 			categoryName = categoryName + ` ${year}`;
 			const category = guild.channels.create({ name: categoryName, type: ChannelType.GuildCategory });
 			let categoryChannel;
-			category.then(c => { categoryChannel = c; c.setPosition(3); }); //Staff-Only Channels is at Position 0
+			category.then(c => { categoryChannel = c; c.setPosition(4); }); //Staff-Only Channels is at Position 0
 			const channels = ['general', 'labs', 'random', 'project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
 			// Create the public channels normally
 			for (let i = 0; i <= 2; ++i) {
