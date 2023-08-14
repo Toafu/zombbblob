@@ -118,7 +118,7 @@ client.on('ready', () => {
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
-	client.channels.cache.get('926277044487200798').send('I have been updated. <:zombbblob:1026136422572372170>');
+	client.channels.cache.get('926277044487200798').send('I have risen again. <:zombbblob:1026136422572372170>');
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
 	// client.guilds.fetch('734492640216744017').then(g => {

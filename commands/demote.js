@@ -1,4 +1,6 @@
-//a way for staff to assign/remove roles (it might be easier to use a universal syntax for all roles like "/assign staff" instead of $staff, which is not as efficient
+const { ApplicationCommandOptionType, PermissionsBitField } = require("discord.js");
+
+//a way for staff to assign/remove roles
 module.exports = {
 	slash: true,
 	name: 'demote',
@@ -8,65 +10,42 @@ module.exports = {
 	options: [
 		{
 			name: 'user',
-			description: 'Provide a userID, mention, or username',
+			description: 'Mention a user',
 			required: true,
-			type: 3,
+			type: ApplicationCommandOptionType.User,
 		},
 		{
 			name: 'role',
 			description: 'Mention a role',
 			required: true,
-			type: 3,
+			type: ApplicationCommandOptionType.Role,
 		},
 	],
 	expectedArgs: "<user> <role>",
 	description: 'removes from a user the specified role',
 	testOnly: true, //so the slash command updates instantly
-	callback: async ({ guild, args, interaction: msgInt }) => {
-		let userQuery = args[0]; //Try just ID first
-		let userMention = userQuery.slice(2, userQuery.length - 1);
-		let roleID = args[1];
-		roleID = roleID.slice(3, roleID.length - 1);
-		let member = guild.members.cache.get(userQuery);
-		let role = guild.roles.cache.get(roleID);
+	callback: async ({ guild, args, user, interaction: msgInt }) => {
+		const targetUserID = args[0];
+		const roleID = args[1];
+		const member = guild.members.cache.get(targetUserID);
+		const role = guild.roles.cache.get(roleID);
 		if (!role) {
 			await guild.roles.fetch().then(roles => roles.find(role => role.name === args[1])).then(r => {
 				if (r) { //We use 'r' to differentiate from 'role' within .find(), even though they're in different scopes
 					msgInt.reply(`Did you mean <@&${r.id}>? Make sure it's mentioned in the argument.`);
 				} else {
-					msgInt.reply(`Unable to find role with ID/name: \`${args[1]}\``);
+					msgInt.reply(`Unable to find role with ID: \`${args[1]}\``);
 				}
 			});
 			return;
 		}
-		if (!member) {
-			member = guild.members.cache.get(userMention); //See if it's a mention
-		};
-		if (!member) { //Username
-			guild.members.search({ query: userQuery, limit: 5 }).then(async result => { //returns a map of [userID, GuildMember]
-				const keys = result.keys();
-				if (result.size > 1) { //yaaay duplicates
-					let targets = [];
-					for (let i = 0; i < result.size; ++i) {
-						let keyID = keys.next().value;
-						targets.push(`<@${keyID}> - ${keyID}`);
-					}
-					targets = targets.join(`\n`);
-					msgInt.reply(`I found more than one user. Please remove the role with the desired user's ID:\n${targets}`);
-					return;
-				} else { //At most one exists
-					member = guild.members.cache.get(keys.next().value);
-					if (!member) {
-						msgInt.reply(`Could not find user ${userQuery}`);
-					} else {
-						await member.roles.remove(role);
-						await msgInt.reply(`Successfully removed the ${role.name} role from ${member.user.username}`);
-					}
-				}
-			});
-		} else { //Mention or ID
-			member.roles.remove(role);
-			msgInt.reply(`Successfully removed the ${role.name} role from ${member.user.username}`);
-		}
+		await guild.members.fetch(user.id).then(u => {
+			if (role.comparePositionTo(u.roles.highest) > 0 && !u.permissions.has(PermissionsBitField.Flags.Administrator)) {
+				msgInt.reply(`<:blobdisapproval:1039016273343951009> You cannot remove a role that is higher than your highest role (Administrators can bypass).`);
+			} else {
+				member.roles.remove(role);
+				msgInt.reply(`Successfully removed the ${role.name} role from ${member.user.username}`);
+			}
+		});
 	},
 };
