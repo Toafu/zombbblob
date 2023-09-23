@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
-// const fs = require('fs'); //Uncomment during zombbblob event
+const fs = require('fs'); //Uncomment during zombbblob event
 
 require('dotenv').config();
 const topTen = [];
@@ -44,6 +44,7 @@ function isSpam(messageContent, author) {
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
+const zombbblobRole = '1155211060685582456'; // zombbblob role
 exports.studentRole = studentRole;
 exports.studentAlumRole = studentAlumRole;
 // ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
@@ -129,7 +130,6 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
 	if (message.author.bot) return; //if message is from a bot
-	//let infectedWord = fs.readFileSync('infectedWord.txt', 'utf8');
 	if (isSpam(message.content, message.author.id)) {
 		// Spam detector (if same message sent over 10 times in a row)
 		client.channels.cache.get('734554759662665909') // server log channel
@@ -178,28 +178,18 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank command
-	/*
 	else {
-		message.content = message.content.toLowerCase();
+		let infectedWord = fs.readFileSync('commands/zombbblob/infectedWord.txt', 'utf8');
 		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 			//TODO: Make sure to update the role and channel IDs below
-			if (!message.member.roles.cache.some((role) => role.id === '1024787443951611974')) { //user meets infection criteria
+			if (!message.member.roles.cache.some((role) => role.id === zombbblobRole)) { //user meets infection criteria
 				message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
-				message.member.roles.add('1024787443951611974'); //add zombbblob role
-				client.channels.cache.get('1024801253257130005') //get infected channel
+				message.member.roles.add(zombbblobRole); //add zombbblob role
+				client.channels.cache.get('1155211589243375727') //get infected channel
 				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 			} //if user is not zombbblob'd
 		} //if infection trigger
-		
-		Automatically reply to a message when it includes key phrases
-		if (message.channel.id === '1055562256705929288') { //#final-exam in Winter 2023
-			if ((message.content.includes("exam") || message.content.includes("grades") || message.content.includes("graded") || message.content.includes("scores"))
-			 && (message.content.includes("when are") || message.content.includes("when will"))) {
-				message.reply("We are currently waiting for grades to be published! <:blobsleepless:966863492831391754>");
-			}
-		}
 	} // if not !rank command
-	*/
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
