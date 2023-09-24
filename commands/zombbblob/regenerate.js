@@ -1,4 +1,3 @@
-//LEGACY COMMAND
 const fs = require('fs');
 let words = [];
 fs.readFile('commands/zombbblob/words.txt', (err, data) => {
