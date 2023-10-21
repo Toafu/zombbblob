@@ -133,3 +133,4 @@ dist
 testing
 *.txt
 !/minigames/**
+*/zombbblob/*.txt

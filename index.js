@@ -44,7 +44,7 @@ function isSpam(messageContent, author) {
 let topTenUpdated = null;
 const studentRole = '926186372572799037'; //Student role
 const studentAlumRole = '748920659626950737'; //Student Alumni role
-const zombbblobRole = '1155211060685582456'; // zombbblob role
+// const zombbblobRole = '1155211060685582456'; // zombbblob role
 exports.studentRole = studentRole;
 exports.studentAlumRole = studentAlumRole;
 // ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
@@ -178,18 +178,18 @@ client.on('messageCreate', async (message) => {
 			}
 		});
 	} //if !rank command
-	else {
-		let infectedWord = fs.readFileSync('commands/zombbblob/infectedWord.txt', 'utf8');
-		if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
-			//TODO: Make sure to update the role and channel IDs below
-			if (!message.member.roles.cache.some((role) => role.id === zombbblobRole)) { //user meets infection criteria
-				message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
-				message.member.roles.add(zombbblobRole); //add zombbblob role
-				client.channels.cache.get('1155211589243375727') //get infected channel
-				.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
-			} //if user is not zombbblob'd
-		} //if infection trigger
-	} // if not !rank command
+	// else {
+	// 	let infectedWord = fs.readFileSync('commands/zombbblob/infectedWord.txt', 'utf8');
+	// 	if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
+	// 		//TODO: Make sure to update the role and channel IDs below
+	// 		if (!message.member.roles.cache.some((role) => role.id === zombbblobRole)) { //user meets infection criteria
+	// 			message.react('<:zombbblob:1026136422572372170>'); //react with :zombbblob:
+	// 			message.member.roles.add(zombbblobRole); //add zombbblob role
+	// 			client.channels.cache.get('1155211589243375727') //get infected channel
+	// 			.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
+	// 		} //if user is not zombbblob'd
+	// 	} //if infection trigger
+	// } // if not !rank command
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
