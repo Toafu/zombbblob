@@ -1,4 +1,5 @@
 const { ChannelType, PermissionsBitField } = require("discord.js");
+const { studentRole, studentAlumRole } = require('../index');
 
 module.exports = {
 	slash: true,
@@ -36,7 +37,11 @@ module.exports = {
 				categoryID = c.id;
 				c.permissionOverwrites.set([
 					{
-						id: guild.roles.everyone,
+						id: studentRole,
+						deny: [PermissionsBitField.Flags.SendMessages]
+					},
+					{
+						id: studentAlumRole,
 						deny: [PermissionsBitField.Flags.SendMessages]
 					},
 					{	// Staff role
