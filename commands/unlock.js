@@ -1,4 +1,5 @@
 const { PermissionsBitField } = require('discord.js');
+const { SendMessages, SendMessagesInThreads, Connect, Speak } = PermissionsBitField.Flags;
 const { studentRole } = require('../index');
 
 module.exports = {
@@ -6,35 +7,23 @@ module.exports = {
 	name: 'unlock',
 	category: 'potatobot',
 	maxArgs: 0,
-	description: 'unlocks the server to Students (adds Send Messages permission)',
+	description: 'unlocks the server to Students (able to communicate)',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, interaction: msgInt }) => {
-		const unlockedPermissions = [
-			'CreateInstantInvite',
-			'AddReactions',
-			'Stream',
-			'ViewChannel',
-			'SendMessages',
-			'EmbedLinks',
-			'ReadMessageHistory',
-			'Connect',
-			'Speak',
-			'UseVAD',
-			'ChangeNickname',
-			'ManageEmojisAndStickers',
-			'ManageGuildExpressions',
-			'UseApplicationCommands',
-			'RequestToSpeak',
-			'ManageEvents',
-			'SendMessagesInThreads',
-			'UseSoundboard'
+		const permissionsToAdd = [
+			SendMessages,
+			SendMessagesInThreads,
+			Connect,
+			Speak
 		];
 		guild.roles.fetch(studentRole).then(r => {
-			r.setPermissions(unlockedPermissions).then(() => {
-				if (!r.permissions.has(PermissionsBitField.Flags.SendMessages)) {
-					msgInt.reply("Unable to add `SEND_MESSAGES` to Student");
-				} else {
+			let newPermissions = r.permissions.add(permissionsToAdd);
+			r.setPermissions(newPermissions).then(() => {
+				// Verify permissions were removed
+				if (r.permissions.has(permissionsToAdd)) {
 					msgInt.reply("Server unlocked to the Student role");
+				} else {
+					msgInt.reply("Unable to add permissions to Student");
 				}
 			});
 		});

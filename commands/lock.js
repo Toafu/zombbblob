@@ -1,4 +1,5 @@
 const { PermissionsBitField } = require('discord.js');
+const { SendMessages, SendMessagesInThreads, Connect, Speak } = PermissionsBitField.Flags;
 const { studentRole } = require('../index');
 
 module.exports = {
@@ -6,32 +7,21 @@ module.exports = {
 	name: 'lock',
 	category: 'potatobot',
 	maxArgs: 0,
-	description: 'locks the server to Students (removes Send Messages permission)',
+	description: 'locks the server to Students (unable to communicate)',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, interaction: msgInt }) => {
-		const lockedPermissions = [
-			'CreateInstantInvite',
-			'AddReactions',
-			'Stream',
-			'ViewChannel',
-			'EmbedLinks',
-			'ReadMessageHistory',
-			'Connect',
-			'Speak',
-			'UseVAD',
-			'ChangeNickname',
-			'ManageEmojisAndStickers',
-			'ManageGuildExpressions',
-			'UseApplicationCommands',
-			'RequestToSpeak',
-			'ManageEvents',
-			'SendMessagesInThreads',
-			'UseSoundboard'
+		const permissionsToRemove = [
+			SendMessages,
+			SendMessagesInThreads,
+			Connect,
+			Speak
 		];
 		guild.roles.fetch(studentRole).then(r => {
-			r.setPermissions(lockedPermissions).then(() => {
-				if (r.permissions.has(PermissionsBitField.Flags.SendMessages)) {
-					msgInt.reply("Unable to remove `SEND_MESSAGES` from Student");
+			let newPermissions = r.permissions.remove(permissionsToRemove);
+			r.setPermissions(newPermissions).then(() => {
+				// Verify permissions were removed
+				if (r.permissions.has(permissionsToRemove)) {
+					msgInt.reply("Unable to remove permissions from Student");
 				} else {
 					msgInt.reply("Server locked to the Student role");
 				}
