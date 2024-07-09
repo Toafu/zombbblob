@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
-const fs = require('fs'); //Uncomment during zombbblob event
+// const fs = require('fs'); //Uncomment during zombbblob event
 
 require('dotenv').config();
 const topTen = [];
@@ -179,7 +179,7 @@ client.on('messageCreate', async (message) => {
 		});
 	} //if !rank command
 	// else {
-	// 	let infectedWord = fs.readFileSync('commands/zombbblob/infectedWord.txt', 'utf8');
+	// 	let infectedWord = fs.readFileSync('commands/minigames/zombbblob/infectedWord.txt', 'utf8');
 	// 	if (message.content.toLowerCase().search(infectedWord) != -1) { //user says infected word
 	// 		//TODO: Make sure to update the role and channel IDs below
 	// 		if (!message.member.roles.cache.some((role) => role.id === zombbblobRole)) { //user meets infection criteria
@@ -189,7 +189,7 @@ client.on('messageCreate', async (message) => {
 	// 			.send(`<@${message.author.id}> was zombified <:zombbblob:1026136422572372170>\n${message.author.username} was infected by \`${infectedWord}\`\n${message.url}`);
 	// 		} //if user is not zombbblob'd
 	// 	} //if infection trigger
-	// } // if not !rank command
+	// } //if not !rank command
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
