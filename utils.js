@@ -16,11 +16,13 @@ const Semesters = {
 	w: 'Winter'
 };
 
-export const communicationsPermissions = [
+const communicationsPermissions = [
 	PermissionsBitField.Flags.SendMessages,
 	PermissionsBitField.Flags.SendMessagesInThreads,
 	PermissionsBitField.Flags.Connect,
 	PermissionsBitField.Flags.Speak
 ];
 
-export { Roles, Semesters };
+exports.Roles = Roles;
+exports.Semsters = Semesters;
+exports.communicationsPermissions = communicationsPermissions;
