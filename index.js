@@ -2,7 +2,8 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
-// const fs = require('fs'); //Uncomment during zombbblob event
+const { Roles: { Student, StudentAlumni } } = require('./utils');
+// const fs = require('fs');
 
 require('dotenv').config();
 const topTen = [];
@@ -37,26 +38,14 @@ function isSpam(messageContent, author) {
 	addMessage(messageContent, author);
 	// Send at least this number of messages in some time period
 	const MESSAGE_TIMEOUT_CRITICAL_COUNT = 10;
-	return recentMessages.filter((x) => x.content === messageContent && 
+	return recentMessages.filter((x) => x.content === messageContent &&
 		x.author === author).length >= MESSAGE_TIMEOUT_CRITICAL_COUNT;
 }
 
-let topTenUpdated = null;
-const studentRole = '926186372572799037'; //Student role
-const studentAlumRole = '748920659626950737'; //Student Alumni role
-// const zombbblobRole = '1155211060685582456'; // zombbblob role
-exports.studentRole = studentRole;
-exports.studentAlumRole = studentAlumRole;
-// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
-// const lightMode = '1065432702431526932'; //Light Mode role
-// const darkMode = '1065432906111135784'; //Dark Mode role
-// const galacticNews = '1068940763792158720';
-// exports.lightMode = lightMode;
-// exports.darkMode = darkMode;
-// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
-
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
+
+let topTenUpdated = null;
 
 async function updateTopTen() {
 	if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
@@ -115,7 +104,7 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 	client.user.setPresence({
-		activities: [{ name: 'Welcome to 281!' }],
+		activities: [{ name: 'Welcome to EECS281!' }],
 		status: 'online',
 	});
 	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
@@ -156,21 +145,21 @@ client.on('messageCreate', async (message) => {
 			await updateTopTen();
 			if (rankQuery === topTen[0]) { //per request of slime
 				const arayL = ['<:burgerKingBlobL:1026644796703510599>',
-				'🤡',
-				'💀',
-				'👎',
-				'📉',
-				'🇱',
-				'<:blobL:1023692287185801376>',
-				'<:blobsweats:1052600617568317531>',
-				'<:notlikeblob:1027966505922592779>',
-				'<:blobdisapproval:1039016273343951009>',
-				'<:blobyikes:1046967593132630056>',
-				'<:blobbruh:936493734592380988>',
-				'<:blobRecursive:1026705949605507093>',
-				'<:blobEveryone:1026656071856685117>',
-				'<:D_:1029092005416009748>'];
-				arayL.forEach(async emote => {await m.react(emote)});
+					'🤡',
+					'💀',
+					'👎',
+					'📉',
+					'🇱',
+					'<:blobL:1023692287185801376>',
+					'<:blobsweats:1052600617568317531>',
+					'<:notlikeblob:1027966505922592779>',
+					'<:blobdisapproval:1039016273343951009>',
+					'<:blobyikes:1046967593132630056>',
+					'<:blobbruh:936493734592380988>',
+					'<:blobRecursive:1026705949605507093>',
+					'<:blobEveryone:1026656071856685117>',
+					'<:D_:1029092005416009748>'];
+				arayL.forEach(async emote => { await m.react(emote); });
 			} else if (topTen.includes(rankQuery)) { //if user is in top 10
 				m.react('<:blobL:1023692287185801376>'); //react blobL
 			} else {
@@ -198,11 +187,11 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 		await guild.members.fetch(user.id).then(async member => {
 			//Reacting to one role should remove the other
 			if (reaction.emoji.name === '🧠') { // '\u{0001F9E0}'
-				guild.roles.fetch(studentAlumRole).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(studentRole).then(r => { member.roles.add(r); });
+				guild.roles.fetch(StudentAlumni).then(r => { member.roles.remove(r); });
+				await guild.roles.fetch(Student).then(r => { member.roles.add(r); });
 			} else { //reaction.emoji.name === '🎓'
-				guild.roles.fetch(studentRole).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(studentAlumRole).then(r => { member.roles.add(r); });
+				guild.roles.fetch(Student).then(r => { member.roles.remove(r); });
+				await guild.roles.fetch(StudentAlumni).then(r => { member.roles.add(r); });
 			}
 		});
 	} //if reaction is added to reaction role message

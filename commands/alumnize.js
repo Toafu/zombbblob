@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType } = require("discord.js");
-const { studentRole, studentAlumRole } = require('../index');
+const { Roles: { Student, StudentAlumni } } = require('../utils');
+
 const beforeMap = {
 	0: { month: 11, day: 20 }, 	// 1/1 (for all users that joined on or before 12/20 of the previous year)
 	4: { month: 3, day: 27 }, 	// 5/1 (for all users that joined on or before 4/27)
@@ -48,11 +49,11 @@ module.exports = {
 				beforeThreshold.setDate(beforeMap[currMonth].day);
 				client.guilds.fetch('734492640216744017').then(g => {
 					g.members.fetch().then(u => { //Cache all members
-						g.roles.fetch(studentRole).then(r => { //Extract members with the Student role
+						g.roles.fetch(Student).then(r => { //Extract members with the Student role
 							r.members.each(user => { //r.members is a Collection<userID, GuildMember>
 								if (user.joinedAt < beforeThreshold) {
-									user.roles.remove(studentRole);
-									user.roles.add(studentAlumRole);
+									user.roles.remove(Student);
+									user.roles.add(StudentAlumni);
 									++count;
 								}
 							});
@@ -81,11 +82,11 @@ module.exports = {
 			}
 			let count = 0;
 			guild.members.fetch().then(u => { //Cache all members
-				guild.roles.fetch(studentRole).then(r => { //Extract members with the Student role
+				guild.roles.fetch(Student).then(r => { //Extract members with the Student role
 					r.members.each(user => { //r.members is a Collection<userID, GuildMember>
 						if (user.joinedAt > start && user.joinedAt < end) {
-							user.roles.remove(studentRole);
-							user.roles.add(studentAlumRole);
+							user.roles.remove(Student);
+							user.roles.add(StudentAlumni);
 							++count;
 						}
 					});

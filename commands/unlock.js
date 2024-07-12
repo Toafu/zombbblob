@@ -1,6 +1,4 @@
-const { PermissionsBitField } = require('discord.js');
-const { SendMessages, SendMessagesInThreads, Connect, Speak } = PermissionsBitField.Flags;
-const { studentRole } = require('../index');
+const { Roles: { Student }, communicationsPermissions } = require('../utils');
 
 module.exports = {
 	slash: true,
@@ -10,17 +8,11 @@ module.exports = {
 	description: 'unlocks the server to Students (able to communicate)',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, interaction: msgInt }) => {
-		const permissionsToAdd = [
-			SendMessages,
-			SendMessagesInThreads,
-			Connect,
-			Speak
-		];
-		guild.roles.fetch(studentRole).then(r => {
-			let newPermissions = r.permissions.add(permissionsToAdd);
+		guild.roles.fetch(Student).then(r => {
+			let newPermissions = r.permissions.add(communicationsPermissions);
 			r.setPermissions(newPermissions).then(() => {
 				// Verify permissions were removed
-				if (r.permissions.has(permissionsToAdd)) {
+				if (r.permissions.has(communicationsPermissions)) {
 					msgInt.reply("Server unlocked to the Student role");
 				} else {
 					msgInt.reply("Unable to add permissions to Student");

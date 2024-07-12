@@ -1,4 +1,4 @@
-const { lightMode, darkMode } = require('../index');
+const { Roles: { LightMode, DarkMode } } = require('../utils');
 
 module.exports = {
 	slash: true,
@@ -13,14 +13,14 @@ module.exports = {
 		let darkModeSize;
 		let check = true;
 		await msgInt.deferReply();
-		await guild.roles.fetch(lightMode).then(async r => {
+		await guild.roles.fetch(LightMode).then(async r => {
 			if (await r.members.get(msgInt.user.id) != undefined) {
 				check = false;
 				throw `You have already joined the Light Side`;
 			}
 			lightModeSize = r.members.size;
 		}).catch(async e => { await msgInt.editReply(e); });
-		await guild.roles.fetch(darkMode).then(async r => {
+		await guild.roles.fetch(DarkMode).then(async r => {
 			if (await r.members.get(msgInt.user.id) != undefined) {
 				check = false;
 				throw `You have already joined the Dark Side`;
@@ -34,16 +34,16 @@ module.exports = {
 		//Balanced is defined as both teams are either equal or one member different in size
 		guild.members.fetch(msgInt.user.id).then(async u => {
 			if (darkModeSize >= lightModeSize + 2) {
-				await u.roles.add(lightMode);
+				await u.roles.add(LightMode);
 				await msgInt.editReply(`Welcome to the Light Mode`);
 			} else if (lightModeSize >= darkModeSize + 2) {
-				await u.roles.add(darkMode);
+				await u.roles.add(DarkMode);
 				await msgInt.editReply(`Welcome to the Dark Mode`);
 			} else if (RNG == 0) {
-				await u.roles.add(lightMode);
+				await u.roles.add(LightMode);
 				await msgInt.editReply(`Welcome to the Light Mode`);
 			} else {
-				await u.roles.add(darkMode);
+				await u.roles.add(DarkMode);
 				await msgInt.editReply(`Welcome to the Dark Mode`);
 			}
 		});

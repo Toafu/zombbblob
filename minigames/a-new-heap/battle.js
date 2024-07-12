@@ -1,4 +1,4 @@
-const { lightMode, darkMode } = require('../../index');
+const { Roles: { LightMode, DarkMode } } = require('../../utils');
 const fs = require('fs');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
@@ -72,13 +72,13 @@ module.exports = {
 								if (!fighters.has(i.user.id)) {
 									fighters.add(i.user.id);
 									//Distinguish between Light and Dark mode user
-									if (i.member._roles.some(r => r === lightMode)) {
+									if (i.member._roles.some(r => r === LightMode)) {
 										if (i.customId == 'ATK') {
 											++lightATK;
 										} else { //Must be 'DEF'
 											++lightDEF;
 										}
-									} else if (i.member._roles.some(r => r === darkMode)) {
+									} else if (i.member._roles.some(r => r === DarkMode)) {
 										if (i.customId == 'ATK') {
 											++darkATK;
 										} else { //Must be 'DEF'
@@ -218,13 +218,13 @@ module.exports = {
 				if (!fighters.has(i.user.id)) {
 					fighters.add(i.user.id);
 					//Distinguish between Light and Dark mode user
-					if (i.member._roles.some(r => r === lightMode)) {
+					if (i.member._roles.some(r => r === LightMode)) {
 						if (i.customId == 'ATK') {
 							++lightATK;
 						} else { //Must be 'DEF'
 							++lightDEF;
 						}
-					} else if (i.member._roles.some(r => r === darkMode)) {
+					} else if (i.member._roles.some(r => r === DarkMode)) {
 						if (i.customId == 'ATK') {
 							++darkATK;
 						} else { //Must be 'DEF'

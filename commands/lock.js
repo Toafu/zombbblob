@@ -1,6 +1,4 @@
-const { PermissionsBitField } = require('discord.js');
-const { SendMessages, SendMessagesInThreads, Connect, Speak } = PermissionsBitField.Flags;
-const { studentRole } = require('../index');
+const { Roles: { Student }, communicationsPermissions } = require('../utils');
 
 module.exports = {
 	slash: true,
@@ -10,17 +8,11 @@ module.exports = {
 	description: 'locks the server to Students (unable to communicate)',
 	testOnly: true, //so the slash command updates instantly
 	callback: async ({ guild, interaction: msgInt }) => {
-		const permissionsToRemove = [
-			SendMessages,
-			SendMessagesInThreads,
-			Connect,
-			Speak
-		];
-		guild.roles.fetch(studentRole).then(r => {
-			let newPermissions = r.permissions.remove(permissionsToRemove);
+		guild.roles.fetch(Student).then(r => {
+			let newPermissions = r.permissions.remove(communicationsPermissions);
 			r.setPermissions(newPermissions).then(() => {
 				// Verify permissions were removed
-				if (r.permissions.has(permissionsToRemove)) {
+				if (r.permissions.has(communicationsPermissions)) {
 					msgInt.reply("Unable to remove permissions from Student");
 				} else {
 					msgInt.reply("Server locked to the Student role");
