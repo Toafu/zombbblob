@@ -24,5 +24,5 @@ const communicationsPermissions = [
 ];
 
 exports.Roles = Roles;
-exports.Semsters = Semesters;
+exports.Semesters = Semesters;
 exports.communicationsPermissions = communicationsPermissions;
