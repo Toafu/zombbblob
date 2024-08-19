@@ -1,5 +1,5 @@
 const { ChannelType, PermissionsBitField } = require("discord.js");
-const { Semesters, Roles: { Staff } } = require('../utils');
+const { Channels, Semesters, Roles: { Staff } } = require('../utils');
 
 //the ability to create channels for a semester (e.g. /create F22)
 module.exports = {
@@ -32,13 +32,13 @@ module.exports = {
 			const channels = ['general', 'labs', 'random', 'project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
 			// Create the public channels normally
 			for (let i = 0; i <= 2; ++i) {
-				guild.channels.create({ name: channels[i], type: ChannelType.GuildText })
+				await guild.channels.create({ name: channels[i], type: ChannelType.GuildText })
 					.then(channel => { channel.setParent(categoryChannel); })
 					.catch(() => { msgInt.reply("Unable to create category's public channels"); return; });
 			}
 			// Create the private channels with permissions already constructed
 			for (let i = 3; i < channels.length; ++i) {
-				guild.channels.create({
+				await guild.channels.create({
 					name: channels[i],
 					type: ChannelType.GuildText,
 					permissionOverwrites: [
@@ -55,7 +55,16 @@ module.exports = {
 					.then(channel => { channel.setParent(categoryChannel, { lockPermissions: false }); })
 					.catch(() => { msgInt.reply("Unable to create category's private channels"); return; });
 			}
-			msgInt.reply(`${categoryName} successfully created`);
+			// Find #piano-gang and #old-timers and move them to the current semester under the public channels
+			await guild.channels.fetch(Channels.pianogang).then(c => {
+				c.setParent(categoryChannel)
+					.then(ch => ch.setPosition(3));
+			}).catch(() => { msgInt.reply(`Unable to move <#${Channels.pianogang}>,`); return; });
+			await guild.channels.fetch(Channels.oldtimers).then(c => {
+				c.setParent(categoryChannel)
+					.then(ch => ch.setPosition(4));
+			}).catch(() => { msgInt.reply(`Unable to move <#${Channels.oldtimers}>,`); return; });
+			msgInt.reply(`${categoryName} successfully created. Remember to also fix the Onboarding settings for Students.`);
 		} else {
 			msgInt.reply('Invalid semester format. Must follow `[F/S/W][Last two digits of year]`');
 		}

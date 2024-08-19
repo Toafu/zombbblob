@@ -10,6 +10,11 @@ const Roles = {
 	GalacticNews: '1068940763792158720'
 };
 
+const Channels = {
+	pianogang: '1023026145169514586',
+	oldtimers: '1132162479175241768'
+};
+
 const Semesters = {
 	f: 'Fall',
 	s: 'Spring',
@@ -24,5 +29,6 @@ const communicationsPermissions = [
 ];
 
 exports.Roles = Roles;
+exports.Channels = Channels;
 exports.Semesters = Semesters;
 exports.communicationsPermissions = communicationsPermissions;
