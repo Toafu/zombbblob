@@ -1,5 +1,5 @@
-const { ChannelType, PermissionsBitField } = require("discord.js");
-const { Semesters, Roles: { Student, StudentAlumni, Staff } } = require('../utils');
+const { ChannelType, PermissionsBitField, Guild } = require("discord.js");
+const { Channels, Semesters, Roles: { Student, StudentAlumni, Staff } } = require('../utils');
 
 module.exports = {
 	slash: true,
@@ -25,33 +25,23 @@ module.exports = {
 			let year = semester.slice(1); //Remove first character
 			year = year.padStart(4, '20'); //Pads up to 4 character string
 			categoryName = categoryName + ` ${year}`;
-			// Scuffed workaround because renaming inside the first fetch doesn't work
-			let categoryID = "";
-			guild.channels.fetch().then(c => {
-				c = Array.from(c.filter(ch => ch.type === ChannelType.GuildCategory && ch.name === categoryName).values())[0];
-				categoryID = c.id;
-				c.permissionOverwrites.set([
-					{
-						id: Student,
-						deny: [PermissionsBitField.Flags.SendMessages]
-					},
-					{
-						id: StudentAlumni,
-						deny: [PermissionsBitField.Flags.SendMessages]
-					},
-					{
-						id: Staff,
-						allow: [PermissionsBitField.Flags.SendMessages]
-					},
-				]);
-				c.children.cache.forEach((child) => child.lockPermissions());
-			}).then(() => { // WHYYYYYYY
-				guild.channels.fetch(categoryID).then(c => {
-					// Anger fills my soul at this block, but I can't make it work above otherwise.
-					c.setName(`${categoryName} (Archived)`);
-				});
-				msgInt.reply(`Successfully archived ${categoryName}`);
-			}).catch(() => msgInt.reply(`Unable to archive category: ${categoryName}`));
+			const channels = await guild.channels.fetch();
+			const categoryToArchive = channels.find(cat => cat.type === ChannelType.GuildCategory && cat.name === categoryName);
+			if (!categoryToArchive) {
+				msgInt.reply(`Unable to find category called \`${categoryName}\``);
+				return;
+			}
+			await categoryToArchive.setName(`${categoryName} (Archived)`);
+			await categoryToArchive.permissionOverwrites.edit(Student, { SendMessages: false });
+			await categoryToArchive.permissionOverwrites.edit(StudentAlumni, { SendMessages: false });
+			await categoryToArchive.children.cache.each(c => {
+				c.lockPermissions();
+			});
+			const t = await guild.channels.fetch(Channels.smallstudyrooms);
+			// Attempting to put a "higher" category below another actually puts it two below the target
+			await categoryToArchive.edit({position: t.rawPosition + 1});
+			await categoryToArchive.edit({position: categoryToArchive.position - 1});
+			msgInt.reply(`Successfully archived ${categoryName}`);
 		} else {
 			msgInt.reply('Invalid semester format. Must follow `[F/S/W][Last two digits of year]`');
 		}

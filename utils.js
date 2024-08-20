@@ -12,7 +12,8 @@ const Roles = {
 
 const Channels = {
 	pianogang: '1023026145169514586',
-	oldtimers: '1132162479175241768'
+	oldtimers: '1132162479175241768',
+	smallstudyrooms: '734559465168306186',
 };
 
 const Semesters = {
