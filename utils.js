@@ -1,5 +1,8 @@
 const { PermissionsBitField } = require('discord.js');
 
+const CLIENT_ID = "" // update me
+const SERVER_ID = "734492640216744017"
+
 const Roles = {
 	Student: '926186372572799037',
 	StudentAlumni: '748920659626950737',
@@ -29,6 +32,8 @@ const communicationsPermissions = [
 	PermissionsBitField.Flags.Speak
 ];
 
+exports.CLIENT_ID = CLIENT_ID;
+exports.SERVER_ID = SERVER_ID;
 exports.Roles = Roles;
 exports.Channels = Channels;
 exports.Semesters = Semesters;

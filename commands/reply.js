@@ -1,43 +1,33 @@
-const { ApplicationCommandOptionType } = require("discord.js");
+const { ApplicationCommandOptionType, SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
-	slash: true,
-	name: 'reply',
-	category: 'potatobot',
-	minArgs: 2,
-	maxArgs: 2,
-	options: [
-		{
-			name: 'message_link',
-			description: 'The message to reply to',
-			required: true,
-			type: ApplicationCommandOptionType.String,
-		},
-		{
-			name: 'reply_text',
-			description: 'The reply message',
-			required: true,
-			type: ApplicationCommandOptionType.String,
-		}
-	],
-	expectedArgs: "<message link> <reply text>",
-	description: 'replies to a message as the bot',
-	testOnly: true, //so the slash command updates instantly
-	callback: async ({ guild, args, interaction: msgInt }) => {
-		let IDs = args[0].split('/');
+	data: new SlashCommandBuilder()
+		.setName('reply')
+		.addStringOption(option => option
+			.setName('message_link')
+			.setDescription('The message to react to')
+			.setRequired(true))
+		.addStringOption(option => option
+			.setName('reply_text')
+			.setDescription('The reply message')
+			.setRequired(true))	
+		.setDescription('replies to a message as the bot'),
+	execute: async (interaction) => {
+		const replyMessage = interaction.options.getString('reply_text');
+		let IDs = interaction.options.getString('message_link').split('/');
 		// https://discord.com/channels/734492640216744017/926625772595191859/926654292524404817
 		// args[0][1]  [2]       [3]            [4]               [5]                [6]
 		if (IDs.length != 7) {
-			msgInt.reply("Please make sure you are providing a valid message link.");
+			interaction.reply("Please make sure you are providing a valid message link.");
 			return;
 		}
-		guild.channels.fetch(IDs[5]).then(c => { //Extract channel and ignore guild part of link
+		interaction.guild.channels.fetch(IDs[5]).then(c => { //Extract channel and ignore guild part of link
 			c.messages.fetch(IDs[6]).then(async m => { //Extract message from channel
-				await m.reply(args[1]).then(() => { msgInt.reply(`Replied to ${m.url}`); })
-					.catch(() => { msgInt.reply(`Unable to reply to message.`); return; });
+				await m.reply(replyMessage).then(() => { interaction.reply(`Replied to ${m.url}`); })
+					.catch(() => { interaction.reply(`Unable to reply to message.`); return; });
 			})
-				.catch(() => { msgInt.reply(`Unable to find message. Please verify that the message link is valid.`); });
+				.catch(() => { interaction.reply(`Unable to find message. Please verify that the message link is valid.`); });
 		})
-			.catch(() => { msgInt.reply(`Unable to reply to message. Please verify that the message link is valid.`); });
+			.catch(() => { interaction.reply(`Unable to reply to message. Please verify that the message link is valid.`); });
 	}
 };

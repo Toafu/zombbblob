@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const { Roles: { Student, StudentAlumni } } = require('../utils');
 
 const beforeMap = {
@@ -6,35 +6,25 @@ const beforeMap = {
 	4: { month: 3, day: 27 }, 	// 5/1 (for all users that joined on or before 4/27)
 	6: { month: 5, day: 30 }, 	// 7/1 (for all users that joined on or before 6/30)
 };
+
 /*
 the ability to autoassign students the alumni role at the end of a semester. 
 Currently, the bot goes through all the users with a student role and assigns them with the alumni role on 
 However, there's probably a better way to do this (you can also range assign a role using a command like /alumnize 2021-12-21 2021-12-31
 */
 module.exports = {
-	slash: true,
-	name: 'alumnize',
-	category: 'potatobot',
-	minArgs: 2,
-	maxArgs: 2,
-	options: [
-		{
-			name: 'start_date',
-			description: 'Provide a date (YYYY-MM-DD)',
-			required: true,
-			type: ApplicationCommandOptionType.String,
-		},
-		{
-			name: 'end_date',
-			description: 'Provide a date (YYYY-MM-DD)',
-			required: true,
-			type: ApplicationCommandOptionType.String,
-		},
-	],
-	expectedArgs: "<[YYYY-MM-DD] [YYY-MM-DD]>",
-	description: 'Assigns students from start date to end date with the Student Alumni Role',
-	testOnly: true, //so the slash command updates instantly
-	init: (client) => { //For automagic detections
+	data: new SlashCommandBuilder()
+		.setName('alumnize')
+		.addStringOption(option => option
+			.setName('start_date')
+			.setDescription('Provide a date (YYYY-MM-DD)')
+			.setRequired(true))
+		.addStringOption(option => option
+			.setName('end_date')
+			.setDescription('Provide a date (YYYY-MM-DD)')
+			.setRequired(true))
+		.setDescription('Assigns students from start date to end date with the Student Alumni Role'),
+	init: (client) => { //For automagic detectionsc
 		const checkAlumnize = () => {
 			const beforeThreshold = new Date; //Get today's Date
 			const currMonth = beforeThreshold.getMonth();
@@ -69,31 +59,34 @@ module.exports = {
 		};
 		checkAlumnize();
 	},
-	callback: async ({ guild, args, interaction: msgInt }) => {
-		if (args[0].length != 10 || args[1].length != 10) { //Basic error checking. Not perfect.
-			msgInt.reply(`Please make sure dates are of the form YYYY-MM-DD`);
+	execute: async (interaction) => {
+		const startDateArg = interaction.options.getString('start_date');
+		const endDateArg = interaction.options.getString('end_date');
+
+		if (startDateArg.length != 10 || endDateArg.length != 10) {
+			await interaction.reply('Please make sure dates are of the form YYYY-MM-DD');
 			return;
-		} else {
-			const start = new Date(args[0] + "T12:00");
-			const end = new Date(args[1] + "T12:00");
-			if (start.toString() == "Invalid Date" || end.toString() == "Invalid Date") {
-				msgInt.reply("Failed to detect date. Please make sure dates are of the form YYYY-MM-DD.");
-				return;
-			}
-			let count = 0;
-			guild.members.fetch().then(u => { //Cache all members
-				guild.roles.fetch(Student).then(r => { //Extract members with the Student role
-					r.members.each(user => { //r.members is a Collection<userID, GuildMember>
-						if (user.joinedAt > start && user.joinedAt < end) {
-							user.roles.remove(Student);
-							user.roles.add(StudentAlumni);
-							++count;
-						}
-					});
-					msgInt.reply(`Students Alumnized: ${count}.`);
-				});
-			})
-				.catch(console.error);
 		}
+
+		const start = new Date(startDateArg + "T12:00");
+		const end = new Date(endDateArg + "T12:00");
+		if (start.toString() == "Invalid Date" || end.toString() == "Invalid Date") {
+			await interaction.reply("Failed to detect date. Please make sure dates are of the form YYYY-MM-DD.");
+			return;
+		}
+		let count = 0;
+		interaction.guild.members.fetch().then(u => { //Cache all members
+			interaction.guild.roles.fetch(Student).then(r => { //Extract members with the Student role
+				r.members.each(user => { //r.members is a Collection<userID, GuildMember>
+					if (user.joinedAt > start && user.joinedAt < end) {
+						user.roles.remove(Student);
+						user.roles.add(StudentAlumni);
+						++count;
+					}
+				});
+				interaction.reply(`Students Alumnized: ${count}.`);
+			});
+		})
+			.catch(console.error);
 	}
 };

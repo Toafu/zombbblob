@@ -1,11 +1,11 @@
+const { SlashCommandBuilder } = require('discord.js');
+const { Roles: { Student }, communicationsPermissions } = require('../utils');
+
 module.exports = {
-	slash: true,
-	name: 'open',
-	category: 'potatobot',
-	maxArgs: 0,
-	description: 'opens the channel to students (syncs with parent category permissions)',
-	testOnly: true, //so the slash command updates instantly
-	callback: async ({ channel, interaction: msgInt }) => {
-		channel.lockPermissions().then(() => msgInt.reply(`<#${channel.id}> opened`));
+	data: new SlashCommandBuilder()
+		.setName('open')
+		.setDescription('opens the channel to students (syncs with parent category permissions)'),
+	execute: async (interaction) => {
+		interaction.channel.lockPermissions().then(() => interaction.reply(`<#${interaction.channel.id}> opened`));
 	}
 };

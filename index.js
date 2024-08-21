@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
-const WOK = require('wokcommands');
 const path = require('path');
 const fetch = require('node-fetch');
+const fs = require('fs');
 const { Roles: { Student, StudentAlumni } } = require('./utils');
 // const fs = require('fs');
 
@@ -83,23 +83,6 @@ const client = new Client({
 
 client.on('ready', () => {
 	console.log('zombbblob has awoken');
-	new WOK(client, {
-		testServers: ['734492640216744017'],
-		commandsDir: path.join(__dirname, 'commands'),
-		disabledDefaultCommands: [
-			'channelcommand',
-			'customcommand',
-			'delcustomcommand',
-			'prefix',
-			'requiredpermissions',
-			'requiredroles',
-			'togglecommand',
-		],
-		botOwners: ['269910487133716480', 	//toafu
-					'730205193408479242', 	//ajzhou
-		],
-	})
-		.setDefaultPrefix('z!');
 	process.on('unhandledRejection', (error) => {
 		console.error('Unhandled promise rejection:', error);
 	});
@@ -215,5 +198,32 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 // 	}
 // });
 // ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
+
+const commandsPath = path.join(__dirname, "commands");
+const commandFilePaths = fs.readdirSync(commandsPath).map(commandFileName => path.join(commandsPath, commandFileName));
+const commands = Object.fromEntries(commandFilePaths.map(commandFilePath => {
+	const commandObject = require(commandFilePath);
+
+	if (commandObject.init) {
+		commandObject.init(client);
+	}
+	
+	return [commandObject.data.name, commandObject];
+}));
+
+client.on('interactionCreate', async (interaction) => {
+	if (!interaction.isChatInputCommand()) {
+		return;
+	}
+
+	const command = commands[interaction.commandName];
+
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
+
+	command.execute(interaction);
+})
 
 client.login(process.env.TOKEN);

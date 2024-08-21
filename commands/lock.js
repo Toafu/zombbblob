@@ -1,21 +1,19 @@
+const { SlashCommandBuilder } = require('discord.js');
 const { Roles: { Student }, communicationsPermissions } = require('../utils');
 
 module.exports = {
-	slash: true,
-	name: 'lock',
-	category: 'potatobot',
-	maxArgs: 0,
-	description: 'locks the server to Students (unable to communicate)',
-	testOnly: true, //so the slash command updates instantly
-	callback: async ({ guild, interaction: msgInt }) => {
-		guild.roles.fetch(Student).then(r => {
+	data: new SlashCommandBuilder()
+		.setName('lock')
+		.setDescription('locks the server to Students (unable to communicate)'),
+	execute: async (interaction) => {
+		interaction.guild.roles.fetch(Student).then(r => {
 			let newPermissions = r.permissions.remove(communicationsPermissions);
 			r.setPermissions(newPermissions).then(() => {
 				// Verify permissions were removed
 				if (r.permissions.has(communicationsPermissions)) {
-					msgInt.reply("Unable to remove permissions from Student");
+					interaction.reply("Unable to remove permissions from Student");
 				} else {
-					msgInt.reply("Server locked to the Student role");
+					interaction.reply("Server locked to the Student role");
 				}
 			});
 		});
