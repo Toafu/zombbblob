@@ -12,7 +12,7 @@ const commandDatums = commandFilePaths.map(commandFilePath => require(commandFil
 
 const restClient = new REST().setToken(process.env.TOKEN);
 
-(async function () {
+module.exports.registerCommands = async function() {
     await restClient.put(
         Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID), 
         { body: [] }
@@ -22,4 +22,4 @@ const restClient = new REST().setToken(process.env.TOKEN);
         Routes.applicationCommands(CLIENT_ID, SERVER_ID),
         { body: commandDatums }
     );
-})();
+}

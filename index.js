@@ -3,6 +3,7 @@ const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { Roles: { Student, StudentAlumni } } = require('./utils');
+const { registerCommands } = require('./registerCommands');
 // const fs = require('fs');
 
 require('dotenv').config();
@@ -226,4 +227,4 @@ client.on('interactionCreate', async (interaction) => {
 	command.execute(interaction);
 })
 
-client.login(process.env.TOKEN);
+registerCommands().then(() => client.login(process.env.TOKEN));
