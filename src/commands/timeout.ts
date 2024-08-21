@@ -1,6 +1,7 @@
-const { ApplicationCommandOptionType, SlashCommandBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { Command } from "../command";
 
-module.exports = {
+export const timeout: Command = {
 	data: new SlashCommandBuilder()
 		.setName('timeout')
 		.addUserOption(option => option
@@ -16,9 +17,14 @@ module.exports = {
 			.setDescription('The logged reason for this timeout')
 			.setRequired(false))
 		.setDescription('times out a user for some amount of seconds'),
-	execute: async (interaction) => {
-		const targetUser = interaction.options.getUser('user');
-		const timeoutLengthSeconds = interaction.options.getInteger('timeout_length_in_sec');
+	init: () => {},
+	execute: async (interaction: ChatInputCommandInteraction) => {
+		if (interaction.guild === null) {
+			return;
+		}
+
+		const targetUser = interaction.options.getUser('user', true);
+		const timeoutLengthSeconds = interaction.options.getInteger('timeout_length_in_sec', true);
 		
 		const reason = `By ${interaction.user.tag}: ${interaction.options.getString('reason') ?? 'They deserved it'}`;
 		

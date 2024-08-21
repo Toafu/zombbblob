@@ -1,6 +1,7 @@
-const { ApplicationCommandOptionType, SlashCommandBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { Command } from "../command";
 
-module.exports = {
+export const reply: Command = {
 	data: new SlashCommandBuilder()
 		.setName('reply')
 		.addStringOption(option => option
@@ -12,17 +13,32 @@ module.exports = {
 			.setDescription('The reply message')
 			.setRequired(true))	
 		.setDescription('replies to a message as the bot'),
-	execute: async (interaction) => {
-		const replyMessage = interaction.options.getString('reply_text');
-		let IDs = interaction.options.getString('message_link').split('/');
+	init: () => {},
+	execute: async (interaction: ChatInputCommandInteraction) => {
+		if (interaction.guild === null) {
+			return;
+		}
+
+		const replyMessage = interaction.options.getString('reply_text', true);
+		let IDs = interaction.options.getString('message_link', true).split('/');
 		// https://discord.com/channels/734492640216744017/926625772595191859/926654292524404817
 		// args[0][1]  [2]       [3]            [4]               [5]                [6]
 		if (IDs.length != 7) {
 			interaction.reply("Please make sure you are providing a valid message link.");
 			return;
 		}
-		interaction.guild.channels.fetch(IDs[5]).then(c => { //Extract channel and ignore guild part of link
-			c.messages.fetch(IDs[6]).then(async m => { //Extract message from channel
+		interaction.guild.channels.fetch(IDs[5]).then(async c => { //Extract channel and ignore guild part of link
+			if (c === null) {
+				await interaction.reply("Could not fetch channel!");
+				return;
+			}
+
+			if (c !instanceof BaseGuildTextChannel) {
+				await interaction.reply("Channel must be a guild text channel!");
+				return;
+			}
+
+			(c as unknown as BaseGuildTextChannel).messages.fetch(IDs[6]).then(async m => { //Extract message from channel
 				await m.reply(replyMessage).then(() => { interaction.reply(`Replied to ${m.url}`); })
 					.catch(() => { interaction.reply(`Unable to reply to message.`); return; });
 			})

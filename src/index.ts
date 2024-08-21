@@ -1,23 +1,29 @@
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
-const path = require('path');
-const fetch = require('node-fetch');
-const fs = require('fs');
-const { Roles: { Student, StudentAlumni } } = require('./utils');
-const { registerCommands } = require('./registerCommands');
-// const fs = require('fs');
+import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
+import fetch from 'node-fetch';
+import { Roles } from './utils';
+import { registerCommands } from './registerCommands';
+import { Command } from './command';
+// import fs from 'fs';
 
 require('dotenv').config();
-const topTen = [];
-let recentMessages = [];
+const topTen: Snowflake[] = [];
 
-function preprocessMessageForSpam(messageContent) {
+type RecentMessage = {
+	content: String,
+	author: Snowflake,
+	time: number
+}
+let recentMessages: RecentMessage[] = [];
+
+function preprocessMessageForSpam(messageContent: String) {
 	return messageContent.toLowerCase().replace(/\s/g, '');
 }
 
-function addMessage(messageContent, author) {
+
+function addMessage(messageContent: String, authorID: Snowflake) {
 	recentMessages.push({
 		content: messageContent,
-		author: author,
+		author: authorID,
 		time: Date.now()
 	});
 
@@ -34,22 +40,22 @@ function addMessage(messageContent, author) {
 	}
 }
 
-function isSpam(messageContent, author) {
+function isSpam(messageContent: String, authorID: Snowflake) {
 	messageContent = preprocessMessageForSpam(messageContent);
-	addMessage(messageContent, author);
+	addMessage(messageContent, authorID);
 	// Send at least this number of messages in some time period
 	const MESSAGE_TIMEOUT_CRITICAL_COUNT = 10;
 	return recentMessages.filter((x) => x.content === messageContent &&
-		x.author === author).length >= MESSAGE_TIMEOUT_CRITICAL_COUNT;
+		x.author === authorID).length >= MESSAGE_TIMEOUT_CRITICAL_COUNT;
 }
 
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
 
-let topTenUpdated = null;
+let topTenUpdated: number = -1;
 
 async function updateTopTen() {
-	if (topTenUpdated != null && Date.now() - topTenUpdated < 60 * 1000) {
+	if (topTenUpdated != -1 && Date.now() - topTenUpdated < 60 * 1000) {
 		return; //no
 	}
 	await fetch(
@@ -58,7 +64,6 @@ async function updateTopTen() {
 			headers: {
 				accept: 'application/json',
 			},
-			body: null,
 			method: 'GET',
 		},
 	)
@@ -83,16 +88,38 @@ const client = new Client({
 });
 
 client.on('ready', () => {
+	for (const command of commands.values()) {
+		command.init(client);
+	}
+
 	console.log('zombbblob has awoken');
 	process.on('unhandledRejection', (error) => {
 		console.error('Unhandled promise rejection:', error);
 	});
+
+	if (client.user === null) {
+		process.exit(1);
+		throw "fix";
+	}
+
 	client.user.setPresence({
 		activities: [{ name: 'Welcome to EECS281!' }],
 		status: 'online',
 	});
-	client.channels.cache.get('926625772595191859').messages.fetch('926654292524404817');
-	client.channels.cache.get('926277044487200798').send('I have risen again. <:zombbblob:1026136422572372170>');
+	const startupChannel = client.channels.cache.get('926277044487200798');
+	if (!startupChannel) {
+		console.error("Startup channel invalid!");
+		process.exit(1);
+		throw "fix";
+	}
+
+	if (startupChannel instanceof BaseGuildTextChannel) {
+		startupChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
+	} else {
+		console.error("Startup channel is not a text channel!");
+		process.exit(1);
+		throw "fix";
+	}
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
 	// client.guilds.fetch('734492640216744017').then(g => {
@@ -103,15 +130,29 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
 	if (message.author.bot) return; //if message is from a bot
+	if (message.member === null) return;
 	if (isSpam(message.content, message.author.id)) {
 		// Spam detector (if same message sent over 10 times in a row)
-		client.channels.cache.get('734554759662665909') // server log channel
-			.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
+		const serverLogChannel = client.channels.cache.get('734554759662665909');
+		if (!serverLogChannel) {
+			console.error("server log channel invalid!");
+			process.exit(1);
+			throw "fix";
+		}
+	
+		if (serverLogChannel instanceof BaseGuildTextChannel) {
+			serverLogChannel.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
+		} else {
+			console.error("Startup channel is not a text channel!");
+			process.exit(1);
+			throw "fix";
+		}
+
 		message.member.timeout(30 * 1000); // timeout for 30 seconds
 	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
-		const filter = (m) => m.author.id.toString() === '159985870458322944';
+		const filter = (m: Message) => m.author.id.toString() === '159985870458322944';
 		const collector = message.channel.createMessageCollector({
 			filter,
 			time: 5000,
@@ -122,8 +163,9 @@ client.on('messageCreate', async (message) => {
 			let rankQuery = message.author.id.toString();
 			if (words.length > 1) {
 				//assumes user is querying another user
-				if (words[1].match(/\d+/)) {
-					rankQuery = words[1].match(/\d+/)[0];
+				const regexQuery = words[1].match(/\d+/);
+				if (regexQuery) {
+					rankQuery = regexQuery[0];
 				}
 			}
 			await updateTopTen();
@@ -165,17 +207,20 @@ client.on('messageCreate', async (message) => {
 	// } //if not !rank command
 });
 
-client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/Student Alumni reaction roles
+client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Student/Roles.Student Alumni reaction roles
 	if (reaction.message.id === '926654292524404817') {
 		const { guild } = reaction.message; //Extract EECS281 server
+		if (guild === null) {
+			return;
+		}
 		await guild.members.fetch(user.id).then(async member => {
 			//Reacting to one role should remove the other
 			if (reaction.emoji.name === '🧠') { // '\u{0001F9E0}'
-				guild.roles.fetch(StudentAlumni).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(Student).then(r => { member.roles.add(r); });
+				guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.remove(r); });
+				await guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.add(r); });
 			} else { //reaction.emoji.name === '🎓'
-				guild.roles.fetch(Student).then(r => { member.roles.remove(r); });
-				await guild.roles.fetch(StudentAlumni).then(r => { member.roles.add(r); });
+				guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.remove(r); });
+				await guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.add(r); });
 			}
 		});
 	} //if reaction is added to reaction role message
@@ -200,24 +245,40 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Student/St
 // });
 // ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 
-const commandsPath = path.join(__dirname, "commands");
-const commandFilePaths = fs.readdirSync(commandsPath).map(commandFileName => path.join(commandsPath, commandFileName));
-const commands = Object.fromEntries(commandFilePaths.map(commandFilePath => {
-	const commandObject = require(commandFilePath);
-
-	if (commandObject.init) {
-		commandObject.init(client);
-	}
-	
-	return [commandObject.data.name, commandObject];
-}));
+const commands: Map<String, Command> = new Map();
+import { alumnize } from "./commands/alumnize";
+commands.set("alumnize", alumnize);
+import { archive } from "./commands/archive";
+commands.set("archive", archive);
+import { assign } from "./commands/assign";
+commands.set("assign", assign);
+import { create } from "./commands/create";
+commands.set("create", create);
+import { demote } from "./commands/demote";
+commands.set("demote", demote);
+import { invite } from "./commands/invite";
+commands.set("invite", invite);
+import { lock } from "./commands/lock";
+commands.set("lock", lock);
+import { open } from "./commands/open";
+commands.set("open", open);
+import { react } from "./commands/react";
+commands.set("react", react);
+import { reply } from "./commands/reply";
+commands.set("reply", reply);
+import { send } from "./commands/send";
+commands.set("send", send);
+import { timeout } from "./commands/timeout";
+commands.set("timeout", timeout);
+import { unlock } from "./commands/unlock";
+commands.set("unlock", unlock);
 
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isChatInputCommand()) {
 		return;
 	}
 
-	const command = commands[interaction.commandName];
+	const command = commands.get(interaction.commandName);
 
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
@@ -227,4 +288,6 @@ client.on('interactionCreate', async (interaction) => {
 	command.execute(interaction);
 })
 
-registerCommands().then(() => client.login(process.env.TOKEN));
+registerCommands().then(() => {
+	client.login(process.env.TOKEN);
+});

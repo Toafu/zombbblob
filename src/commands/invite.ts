@@ -1,7 +1,8 @@
-const { SlashCommandBuilder } = require("discord.js");
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { Command } from "../command";
 
 //the ability to create invites with number of uses (e.g., /invite N)
-module.exports = {
+export const invite: Command = {
 	data: new SlashCommandBuilder()
 		.setName('invite')
 		.addIntegerOption(option => option
@@ -9,7 +10,12 @@ module.exports = {
 			.setDescription('Number of invite uses')
 			.setRequired(false))
 		.setDescription('creates an invite with a set number of uses (default unlimited)'),
-	execute: async (interaction) => {
+	init: () => {},
+	execute: async (interaction: ChatInputCommandInteraction) => {
+		if (interaction.guild === null) {
+			return;
+		}
+
 		const numUses = interaction.options.getInteger('n');
 
 		if (numUses === null) {
