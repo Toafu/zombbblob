@@ -4,8 +4,12 @@
     "dotenv": "^16.0.3",
     "node-fetch": "^2.6.7",
     "path": "^0.12.7",
+    "typescript": "^5.5.4",
     "undici": "^6.19.2",
     "wokcommands": "^1.5.3",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
   }
 }

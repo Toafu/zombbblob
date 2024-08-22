@@ -1,6 +1,9 @@
-const { PermissionsBitField } = require('discord.js');
+import { PermissionsBitField } from 'discord.js';
 
-const Roles = {
+export const CLIENT_ID = "" // update me
+export const SERVER_ID = "734492640216744017"
+
+export const Roles = {
 	Student: '926186372572799037',
 	StudentAlumni: '748920659626950737',
 	Staff: '734552983261675691',
@@ -10,26 +13,20 @@ const Roles = {
 	GalacticNews: '1068940763792158720'
 };
 
-const Channels = {
+export const Channels = {
 	pianogang: '1023026145169514586',
 	oldtimers: '1132162479175241768',
 	smallstudyrooms: '734559465168306186',
 };
 
-const Semesters = {
-	f: 'Fall',
-	s: 'Spring',
-	w: 'Winter'
-};
+export const Semesters: Map<String, String> = new Map();
+Semesters.set('f', 'Fall');
+Semesters.set('s', 'Spring');
+Semesters.set('w', 'Winter');
 
-const communicationsPermissions = [
+export const communicationsPermissions = [
 	PermissionsBitField.Flags.SendMessages,
 	PermissionsBitField.Flags.SendMessagesInThreads,
 	PermissionsBitField.Flags.Connect,
 	PermissionsBitField.Flags.Speak
 ];
-
-exports.Roles = Roles;
-exports.Channels = Channels;
-exports.Semesters = Semesters;
-exports.communicationsPermissions = communicationsPermissions;
