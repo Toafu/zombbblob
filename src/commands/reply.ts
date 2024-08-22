@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../command";
 
 export const reply: Command = {
@@ -33,12 +33,12 @@ export const reply: Command = {
 				return;
 			}
 
-			if (c !instanceof BaseGuildTextChannel) {
-				await interaction.reply("Channel must be a guild text channel!");
+			if (!(c instanceof TextChannel)) {
+				await interaction.reply("Channel must be a text channel!");
 				return;
 			}
 
-			(c as unknown as BaseGuildTextChannel).messages.fetch(IDs[6]).then(async m => { //Extract message from channel
+			(c as unknown as TextChannel).messages.fetch(IDs[6]).then(async m => { //Extract message from channel
 				await m.reply(replyMessage).then(() => { interaction.reply(`Replied to ${m.url}`); })
 					.catch(() => { interaction.reply(`Unable to reply to message.`); return; });
 			})

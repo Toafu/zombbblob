@@ -35,8 +35,7 @@ export const archive: Command = {
 			await categoryToArchive.permissionOverwrites.edit(Roles.Student, { SendMessages: false });
 			await categoryToArchive.permissionOverwrites.edit(Roles.StudentAlumni, { SendMessages: false });
 
-			// supress typescript
-			for (const [_, childChannel] of (categoryToArchive as CategoryChannel).children.cache) {
+			for (const childChannel of (categoryToArchive as CategoryChannel).children.cache.values()) {
 				await childChannel.lockPermissions();
 			}
 

@@ -98,18 +98,18 @@ export const alumnize: Command = {
 
 		const studentRole = await interaction.guild.roles.fetch(Roles.Student) //Extract members with the Roles.Student role
 		if (studentRole === null) {
-			await interaction.reply("Failed to fetch student role!");
+			await interaction.reply("Failed to fetch Student role!");
 			return;
 		}
 		
-		for (const [_, member] of studentRole.members) {
+		for (const member of studentRole.members.values()) {
 			if (member.joinedAt === null) {
 				await interaction.channel.send(`Failed to alumnize <@${member.id}> due to null join date`);
 				continue;
 			}
 			if (member.joinedAt > start && member.joinedAt < end) {
-				member.roles.remove(Roles.Student);
-				member.roles.add(Roles.StudentAlumni);
+				await member.roles.remove(Roles.Student);
+				await member.roles.add(Roles.StudentAlumni);
 				++count;
 			}
 		}

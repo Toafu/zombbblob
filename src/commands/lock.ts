@@ -21,9 +21,9 @@ export const lock: Command = {
 			r.setPermissions(newPermissions).then(() => {
 				// Verify permissions were removed
 				if (r.permissions.has(communicationsPermissions)) {
-					interaction.reply("Unable to remove permissions from Roles.Student");
+					interaction.reply("Unable to remove permissions from Student");
 				} else {
-					interaction.reply("Server locked to the Roles.Student role");
+					interaction.reply("Server locked to the Student role");
 				}
 			});
 		});

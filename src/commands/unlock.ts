@@ -22,9 +22,9 @@ export const unlock: Command = {
 			r.setPermissions(newPermissions).then(() => {
 				// Verify permissions were removed
 				if (r.permissions.has(communicationsPermissions)) {
-					interaction.reply("Server unlocked to the Roles.Student role");
+					interaction.reply("Server unlocked to the Student role");
 				} else {
-					interaction.reply("Unable to add permissions to Roles.Student");
+					interaction.reply("Unable to add permissions to Student");
 				}
 			});
 		});
