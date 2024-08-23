@@ -43,3 +43,24 @@ export const communicationsPermissions = [
 	PermissionsBitField.Flags.Connect,
 	PermissionsBitField.Flags.Speak
 ];
+
+type DecodedMessageLink = {
+	guildID: Snowflake,
+	channelID: Snowflake,
+	messageID: Snowflake
+}
+
+const MESSAGE_LINK_REGEX = /^https:\/\/discord\.com\/channels\/(\d{18})\/(\d{18})\/(\d{18})$/;
+export function parseMessageLink(messageLink: string): [Error | null, DecodedMessageLink] {
+	const messageLinkParts = messageLink.match(MESSAGE_LINK_REGEX);
+	
+	if (messageLinkParts === null) {
+		return [new Error("Please make sure you are providing a valid message link."), {guildID: "0", channelID: "0", messageID: "0"}];
+	}
+
+	return [null, {
+		guildID: messageLinkParts[1],
+		channelID: messageLinkParts[2],
+		messageID: messageLinkParts[3]
+	}];
+}

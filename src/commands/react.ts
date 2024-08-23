@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../command";
+import { parseMessageLink } from "../utils";
 
 //There should be a command to make PotatoBot send custom messages, but only accessible by staff in the staff chat
 export const command: Command = {
@@ -21,30 +22,35 @@ export const command: Command = {
 		}
 
 		const reactionEmote = interaction.options.getString('reaction_emote', true);
-		let IDs = interaction.options.getString('message_link', true).split('/');
-		// https://discord.com/channels/734492640216744017/926625772595191859/926654292524404817
-		// args[0][1]  [2]       [3]            [4]               [5]                [6]
-		if (IDs.length != 7) {
-			await interaction.reply("Please make sure you are providing a valid message link.");
+
+		const [error, messageLinkParts] = parseMessageLink(interaction.options.getString('message_link', true));
+		if (error !== null) {
+			await interaction.reply(error.message);
 			return;
 		}
-		interaction.guild.channels.fetch(IDs[5]).then(async c => { //Extract channel and ignore guild part of link
-			if (c === null) {
-				await interaction.reply("Could not fetch channel!");
-				return;
-			}
 
-			if (!(c instanceof TextChannel)) {
-				await interaction.reply("Channel must be a text channel!");
-				return;
-			}
+		const channel = interaction.guild.channels.fetch(messageLinkParts.channelID);
+		
+		if (channel === null) {
+			await interaction.reply("Could not fetch channel!");
+			return;
+		}
 
-			(c as unknown as TextChannel).messages.fetch(IDs[6]).then(async m => { //Extract message from channel
-				await m.react(reactionEmote).then(() => { interaction.reply(`Reacted ${reactionEmote} to ${m.url}`); })
-					.catch(() => { interaction.reply(`Unable to find emoji \`${reactionEmote}\`.`); return; });
-			})
-				.catch(() => { interaction.reply(`Unable to find message. Please verify that the message link is valid.`); });
-		})
-			.catch(() => { interaction.reply(`Unable to react to message. Please verify that the message link is valid.`); });
+		if (!(channel instanceof TextChannel)) {
+			await interaction.reply("Channel must be a text channel!");
+			return;
+		}
+
+		const message = await channel.messages.fetch(messageLinkParts.messageID)
+			.then(message => message)
+			.catch(_ => null);
+		
+		if (message === null) {
+			await interaction.reply("Could not fetch message");
+			return;
+		}
+
+		await message.react(reactionEmote);
+		await interaction.reply(`Reacted ${reactionEmote} to ${message.url}`);
 	}
 };

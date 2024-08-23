@@ -21,8 +21,9 @@ export const command: Command = {
 			await interaction.reply("Target channel must be a text channel!");
 			return;
 		}
-		(targetChannel as unknown as TextChannel).send(interaction.options.getString('message', true))
-			.catch(() => { interaction.reply(`Unable to send message. You may have selected a category (<#${targetChannel.id}>) or provided an invalid channel ID.`); }); 
-		await interaction.reply(`Message sent in <#${targetChannel.id}>`);
+
+		await targetChannel.send(interaction.options.getString('message', true))
+			.then(_ => interaction.reply(`Message sent in <#${targetChannel.id}>`))
+			.catch(_ => interaction.reply("Failed to send message in that channel (I probably don't have permitions)."));
 	}
 };
