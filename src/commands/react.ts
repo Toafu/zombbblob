@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, GuildChannel, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../command";
 import { parseMessageLink } from "../utils";
 
@@ -29,14 +29,14 @@ export const command: Command = {
 			return;
 		}
 
-		const channel = interaction.guild.channels.fetch(messageLinkParts.channelID);
+		const channel = await interaction.guild.channels.fetch(messageLinkParts.channelID);
 		
 		if (channel === null) {
 			await interaction.reply("Could not fetch channel!");
 			return;
 		}
 
-		if (!(channel instanceof TextChannel)) {
+		if (!channel.isTextBased()) {
 			await interaction.reply("Channel must be a text channel!");
 			return;
 		}

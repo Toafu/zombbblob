@@ -67,7 +67,7 @@ export const command: Command = {
 					process.exit(1);
 				}
 				
-				if (!(serverLog instanceof BaseGuildTextChannel)) {
+				if (!serverLog.isTextBased()) {
 					console.error("Server log channel is not a text channel");
 					process.exit(1);
 				}

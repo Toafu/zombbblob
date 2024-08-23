@@ -1,4 +1,4 @@
-import { PermissionsBitField } from 'discord.js';
+import { PermissionsBitField, Snowflake } from 'discord.js';
 
 export const CLIENT_ID = "1025822491689619556" // update me
 export const SERVER_ID = "734492640216744017"

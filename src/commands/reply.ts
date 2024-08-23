@@ -28,14 +28,14 @@ export const command: Command = {
 			return;
 		}
 
-		const channel = interaction.guild.channels.fetch(messageLinkParts.channelID);
+		const channel = await interaction.guild.channels.fetch(messageLinkParts.channelID);
 		
 		if (channel === null) {
 			await interaction.reply("Could not fetch channel!");
 			return;
 		}
 
-		if (!(channel instanceof TextChannel)) {
+		if (!channel.isTextBased()) {
 			await interaction.reply("Channel must be a text channel!");
 			return;
 		}

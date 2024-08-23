@@ -121,13 +121,13 @@ client.on('ready', async () => {
 		throw "fix";
 	}
 
-	if (startupChannel instanceof BaseGuildTextChannel) {
-		startupChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
-	} else {
+	if (!startupChannel.isTextBased()) {
 		console.error("Startup channel is not a text channel!");
 		process.exit(1);
-		throw "fix";
 	}
+
+	startupChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
+
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
 	// client.guilds.fetch('734492640216744017').then(g => {
@@ -148,15 +148,13 @@ client.on('messageCreate', async (message) => {
 			throw "fix";
 		}
 	
-		if (serverLogChannel instanceof BaseGuildTextChannel) {
-			serverLogChannel.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
-		} else {
-			console.error("Startup channel is not a text channel!");
-			process.exit(1);
-			throw "fix";
+		if (!serverLogChannel.isTextBased()) {
+			console.error("Server log channel is not a text channel!");
+			return;
 		}
 
-		message.member.timeout(30 * 1000); // timeout for 30 seconds
+		await serverLogChannel.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
+		await message.member.timeout(30 * 1000); // timeout for 30 seconds
 	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
