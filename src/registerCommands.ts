@@ -8,6 +8,8 @@ import { CLIENT_ID, SERVER_ID } from './utils'
 import { Command } from './command';
 
 export const registerCommands = async function() {
+    console.log("Registering commands...");
+
     if (!process.env.TOKEN) {
         console.error("No TOKEN in ENV!");
         process.exit(1);
@@ -23,11 +25,13 @@ export const registerCommands = async function() {
         return command.data.toJSON();
     }));
 
+    console.log("Clearing old commands...");
     await restClient.put(
         Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID), 
         { body: [] }
     );
     
+    console.log("Inserting new commands...");
     await restClient.put(
         Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID),
         { body: commandDatums }

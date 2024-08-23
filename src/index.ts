@@ -2,7 +2,7 @@ import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayInten
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
-import { Channels, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
+import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
 
@@ -91,42 +91,81 @@ const client = new Client({
 const commands: Map<String, Command> = new Map(); 
 
 client.on('ready', async () => {
-  const commandsDirectoryPath = path.join(__dirname, "commands/"); 
-  for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) { 
-    const { command } = await import( 
-      path.join(commandsDirectoryPath, commandFileName) 
-    ); 
-    command.init(client); 
-    commands.set(command.data.name, command); 
-  }
+	console.log("Checking CLIENT_ID...");
+
+	// This is probably impossible
+	if (client.user === null) {
+		console.error("client.user is null at ready time!");
+		process.exit(1);
+	}
+
+	if (client.user.id !== CLIENT_ID) {
+		console.error(`CLIENT_ID (${CLIENT_ID}) does not match client.user.id ${client.user.id}`);
+		process.exit(1);
+	}
+
+	console.log("Checking SERVER_ID...");
+	const guild = await client.guilds.fetch(SERVER_ID)
+		.then(guild => guild)
+		.catch(_ => null);
+
+	if (guild === null) {
+		console.error(`Could not fetch guild with id ${SERVER_ID}`);
+		process.exit(1);
+	}
+
+	console.log("Checking Roles...");
+	for (const [roleName, roleID] of Object.entries(Roles)) {
+		const role = await guild.roles.fetch(roleID);
+
+		if (role === null) {
+			console.error(`Role "${roleName}" could not be fetched!`);
+			process.exit(1);
+		}
+	}
+
+	console.log("Checking Channels...");
+	for (const [channelName, channelID] of Object.entries(Channels)) {
+		const channel = await guild.channels.fetch(channelID)
+			.catch(_ => null);
+
+		if (channel === null) {
+			console.error(`Channel "${channelName}" could not be fetched!`);
+			process.exit(1);
+		}
+	}
+
+	console.log("Initializing commands...")
+	const commandsDirectoryPath = path.join(__dirname, "commands/"); 
+	for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) { 
+		const { command } = await import( 
+		path.join(commandsDirectoryPath, commandFileName) 
+		); 
+		command.init(client); 
+		commands.set(command.data.name, command); 
+	}
 
 	console.log('zombbblob has awoken');
 	process.on('unhandledRejection', (error) => {
 		console.error('Unhandled promise rejection:', error);
 	});
 
-	if (client.user === null) {
-		process.exit(1);
-		throw "fix";
-	}
-
 	client.user.setPresence({
 		activities: [{ name: 'Welcome to EECS281!' }],
 		status: 'online',
 	});
-	const startupChannel = client.channels.cache.get(Channels.zombbblobdev);
-	if (!startupChannel) {
+	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev);
+	if (!zombbblobDevChannel) {
 		console.error("Startup channel invalid!");
 		process.exit(1);
-		throw "fix";
 	}
 
-	if (!startupChannel.isTextBased()) {
+	if (!zombbblobDevChannel.isTextBased()) {
 		console.error("Startup channel is not a text channel!");
 		process.exit(1);
 	}
 
-	startupChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
+	zombbblobDevChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
 
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
@@ -145,7 +184,6 @@ client.on('messageCreate', async (message) => {
 		if (!serverLogChannel) {
 			console.error("server log channel invalid!");
 			process.exit(1);
-			throw "fix";
 		}
 	
 		if (!serverLogChannel.isTextBased()) {
@@ -263,9 +301,15 @@ client.on('interactionCreate', async (interaction) => {
 		return;
 	}
 
-	command.execute(interaction);
-})
-
-registerCommands().then(() => {
-	client.login(process.env.TOKEN);
+	return command.execute(interaction);
 });
+
+(async function(){
+	if (process.argv.length <= 2 || process.argv[2] !== "-n") {
+		await registerCommands();
+	}
+	
+	return client.login(process.env.TOKEN);
+})();
+
+
