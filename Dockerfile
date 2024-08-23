@@ -12,5 +12,6 @@ RUN chown -R zombbbot:nodejs /app
 
 USER zombbbot
 RUN npm ci --production
+RUN node_modules/.bin/tsc
 
-CMD ["node", "index.js"]
+CMD ["node", "build/index.js"]
