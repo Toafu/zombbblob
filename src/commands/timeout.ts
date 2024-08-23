@@ -28,10 +28,19 @@ export const command: Command = {
 		
 		const reason = `By ${interaction.user.tag}: ${interaction.options.getString('reason') ?? 'They deserved it'}`;
 		
-		await interaction.guild.members.fetch(targetUser.id).then(u => {
-			u.timeout(1000 * timeoutLengthSeconds, reason)
-				.then(() => { interaction.reply(`Timed out <@${targetUser.id}> for ${timeoutLengthSeconds} seconds`); })
-				.catch(() => { interaction.reply(`Unable to time out <@${targetUser.id}>.`); });
-		});
+		const targetMember = await interaction.guild.members.fetch(targetUser.id)
+			.then(member => member)
+			.catch(_ => null);
+
+		if (targetMember === null) {
+			await interaction.reply("Failed to fetch target member, maybe they left or got kicked/banned?");
+			return;
+		}
+
+		const resultMessage = await targetMember.timeout(1000 * timeoutLengthSeconds, reason)
+			.then(() => `Timed out <@${targetUser.id}> for ${timeoutLengthSeconds} seconds`)
+			.catch(() => `Unable to time out <@${targetUser.id}>.`);
+
+		await interaction.reply(resultMessage);
 	},
 };
