@@ -3,7 +3,7 @@ import { Channels, Semesters, Roles } from '../utils';
 import { Command } from "../command";
 
 //the ability to create channels for a semester (e.g. /create F22)
-export const create: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('create')
 		.addStringOption(option => option

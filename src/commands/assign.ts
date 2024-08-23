@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionsB
 import { Command } from "../command";
 
 //a way for staff to assign/remove roles
-export const assign: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('assign')
 		.addUserOption(option => option

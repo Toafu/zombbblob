@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
-export const timeout: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('timeout')
 		.addUserOption(option => option

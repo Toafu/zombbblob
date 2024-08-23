@@ -3,7 +3,7 @@ import { Command } from "../command";
 import { Channels } from "../utils";
 
 //the ability to create invites with number of uses (e.g., /invite N)
-export const invite: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('invite')
 		.addIntegerOption(option => option

@@ -2,7 +2,7 @@ import { ChannelType, PermissionsBitField, Guild, SlashCommandBuilder, ChatInput
 import { Channels, Semesters, Roles } from '../utils';
 import { Command } from "../command";
 
-export const archive: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('archive')
 		.addStringOption(option => option

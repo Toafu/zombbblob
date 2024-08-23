@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { communicationsPermissions, Roles } from '../utils';
 import { Command } from '../command';
 
-export const unlock: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('unlock')
 		.setDescription('unlocks the server to Students (able to communicate)'),

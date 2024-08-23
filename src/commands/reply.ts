@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../command";
 
-export const reply: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('reply')
 		.addStringOption(option => option

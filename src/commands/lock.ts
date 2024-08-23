@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { Roles, communicationsPermissions } from '../utils';
 import { Command } from '../command';
 
-export const lock: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('lock')
 		.setDescription('locks the server to Students (unable to communicate)'),

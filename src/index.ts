@@ -1,9 +1,10 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
-import { Channels, MEE6_API, MEE6_ID, Roles, updateRoleMessage } from './utils';
+import fs from 'fs';
+import path from 'path';
+import { Channels, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
-// import fs from 'fs';
 
 require('dotenv').config();
 const topTen: Snowflake[] = [];
@@ -59,7 +60,7 @@ async function updateTopTen() {
 		return; //no
 	}
 	await fetch(
-		MEE6_API,
+		`https://mee6.xyz/api/plugins/levels/leaderboard/${SERVER_ID}`,
 		{
 			headers: {
 				accept: 'application/json',
@@ -87,10 +88,17 @@ const client = new Client({
 	partials: [Partials.Channel],
 });
 
-client.on('ready', () => {
-	for (const command of commands.values()) {
-		command.init(client);
-	}
+const commands: Map<String, Command> = new Map(); 
+
+client.on('ready', async () => {
+  const commandsDirectoryPath = path.join(__dirname, "commands/"); 
+  for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) { 
+    const { command } = await import( 
+      path.join(commandsDirectoryPath, commandFileName) 
+    ); 
+    command.init(client); 
+    commands.set(command.data.name, command); 
+  }
 
 	console.log('zombbblob has awoken');
 	process.on('unhandledRejection', (error) => {
@@ -244,34 +252,6 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Stud
 // 	}
 // });
 // ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
-
-const commands: Map<String, Command> = new Map();
-import { alumnize } from "./commands/alumnize";
-commands.set("alumnize", alumnize);
-import { archive } from "./commands/archive";
-commands.set("archive", archive);
-import { assign } from "./commands/assign";
-commands.set("assign", assign);
-import { create } from "./commands/create";
-commands.set("create", create);
-import { demote } from "./commands/demote";
-commands.set("demote", demote);
-import { invite } from "./commands/invite";
-commands.set("invite", invite);
-import { lock } from "./commands/lock";
-commands.set("lock", lock);
-import { open } from "./commands/open";
-commands.set("open", open);
-import { react } from "./commands/react";
-commands.set("react", react);
-import { reply } from "./commands/reply";
-commands.set("reply", reply);
-import { send } from "./commands/send";
-commands.set("send", send);
-import { timeout } from "./commands/timeout";
-commands.set("timeout", timeout);
-import { unlock } from "./commands/unlock";
-commands.set("unlock", unlock);
 
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isChatInputCommand()) {

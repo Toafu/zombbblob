@@ -1,7 +1,7 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../command';
 
-export const open: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('open')
 		.setDescription('opens the channel to students (syncs with parent category permissions)'),

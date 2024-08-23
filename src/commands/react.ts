@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInt
 import { Command } from "../command";
 
 //There should be a command to make PotatoBot send custom messages, but only accessible by staff in the staff chat
-export const react: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('react')
 		.addStringOption(option => option

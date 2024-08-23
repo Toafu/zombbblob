@@ -13,7 +13,7 @@ the ability to autoassign students the alumni role at the end of a semester.
 Currently, the bot goes through all the users with a student role and assigns them with the alumni role on 
 However, there's probably a better way to do this (you can also range assign a role using a command like /alumnize 2021-12-21 2021-12-31
 */
-export const alumnize: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('alumnize')
 		.addStringOption(option => option

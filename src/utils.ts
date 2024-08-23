@@ -3,7 +3,6 @@ import { PermissionsBitField } from 'discord.js';
 export const CLIENT_ID = "1025822491689619556" // update me
 export const SERVER_ID = "734492640216744017"
 export const MEE6_ID = '159985870458322944';
-export const MEE6_API = 'https://mee6.xyz/api/plugins/levels/leaderboard/734492640216744017';
 export const updateRoleMessage = '926654292524404817';
 
 export const Roles = {
