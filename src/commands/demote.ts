@@ -29,13 +29,13 @@ export const command: Command = {
 			return;
 		}
 
-		await interaction.guild.members.fetch(interaction.user.id).then(async u => {
-			if (targetRole.comparePositionTo(u.roles.highest) > 0 && !u.permissions.has(PermissionsBitField.Flags.Administrator)) {
-				await interaction.reply(`<:blobdisapproval:1039016273343951009> You cannot remove a role that is higher than your highest role (Administrators can bypass).`);
-			} else {
-				await targetMember.roles.remove(targetRole);
-				await interaction.reply(`Successfully removed the ${targetRole.name} role from ${targetMember.user.username}`);
-			}
-		});
+		const interactionMember = await interaction.guild.members.fetch(interaction.user.id);
+		if (targetRole.comparePositionTo(interactionMember.roles.highest) > 0 && !interactionMember.permissions.has(PermissionsBitField.Flags.Administrator)) {
+			await interaction.reply(`<:blobdisapproval:1039016273343951009> You cannot remove a role that is higher than your highest role (Administrators can bypass).`);
+			return;
+		}
+	
+		await targetMember.roles.remove(targetRole);
+		await interaction.reply(`Successfully removed the ${targetRole.name} role from ${targetMember.user.username}`);
 	},
 };
