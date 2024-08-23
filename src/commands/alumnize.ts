@@ -49,16 +49,18 @@ export const command: Command = {
 					process.exit(1);
 				}
 
-				studentRole.members.each(member => { //r.members is a Collection<userID, GuildMember>
-					if (member.joinedAt === null) {
-						throw "fix";
+				for (const [studentDiscordID, studentMember] of studentRole.members.entries()) { //r.members is a Collection<userID, GuildMember>
+					if (studentMember.joinedAt === null) {
+						console.error(`Student with id ${studentDiscordID} has a null joinedAt time!`);
+						continue;
 					}
-					if (member.joinedAt < beforeThreshold) {
-						member.roles.remove(Roles.Student);
-						member.roles.add(Roles.StudentAlumni);
+
+					if (studentMember.joinedAt < beforeThreshold) {
+						await studentMember.roles.remove(Roles.Student);
+						await studentMember.roles.add(Roles.StudentAlumni);
 						++count;
 					}
-				});
+				}
 
 				const serverLog = await guild.channels.fetch(Channels.serverlog);
 				
