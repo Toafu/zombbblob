@@ -25,7 +25,7 @@ export const alumnize: Command = {
 			.setDescription('Provide a date (YYYY-MM-DD)')
 			.setRequired(true))
 		.setDescription('Assigns students from start date to end date with the Roles.Student Alumni Role'),
-	init: (client: Client<boolean>) => { //For automagic detectionsc
+	init: (client: Client<boolean>) => { //For automagic detections
 		const checkAlumnize = () => {
 			const beforeThreshold = new Date; //Get today's Date
 			const currMonth = beforeThreshold.getMonth();
