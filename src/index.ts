@@ -1,6 +1,6 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
-import { Roles } from './utils';
+import { Channels, MEE6_ID, Roles, updateRoleMessage } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
 // import fs from 'fs';
@@ -106,7 +106,7 @@ client.on('ready', () => {
 		activities: [{ name: 'Welcome to EECS281!' }],
 		status: 'online',
 	});
-	const startupChannel = client.channels.cache.get('926277044487200798');
+	const startupChannel = client.channels.cache.get(Channels.zombbblobdev);
 	if (!startupChannel) {
 		console.error("Startup channel invalid!");
 		process.exit(1);
@@ -133,7 +133,7 @@ client.on('messageCreate', async (message) => {
 	if (message.member === null) return;
 	if (isSpam(message.content, message.author.id)) {
 		// Spam detector (if same message sent over 10 times in a row)
-		const serverLogChannel = client.channels.cache.get('734554759662665909');
+		const serverLogChannel = client.channels.cache.get(Channels.serverlog);
 		if (!serverLogChannel) {
 			console.error("server log channel invalid!");
 			process.exit(1);
@@ -152,7 +152,7 @@ client.on('messageCreate', async (message) => {
 	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
-		const filter = (m: Message) => m.author.id.toString() === '159985870458322944';
+		const filter = (m: Message) => m.author.id.toString() === MEE6_ID;
 		const collector = message.channel.createMessageCollector({
 			filter,
 			time: 5000,
@@ -208,7 +208,7 @@ client.on('messageCreate', async (message) => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Student/Roles.Student Alumni reaction roles
-	if (reaction.message.id === '926654292524404817') {
+	if (reaction.message.id === updateRoleMessage) {
 		const { guild } = reaction.message; //Extract EECS281 server
 		if (guild === null) {
 			return;

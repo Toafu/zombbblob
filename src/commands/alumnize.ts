@@ -1,5 +1,5 @@
-import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, Guild, GuildBasedChannel, GuildMember, Role, SlashCommandBuilder, TextChannel, User } from "discord.js";
-import { Roles } from '../utils';
+import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, Guild, GuildBasedChannel, GuildMember, SlashCommandBuilder } from "discord.js";
+import { Channels, Roles, SERVER_ID } from '../utils';
 import { Command } from "../command";
 
 const beforeMap = {
@@ -38,7 +38,7 @@ export const alumnize: Command = {
 				//Use beforeMap to get the desired target join threshold
 				beforeThreshold.setMonth(beforeMap[currMonth].month);
 				beforeThreshold.setDate(beforeMap[currMonth].day);
-				client.guilds.fetch('734492640216744017').then((g: Guild) => {
+				client.guilds.fetch(SERVER_ID).then((g: Guild) => {
 					g.members.fetch().then(u => { //Cache all members
 						g.roles.fetch(Roles.Student).then(r => { //Extract members with the Roles.Student role
 							if (r === null) {
@@ -54,7 +54,7 @@ export const alumnize: Command = {
 									++count;
 								}
 							});
-							g.channels.fetch('734554759662665909').then((c: GuildBasedChannel | null) => { //#server-log
+							g.channels.fetch(Channels.serverlog).then((c: GuildBasedChannel | null) => { //#server-log
 								if (c === null) {
 									throw "fix";
 								}
