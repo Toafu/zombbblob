@@ -50,7 +50,7 @@ type DecodedMessageLink = {
 	messageID: Snowflake
 }
 
-const MESSAGE_LINK_REGEX = /^https:\/\/discord\.com\/channels\/(\d{18})\/(\d{18})\/(\d{18})$/;
+const MESSAGE_LINK_REGEX = /^https:\/\/discord\.com\/channels\/(\d+)\/(\d+)\/(\d+)$/;
 export function parseMessageLink(messageLink: string): [Error | null, DecodedMessageLink] {
 	const messageLinkParts = messageLink.match(MESSAGE_LINK_REGEX);
 	
