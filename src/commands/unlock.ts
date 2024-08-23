@@ -12,21 +12,16 @@ export const command: Command = {
 			return;
 		}
 
-		interaction.guild.roles.fetch(Roles.Student).then(async r => {
-			if (r === null) {
-				await interaction.reply("Failed to fetch Student role!");
-				return;
-			}
+		const studentRole = await interaction.guild.roles.fetch(Roles.Student);
+		if (studentRole === null) {
+			await interaction.reply("Could not fetch Student role");
+			return;
+		}
 
-			let newPermissions = r.permissions.add(communicationsPermissions);
-			r.setPermissions(newPermissions).then(() => {
-				// Verify permissions were removed
-				if (r.permissions.has(communicationsPermissions)) {
-					interaction.reply("Server unlocked to the Student role");
-				} else {
-					interaction.reply("Unable to add permissions to Student");
-				}
-			});
-		});
+		const resultMessage = await studentRole.setPermissions(studentRole.permissions.add(communicationsPermissions))
+			.then(() => "Server unlocked to the Student role")
+			.catch(() => "Unable to add permissions to Student");
+
+		await interaction.reply(resultMessage);
 	}
 };
