@@ -1,5 +1,5 @@
 import { ChannelType, PermissionsBitField, Guild, SlashCommandBuilder, ChatInputCommandInteraction, CategoryChannel } from "discord.js";
-import { Channels, Semesters, Roles } from '../utils';
+import { Channels, Roles, semesterStringToCategoryName } from '../utils';
 import { Command } from "../command";
 
 export const command: Command = {
@@ -18,16 +18,13 @@ export const command: Command = {
 
 		const deferredReply = await interaction.deferReply();
 
-		const semester = interaction.options.getString('semester', true).toLowerCase();
-		
-		if (!/[fsw]\d{2}/.test(semester)) {
-			await deferredReply.edit('Invalid semester format. Must follow `[F/S/W][Last two digits of year]`');
+		const [error, categoryName] = semesterStringToCategoryName(interaction.options.getString('semester', true).toLowerCase());
+
+		if (error !== null) {
+			await deferredReply.edit(error.message);
 			return;
 		}
 		
-		const year = semester.slice(1).padStart(4, '20'); //Remove first character, pad YY into YYYY
-		const categoryName = `${Semesters.get(semester[0])} ${year}`;
-
 		const channels = await interaction.guild.channels.fetch();
 		const categoryToArchive = channels.find(cat => cat !== null && cat.type === ChannelType.GuildCategory && cat.name === categoryName);
 		if (!categoryToArchive) {
