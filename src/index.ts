@@ -1,6 +1,6 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
-import { Channels, MEE6_ID, Roles, updateRoleMessage } from './utils';
+import { Channels, MEE6_API, MEE6_ID, Roles, updateRoleMessage } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
 // import fs from 'fs';
@@ -59,7 +59,7 @@ async function updateTopTen() {
 		return; //no
 	}
 	await fetch(
-		'https://mee6.xyz/api/plugins/levels/leaderboard/734492640216744017',
+		MEE6_API,
 		{
 			headers: {
 				accept: 'application/json',
