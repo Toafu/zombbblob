@@ -10,7 +10,7 @@ RUN chown -R zombbbot:nodejs /app
 
 USER zombbbot
 RUN npm ci
-RUN node_modules/.bin/tsc
+RUN npm run build
 RUN npm install --omit-dev
 
 CMD ["node", "build/index.js"]

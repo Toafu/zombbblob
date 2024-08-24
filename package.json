@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node build/index.js",
+    "withoutRegistering": "npm run build && node build/index.js -n"
+  },
   "dependencies": {
     "@types/node-fetch": "^2.6.11",
     "discord.js": "^14.15.3",
