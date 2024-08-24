@@ -1,4 +1,4 @@
-import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, Guild, GuildBasedChannel, GuildMember, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, Client, SlashCommandBuilder } from "discord.js";
 import { Channels, Roles, SERVER_ID } from '../utils';
 import { Command } from "../command";
 

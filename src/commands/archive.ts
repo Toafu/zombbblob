@@ -1,4 +1,4 @@
-import { ChannelType, PermissionsBitField, Guild, SlashCommandBuilder, ChatInputCommandInteraction, CategoryChannel } from "discord.js";
+import { ChannelType, SlashCommandBuilder, ChatInputCommandInteraction, CategoryChannel } from "discord.js";
 import { Channels, Roles, semesterStringToCategoryName } from '../utils';
 import { Command } from "../command";
 

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionsBitField, Role, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, PermissionsBitField, Role, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
 //a way for staff to assign/remove roles
