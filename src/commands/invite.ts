@@ -3,7 +3,7 @@ import { Command } from "../command";
 import { Channels } from "../utils";
 
 //the ability to create invites with number of uses (e.g., /invite N)
-export const invite: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('invite')
 		.addIntegerOption(option => option
@@ -21,10 +21,10 @@ export const invite: Command = {
 
 		if (numUses === null) {
 			interaction.reply('discord.gg/fnVXyhfh33');
-		} else {
-			interaction.guild.invites.create(Channels.welcomeandrules, { maxUses: numUses, maxAge: 0 }).then(i => {
-				interaction.reply(`discord.gg/${i.code}`);
-			});
+			return;
 		}
+
+		const invite = await interaction.guild.invites.create(Channels.welcomeandrules, { maxUses: numUses, maxAge: 0 });
+		await interaction.reply(`discord.gg/${invite.code}`);
 	}
 };

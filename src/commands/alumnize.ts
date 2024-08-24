@@ -13,7 +13,7 @@ the ability to autoassign students the alumni role at the end of a semester.
 Currently, the bot goes through all the users with a student role and assigns them with the alumni role on 
 However, there's probably a better way to do this (you can also range assign a role using a command like /alumnize 2021-12-21 2021-12-31
 */
-export const alumnize: Command = {
+export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('alumnize')
 		.addStringOption(option => option
@@ -26,8 +26,8 @@ export const alumnize: Command = {
 			.setRequired(true))
 		.setDescription('Assigns students from start date to end date with the Roles.Student Alumni Role'),
 	init: (client: Client<boolean>) => { //For automagic detections
-		const checkAlumnize = () => {
-			const beforeThreshold = new Date; //Get today's Date
+		const checkAlumnize = async () => {
+			const beforeThreshold = new Date(); //Get today's Date
 			const currMonth = beforeThreshold.getMonth();
 			if (beforeThreshold.getDate() == 1 && (currMonth == 0 || currMonth == 4 || currMonth == 6)) {
 				//getDate() is 1-indexed but getMonth() is 0-indexed
@@ -38,37 +38,43 @@ export const alumnize: Command = {
 				//Use beforeMap to get the desired target join threshold
 				beforeThreshold.setMonth(beforeMap[currMonth].month);
 				beforeThreshold.setDate(beforeMap[currMonth].day);
-				client.guilds.fetch(SERVER_ID).then((g: Guild) => {
-					g.members.fetch().then(u => { //Cache all members
-						g.roles.fetch(Roles.Student).then(r => { //Extract members with the Roles.Student role
-							if (r === null) {
-								throw "fix";
-							}
-							r.members.each((member: GuildMember) => { //r.members is a Collection<userID, GuildMember>
-								if (member.joinedAt === null) {
-									throw "fix";
-								}
-								if (member.joinedAt < beforeThreshold) {
-									member.roles.remove(Roles.Student);
-									member.roles.add(Roles.StudentAlumni);
-									++count;
-								}
-							});
-							g.channels.fetch(Channels.serverlog).then((c: GuildBasedChannel | null) => { //#server-log
-								if (c === null) {
-									throw "fix";
-								}
-								
-								if (c instanceof BaseGuildTextChannel) {
-									c.send(`Students automatically alumnized: ${count}.`);
-								} else {
-									throw "fix";
-								}
-							});
-						});
-					})
-						.catch(console.error);
-				});
+				
+				const guild = await client.guilds.fetch(SERVER_ID);
+				// put guild members into cache
+				await guild.members.fetch();
+				const studentRole = await guild.roles.fetch(Roles.Student);
+
+				if (studentRole === null) {
+					console.error("Could not fetch student role!");
+					process.exit(1);
+				}
+
+				for (const [studentDiscordID, studentMember] of studentRole.members.entries()) { //r.members is a Collection<userID, GuildMember>
+					if (studentMember.joinedAt === null) {
+						console.error(`Student with id ${studentDiscordID} has a null joinedAt time!`);
+						continue;
+					}
+
+					if (studentMember.joinedAt < beforeThreshold) {
+						await studentMember.roles.remove(Roles.Student);
+						await studentMember.roles.add(Roles.StudentAlumni);
+						++count;
+					}
+				}
+
+				const serverLog = await guild.channels.fetch(Channels.serverlog);
+				
+				if (serverLog === null) {
+					console.error("Server log channel invalid!");
+					process.exit(1);
+				}
+				
+				if (!serverLog.isTextBased()) {
+					console.error("Server log channel is not a text channel");
+					process.exit(1);
+				}
+
+				serverLog.send(`Students automatically alumnized: ${count}.`);
 			};
 			setTimeout(checkAlumnize, 1000 * 60 * 60 * 24);
 		};
@@ -113,6 +119,6 @@ export const alumnize: Command = {
 				++count;
 			}
 		}
-		interaction.reply(`Students Alumnized: ${count}.`);
+		await interaction.reply(`Students Alumnized: ${count}.`);
 	}
 };

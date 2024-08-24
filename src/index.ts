@@ -1,9 +1,10 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
-import { Channels, MEE6_API, MEE6_ID, Roles, updateRoleMessage } from './utils';
+import fs from 'fs';
+import path from 'path';
+import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
-// import fs from 'fs';
 
 require('dotenv').config();
 const topTen: Snowflake[] = [];
@@ -59,7 +60,7 @@ async function updateTopTen() {
 		return; //no
 	}
 	await fetch(
-		MEE6_API,
+		`https://mee6.xyz/api/plugins/levels/leaderboard/${SERVER_ID}`,
 		{
 			headers: {
 				accept: 'application/json',
@@ -87,9 +88,61 @@ const client = new Client({
 	partials: [Partials.Channel],
 });
 
-client.on('ready', () => {
-	for (const command of commands.values()) {
-		command.init(client);
+const commands: Map<String, Command> = new Map(); 
+
+client.on('ready', async () => {
+	console.log("Checking CLIENT_ID...");
+
+	// This is probably impossible
+	if (client.user === null) {
+		console.error("client.user is null at ready time!");
+		process.exit(1);
+	}
+
+	if (client.user.id !== CLIENT_ID) {
+		console.error(`CLIENT_ID (${CLIENT_ID}) does not match client.user.id ${client.user.id}`);
+		process.exit(1);
+	}
+
+	console.log("Checking SERVER_ID...");
+	const guild = await client.guilds.fetch(SERVER_ID)
+		.then(guild => guild)
+		.catch(_ => null);
+
+	if (guild === null) {
+		console.error(`Could not fetch guild with id ${SERVER_ID}`);
+		process.exit(1);
+	}
+
+	console.log("Checking Roles...");
+	for (const [roleName, roleID] of Object.entries(Roles)) {
+		const role = await guild.roles.fetch(roleID);
+
+		if (role === null) {
+			console.error(`Role "${roleName}" could not be fetched!`);
+			process.exit(1);
+		}
+	}
+
+	console.log("Checking Channels...");
+	for (const [channelName, channelID] of Object.entries(Channels)) {
+		const channel = await guild.channels.fetch(channelID)
+			.catch(_ => null);
+
+		if (channel === null) {
+			console.error(`Channel "${channelName}" could not be fetched!`);
+			process.exit(1);
+		}
+	}
+
+	console.log("Initializing commands...")
+	const commandsDirectoryPath = path.join(__dirname, "commands/"); 
+	for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) { 
+		const { command } = await import( 
+		path.join(commandsDirectoryPath, commandFileName) 
+		); 
+		command.init(client); 
+		commands.set(command.data.name, command); 
 	}
 
 	console.log('zombbblob has awoken');
@@ -97,29 +150,23 @@ client.on('ready', () => {
 		console.error('Unhandled promise rejection:', error);
 	});
 
-	if (client.user === null) {
-		process.exit(1);
-		throw "fix";
-	}
-
 	client.user.setPresence({
 		activities: [{ name: 'Welcome to EECS281!' }],
 		status: 'online',
 	});
-	const startupChannel = client.channels.cache.get(Channels.zombbblobdev);
-	if (!startupChannel) {
+	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev);
+	if (!zombbblobDevChannel) {
 		console.error("Startup channel invalid!");
 		process.exit(1);
-		throw "fix";
 	}
 
-	if (startupChannel instanceof BaseGuildTextChannel) {
-		startupChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
-	} else {
+	if (!zombbblobDevChannel.isTextBased()) {
 		console.error("Startup channel is not a text channel!");
 		process.exit(1);
-		throw "fix";
 	}
+
+	zombbblobDevChannel.send('I have risen again. <:zombbblob:1026136422572372170>');
+
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
 	// client.guilds.fetch('734492640216744017').then(g => {
@@ -137,18 +184,15 @@ client.on('messageCreate', async (message) => {
 		if (!serverLogChannel) {
 			console.error("server log channel invalid!");
 			process.exit(1);
-			throw "fix";
 		}
 	
-		if (serverLogChannel instanceof BaseGuildTextChannel) {
-			serverLogChannel.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
-		} else {
-			console.error("Startup channel is not a text channel!");
-			process.exit(1);
-			throw "fix";
+		if (!serverLogChannel.isTextBased()) {
+			console.error("Server log channel is not a text channel!");
+			return;
 		}
 
-		message.member.timeout(30 * 1000); // timeout for 30 seconds
+		await serverLogChannel.send(`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`);
+		await message.member.timeout(30 * 1000); // timeout for 30 seconds
 	}
 	const words = message.content.toLowerCase().split(' ');
 	if (message.content.startsWith('!rank')) { //if person types !rank
@@ -245,34 +289,6 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Stud
 // });
 // ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
 
-const commands: Map<String, Command> = new Map();
-import { alumnize } from "./commands/alumnize";
-commands.set("alumnize", alumnize);
-import { archive } from "./commands/archive";
-commands.set("archive", archive);
-import { assign } from "./commands/assign";
-commands.set("assign", assign);
-import { create } from "./commands/create";
-commands.set("create", create);
-import { demote } from "./commands/demote";
-commands.set("demote", demote);
-import { invite } from "./commands/invite";
-commands.set("invite", invite);
-import { lock } from "./commands/lock";
-commands.set("lock", lock);
-import { open } from "./commands/open";
-commands.set("open", open);
-import { react } from "./commands/react";
-commands.set("react", react);
-import { reply } from "./commands/reply";
-commands.set("reply", reply);
-import { send } from "./commands/send";
-commands.set("send", send);
-import { timeout } from "./commands/timeout";
-commands.set("timeout", timeout);
-import { unlock } from "./commands/unlock";
-commands.set("unlock", unlock);
-
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isChatInputCommand()) {
 		return;
@@ -285,9 +301,15 @@ client.on('interactionCreate', async (interaction) => {
 		return;
 	}
 
-	command.execute(interaction);
-})
-
-registerCommands().then(() => {
-	client.login(process.env.TOKEN);
+	return command.execute(interaction);
 });
+
+(async function(){
+	if (process.argv.length <= 2 || process.argv[2] !== "-n") {
+		await registerCommands();
+	}
+	
+	return client.login(process.env.TOKEN);
+})();
+
+
