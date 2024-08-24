@@ -1,4 +1,4 @@
-import { BaseGuildTextChannel, ChatInputCommandInteraction, Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
+import { Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';

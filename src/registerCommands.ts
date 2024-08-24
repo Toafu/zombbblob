@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 
 import { CLIENT_ID, SERVER_ID } from './utils'
-import { Command } from './command';
 
 export const registerCommands = async function() {
     console.log("Registering commands...");
