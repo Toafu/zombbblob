@@ -1,8 +1,8 @@
-import { Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord.js';
+import { Client, GatewayIntentBits, Message, MessageReaction, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
-import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
+import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, UPDATE_ROLE_MESSAGE_ID } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
 
@@ -85,7 +85,7 @@ const client = new Client({
 		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.GuildMembers
 	],
-	partials: [Partials.Channel],
+	partials: [Partials.Channel, Partials.Message, Partials.Reaction],
 });
 
 const commands: Map<String, Command> = new Map(); 
@@ -133,6 +133,24 @@ client.on('ready', async () => {
 			console.error(`Channel "${channelName}" could not be fetched!`);
 			process.exit(1);
 		}
+	}
+
+	console.log("Validating update-role message...")
+	const updateRoleChannel = guild.channels.cache.get(Channels.updaterole);
+	if (updateRoleChannel === undefined) {
+		console.error("Failed to validate #update-role!");
+		process.exit(1);
+	}
+
+	if (!updateRoleChannel.isTextBased()) {
+		console.error("#update-role is not a text channel!");
+		process.exit(1);
+	}
+
+	const updateRoleMessage = await updateRoleChannel.messages.fetch(UPDATE_ROLE_MESSAGE_ID).catch(_ => null);
+	if (updateRoleMessage === null) {
+		console.error("Failed to fetch update-role message!");
+		process.exit(1);
 	}
 
 	console.log("Initializing commands...")
@@ -251,8 +269,21 @@ client.on('messageCreate', async (message) => {
 	// } //if not !rank command
 });
 
-client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Student/Roles.Student Alumni reaction roles
-	if (reaction.message.id === updateRoleMessage) {
+
+client.on('messageReactionAdd', async (potentiallyPartialReaction, user) => { //Handles Roles.Student/Roles.Student Alumni reaction roles
+	let reaction: MessageReaction;
+	
+	if (potentiallyPartialReaction.partial) {
+		const reactionFetch = await potentiallyPartialReaction.fetch().catch(_ => null);
+		if (reactionFetch === null) {
+			return;
+		}
+		reaction = reactionFetch;
+	} else {
+		reaction = potentiallyPartialReaction;
+	}
+
+	if (reaction.message.id === UPDATE_ROLE_MESSAGE_ID) {
 		const { guild } = reaction.message; //Extract EECS281 server
 		if (guild === null) {
 			return;
@@ -262,7 +293,7 @@ client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Stud
 			if (reaction.emoji.name === '🧠') { // '\u{0001F9E0}'
 				guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.remove(r); });
 				await guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.add(r); });
-			} else { //reaction.emoji.name === '🎓'
+			} else { //fullReaction.emoji.name === '🎓'
 				guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.remove(r); });
 				await guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.add(r); });
 			}
