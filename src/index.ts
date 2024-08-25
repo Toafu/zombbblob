@@ -2,7 +2,7 @@ import { Client, GatewayIntentBits, Message, Partials, Snowflake } from 'discord
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
-import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, updateRoleMessage } from './utils';
+import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, UPDATE_ROLE_MESSAGE_ID } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
 
@@ -135,6 +135,24 @@ client.on('ready', async () => {
 		}
 	}
 
+	console.log("Validating update-role message...")
+	const updateRoleChannel = guild.channels.cache.get(Channels.updaterole);
+	if (updateRoleChannel === undefined) {
+		console.error("Failed to validate #update-role!");
+		process.exit(1);
+	}
+
+	if (!updateRoleChannel.isTextBased()) {
+		console.error("#update-role is not a text channel!");
+		process.exit(1);
+	}
+
+	const updateRoleMessage = await updateRoleChannel.messages.fetch(UPDATE_ROLE_MESSAGE_ID).catch(_ => null);
+	if (updateRoleMessage === null) {
+		console.error("Failed to cache update-role message!");
+		process.exit(1);
+	}
+
 	console.log("Initializing commands...")
 	const commandsDirectoryPath = path.join(__dirname, "commands/"); 
 	for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) { 
@@ -252,7 +270,7 @@ client.on('messageCreate', async (message) => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => { //Handles Roles.Student/Roles.Student Alumni reaction roles
-	if (reaction.message.id === updateRoleMessage) {
+	if (reaction.message.id === UPDATE_ROLE_MESSAGE_ID) {
 		const { guild } = reaction.message; //Extract EECS281 server
 		if (guild === null) {
 			return;
