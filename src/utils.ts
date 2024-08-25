@@ -3,7 +3,7 @@ import { PermissionsBitField, Snowflake } from 'discord.js';
 export const CLIENT_ID = "1025822491689619556" // update me
 export const SERVER_ID = "734492640216744017"
 export const MEE6_ID = '159985870458322944';
-export const UPDATE_ROLE_MESSAGE_ID = '1277337909623652436';
+export const UPDATE_ROLE_MESSAGE_ID = '926654292524404817';
 
 export const Roles = {
 	Student: '926186372572799037',
