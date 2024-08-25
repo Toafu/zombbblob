@@ -21,8 +21,8 @@ export const Channels = {
 	smallstudyrooms: '734559465168306186',
 	serverlog: '734554759662665909',
 	welcomeandrules: '734492640757678083', // use for /invite
-	zombbblobdev: '926277044487200798'
-	updaterole: '1277337904041033821'
+	zombbblobdev: '926277044487200798',
+	updaterole: '926625772595191859'
 };
 
 const Semesters: Map<String, String> = new Map();
