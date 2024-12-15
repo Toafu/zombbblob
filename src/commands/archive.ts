@@ -1,5 +1,5 @@
 import { ChannelType, SlashCommandBuilder, ChatInputCommandInteraction, CategoryChannel } from "discord.js";
-import { Channels, Roles, semesterStringToCategoryName } from '../utils';
+import { Channels, semesterStringToCategoryName, SERVER_ID } from '../utils';
 import { Command } from "../command";
 
 export const command: Command = {
@@ -27,17 +27,16 @@ export const command: Command = {
 		
 		const channels = await interaction.guild.channels.fetch();
 		const categoryToArchive = channels.find(cat => cat !== null && cat.type === ChannelType.GuildCategory && cat.name === categoryName);
-		if (!categoryToArchive) {
+		if (!categoryToArchive || !(categoryToArchive instanceof CategoryChannel)) {
 			await deferredReply.edit(`Unable to find category called \`${categoryName}\``);
 			return;
 		}
 
 		await categoryToArchive.setName(`${categoryName} (Archived)`);
 
-		await categoryToArchive.permissionOverwrites.edit(Roles.Student, { SendMessages: false });
-		await categoryToArchive.permissionOverwrites.edit(Roles.StudentAlumni, { SendMessages: false });
+		await categoryToArchive.permissionOverwrites.edit(SERVER_ID, { SendMessages: false });
 
-		for (const childChannel of (categoryToArchive as CategoryChannel).children.cache.values()) {
+		for (const childChannel of categoryToArchive.children.cache.values()) {
 			await childChannel.lockPermissions();
 		}
 
