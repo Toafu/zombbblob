@@ -1,6 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { Roles, communicationsPermissions } from '../utils';
+import { communicationsPermissions } from '../utils';
 import { Command } from '../command';
+
+import { ConfigHandler } from "../config";
+const { Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()

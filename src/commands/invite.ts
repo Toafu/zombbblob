@@ -1,6 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
-import { Channels } from "../utils";
+
+import { ConfigHandler } from "../config";
+const { Channels } = ConfigHandler.getInstance().getConfig();
 
 //the ability to create invites with number of uses (e.g., /invite N)
 export const command: Command = {

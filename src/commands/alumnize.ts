@@ -1,6 +1,8 @@
 import { ChatInputCommandInteraction, Client, SlashCommandBuilder } from "discord.js";
-import { Channels, Roles, SERVER_ID } from '../utils';
 import { Command } from "../command";
+
+import { ConfigHandler } from "../config";
+const { Channels, Roles, SERVER_ID } = ConfigHandler.getInstance().getConfig();
 
 const beforeMap = {
 	0: { month: 11, day: 20 }, 	// 1/1 (for all users that joined on or before 12/20 of the previous year)
