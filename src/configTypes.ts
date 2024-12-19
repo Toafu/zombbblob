@@ -1,14 +1,14 @@
 export interface Config {
-    CLIENT_ID: string;
-    SERVER_ID: string;
-    UPDATE_ROLE_MESSAGE_ID: string;
+	CLIENT_ID: string;
+	SERVER_ID: string;
+	UPDATE_ROLE_MESSAGE_ID: string;
 
-    Roles: Roles;
-    Channels: Channels;    
+	Roles: Roles;
+	Channels: Channels;
 };
 
 interface Roles {
-    Student: string;
+	Student: string;
 	StudentAlumni: string;
 	Staff: string;
 	InfectedZombbblob: string; // This one can change
