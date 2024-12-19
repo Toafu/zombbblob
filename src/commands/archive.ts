@@ -1,6 +1,9 @@
 import { ChannelType, SlashCommandBuilder, ChatInputCommandInteraction, CategoryChannel } from "discord.js";
-import { Channels, semesterStringToCategoryName, SERVER_ID } from '../utils';
+import { semesterStringToCategoryName } from '../utils';
 import { Command } from "../command";
+
+import { ConfigHandler } from "../config";
+const { Channels, SERVER_ID } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
