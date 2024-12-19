@@ -59,16 +59,16 @@ export class ConfigHandler {
 	private config: Config;
 
 	private constructor() {
-		this.config = process.env.PROD
-		    ? prodConfig
-		    : devConfig;
+		this.config = process.env.PROD === undefined
+		    ? devConfig
+		    : prodConfig;
 	  }
 	
     public static getInstance(): ConfigHandler {
         if (!ConfigHandler.instance) {
             ConfigHandler.instance = new ConfigHandler();
         }
-        
+
         return ConfigHandler.instance;
     }
 
