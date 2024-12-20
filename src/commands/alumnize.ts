@@ -108,6 +108,8 @@ export const command: Command = {
 			return;
 		}
 		
+		const deferredReply = await interaction.deferReply();
+		
 		for (const member of studentRole.members.values()) {
 			if (member.joinedAt === null) {
 				await interaction.channel.send(`Failed to alumnize <@${member.id}> due to null join date`);
@@ -119,6 +121,7 @@ export const command: Command = {
 				++count;
 			}
 		}
-		await interaction.reply(`Students Alumnized: ${count}.`);
+
+		await deferredReply.edit(`Students Alumnized: ${count}.`);
 	}
 };
