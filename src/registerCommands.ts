@@ -4,7 +4,8 @@ import { REST, Routes } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 
-import { CLIENT_ID, SERVER_ID } from './utils'
+import { ConfigHandler } from './config';
+const { CLIENT_ID, SERVER_ID } = ConfigHandler.getInstance().getConfig();
 
 export const registerCommands = async function() {
     console.log("Registering commands...");

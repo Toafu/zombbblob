@@ -2,9 +2,12 @@ import { Client, GatewayIntentBits, Message, MessageReaction, Partials, Snowflak
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
-import { Channels, CLIENT_ID, MEE6_ID, Roles, SERVER_ID, UPDATE_ROLE_MESSAGE_ID } from './utils';
+import { MEE6_ID } from './utils';
 import { registerCommands } from './registerCommands';
 import { Command } from './command';
+
+import { ConfigHandler } from "./config";
+const { Channels, CLIENT_ID, Roles, SERVER_ID, UPDATE_ROLE_MESSAGE_ID } = ConfigHandler.getInstance().getConfig();
 
 require('dotenv').config();
 const topTen: Snowflake[] = [];
