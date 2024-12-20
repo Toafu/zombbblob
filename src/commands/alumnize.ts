@@ -58,8 +58,8 @@ export const command: Command = {
 					}
 
 					if (studentMember.joinedAt < beforeThreshold) {
-						await studentMember.roles.remove(Roles.Student);
 						await studentMember.roles.add(Roles.StudentAlumni);
+						await studentMember.roles.remove(Roles.Student);
 						++count;
 					}
 				}
@@ -118,8 +118,8 @@ export const command: Command = {
 				continue;
 			}
 			if (member.joinedAt > start && member.joinedAt < end) {
-				await member.roles.remove(Roles.Student);
 				await member.roles.add(Roles.StudentAlumni);
+				await member.roles.remove(Roles.Student);
 				++count;
 			}
 		}
