@@ -294,11 +294,11 @@ client.on('messageReactionAdd', async (potentiallyPartialReaction, user) => { //
 		await guild.members.fetch(user.id).then(async member => {
 			//Reacting to one role should remove the other
 			if (reaction.emoji.name === '🧠') { // '\u{0001F9E0}'
-				guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.remove(r); });
-				await guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.add(r); });
+				await guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} return member.roles.add(r); });
+				await guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} return member.roles.remove(r); });
 			} else { //fullReaction.emoji.name === '🎓'
-				guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} member.roles.remove(r); });
-				await guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} member.roles.add(r); });
+				await guild.roles.fetch(Roles.StudentAlumni).then(r => { if (r === null) {console.error(`Failed to fetch Student Alumni Role for ${user.id}`); return;} return member.roles.add(r); });
+				await guild.roles.fetch(Roles.Student).then(r => { if (r === null) {console.error(`Failed to fetch Student Role for ${user.id}`); return;} return member.roles.remove(r); });
 			}
 		});
 	} //if reaction is added to reaction role message
