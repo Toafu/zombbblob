@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Message, MessageReaction, Partials, Snowflake } from 'discord.js';
+import { ActivityType, Client, GatewayIntentBits, Message, MessageReaction, Partials, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
@@ -172,7 +172,11 @@ client.on('ready', async () => {
 	});
 
 	client.user.setPresence({
-		activities: [{ name: 'Welcome to EECS281!' }],
+		activities: [{
+			type: ActivityType.Custom,
+			name: "custom", // name is exposed through the API but not shown in the client for ActivityType.Custom
+			state: "Welcome to EECS281!"
+		}],
 		status: 'online',
 	});
 	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev);
