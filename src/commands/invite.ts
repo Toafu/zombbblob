@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
 import { ConfigHandler } from "../config";
-const { Channels } = ConfigHandler.getInstance().getConfig();
+const { PERMANENT_INVITE_URL, Channels } = ConfigHandler.getInstance().getConfig();
 
 //the ability to create invites with number of uses (e.g., /invite N)
 export const command: Command = {
@@ -22,7 +22,7 @@ export const command: Command = {
 		const numUses = interaction.options.getInteger('n');
 
 		if (numUses === null) {
-			interaction.reply('discord.gg/fnVXyhfh33');
+			interaction.reply(PERMANENT_INVITE_URL);
 			return;
 		}
 
