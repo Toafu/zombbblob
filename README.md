@@ -17,8 +17,13 @@ ulgut and slime are working on a verification feature
 
 ## Deploy
 
-Clone the repo, put the `TOKEN=` in a `.env` file in the project directory, then
+0. Install Docker and Docker Compose
+1. Clone the repo
+2. Create a file named `.env` in the project directory
+3. Define `TOKEN` with a discord bot token (e.g. `TOKEN=abcdef`)
 
-```bash
-docker compose up -d
-```
+    a. If you want to run in production mode, also define `PROD`. The value of the variable does not matter.
+4. Run the following command:
+    ```bash
+    docker compose up -d
+    ```
