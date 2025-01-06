@@ -4,27 +4,27 @@ import { Config } from "./configTypes";
 
 const devConfig: Config = {
 	CLIENT_ID: "1276685924822024326",
-	SERVER_ID: "1032359437207347220",
-	UPDATE_ROLE_MESSAGE_ID: "1277337909623652436",
+	SERVER_ID: "1325691299713777684",
+	UPDATE_ROLE_MESSAGE_ID: "1325692036539744256",
 
 	Roles: {
-		Student: "1275587057472770171",
-		StudentAlumni: "1275587081120514159",
-		Staff: "1275590201808392233",
-		InfectedZombbblob: "1275590249065746443", // This one can change
-		LightMode: "1275590294481408000",
-		DarkMode: "1275590315209654333",
-		GalacticNews: "1275590345803038752"
+		Student: "1325692142865223732",
+		StudentAlumni: "1325692165501747221",
+		Staff: "1325692186725056534",
+		InfectedZombbblob: "1325692190512644117", // This one can change
+		LightMode: "1325692192613994600",
+		DarkMode: "1325692206748532799",
+		GalacticNews: "1325692269164236831"
 	},
 
 	Channels: {
-		pianogang: "1275590124503040015",
-		oldtimers: "1275590142803050538",
-		smallstudyrooms: "1275589150455889951",
-		serverlog: "1275581457762619576",
-		welcomeandrules: "1275582059833851926", // use for /invite
-		zombbblobdev: "1276519227049644074",
-		updaterole: "1277337904041033821",
+		pianogang: "1325692447749177344",
+		oldtimers: "1325692497741221929",
+		smallstudyrooms: "1325691789981646900",
+		serverlog: "1325691838941626421",
+		welcomeandrules: "1325692579651518464", // use for /invite
+		zombbblobdev: "1325692710828511302",
+		updaterole: "1325692003471589387",
 	}
 };
 
