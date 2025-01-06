@@ -54,7 +54,7 @@ export const command: Command = {
 			return;
 		}
 
-		await categoryToArchive.setPosition(highestNonArchiveChannel.position + 1, { reason: "/archive" });
+		await categoryToArchive.setPosition(highestNonArchiveChannel.position, { reason: "/archive" });
 
 		await deferredReply.edit(`Successfully archived ${categoryName}`);
 	}
