@@ -2,6 +2,7 @@ export interface Config {
 	CLIENT_ID: string;
 	SERVER_ID: string;
 	UPDATE_ROLE_MESSAGE_ID: string;
+	PERMANENT_INVITE_URL: string;
 
 	Roles: Roles;
 	Channels: Channels;
