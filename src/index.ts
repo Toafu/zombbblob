@@ -2,6 +2,7 @@ import {
 	ActivityType,
 	Client,
 	GatewayIntentBits,
+	GuildMember,
 	Message,
 	MessageReaction,
 	Partials,
@@ -422,6 +423,20 @@ client.on("interactionCreate", async (interaction) => {
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;
 	}
+
+	if (!interaction.member) {
+		console.error("Command called outside of a server!");
+		return;
+	}
+
+	const member = interaction.member as GuildMember;
+
+	const hasAuthorizedRole = command.authorizedRoleIDs && command.authorizedRoleIDs.some(roleID => member.roles.resolve(roleID));
+	if (!member.roles.resolve(Roles.Staff) && !hasAuthorizedRole) {
+		await interaction.reply({content: "You are not authorized to use this command!", ephemeral: true});
+		return;
+	}
+
 	return command.execute(interaction);
 });
 
