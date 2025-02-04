@@ -1,8 +1,10 @@
 export interface Config {
 	CLIENT_ID: string;
 	SERVER_ID: string;
+	MAINTAINER_ID: string;
 	UPDATE_ROLE_MESSAGE_ID: string;
 	PERMANENT_INVITE_URL: string;
+	ZOMBBBLOB_EMOJI_ID: string;
 
 	Roles: Roles;
 	Channels: Channels;
@@ -26,4 +28,5 @@ interface Channels {
 	welcomeandrules: string; // use for /invite
 	zombbblobdev: string;
 	updaterole: string;
+	zombbblob: string;
 };

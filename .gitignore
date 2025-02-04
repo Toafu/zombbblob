@@ -134,4 +134,5 @@ testing
 *.txt
 !/minigames/**
 */zombbblob/*.txt
+zombbblob-minigame.db
 build/
