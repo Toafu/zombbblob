@@ -44,7 +44,7 @@ const prodConfig: Config = {
 		Student: '926186372572799037',
 		StudentAlumni: '748920659626950737',
 		Staff: '734552983261675691',
-		InfectedZombbblob: '1155211060685582456', // This one can change
+		InfectedZombbblob: '1336203447900569650', // This one can change
 		LightMode: '1065432702431526932',
 		DarkMode: '1065432906111135784',
 		GalacticNews: '1068940763792158720'
@@ -58,7 +58,7 @@ const prodConfig: Config = {
 		welcomeandrules: '734492640757678083', // use for /invite
 		zombbblobdev: '926277044487200798',
 		updaterole: '926625772595191859',
-		zombbblob: ''
+		zombbblob: '1336203561738043414'
 	}
 };
 
