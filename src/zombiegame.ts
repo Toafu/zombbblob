@@ -12,7 +12,8 @@ export async function checkInfection(message: Message, bot: Client) {
 	if (infectedWord === null) {
 		return;
 	}
-	if (message.content.toLowerCase().includes(infectedWord)) {
+	const clean_message = message.content.toLowerCase()
+	if (clean_message.length <= 140 && clean_message.includes(infectedWord)) {
 		if (!message.member.roles.cache.some((role) => role.id === Roles.InfectedZombbblob)) {
 			const infectedChannel = (await bot.channels.fetch(Channels.zombbblob)) as TextBasedChannel
 			if (!infectedChannel) {
