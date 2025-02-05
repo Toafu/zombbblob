@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 import { Config } from "./configTypes";
+import * as path from "path";
 
 const devConfig: Config = {
 	CLIENT_ID: "1276685924822024326",
@@ -9,6 +10,7 @@ const devConfig: Config = {
 	UPDATE_ROLE_MESSAGE_ID: "1325692036539744256",
 	PERMANENT_INVITE_URL: "discord.gg/ZxfHgtBZvp",
 	ZOMBBBLOB_EMOJI_ID: '1332929961300066445',
+	DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
 
 	Roles: {
 		Student: "1325692142865223732",
@@ -39,6 +41,7 @@ const prodConfig: Config = {
 	UPDATE_ROLE_MESSAGE_ID: "926654292524404817",
 	PERMANENT_INVITE_URL: "discord.gg/fnVXyhfh33",
 	ZOMBBBLOB_EMOJI_ID: "1026136422572372170",
+	DB_PATH: path.join(__dirname, "../prod_data/", "zombbblob-minigame.db"),
 
 	Roles: {
 		Student: '926186372572799037',

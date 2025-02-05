@@ -5,6 +5,7 @@ export interface Config {
 	UPDATE_ROLE_MESSAGE_ID: string;
 	PERMANENT_INVITE_URL: string;
 	ZOMBBBLOB_EMOJI_ID: string;
+	DB_PATH: string;
 
 	Roles: Roles;
 	Channels: Channels;
