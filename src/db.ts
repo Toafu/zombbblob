@@ -1,5 +1,8 @@
 import Database from 'better-sqlite3';
 
+import { ConfigHandler } from './config';
+const { DB_PATH } = ConfigHandler.getInstance().getConfig();
+
 export interface Status {
     isRunning: boolean
 };
@@ -14,7 +17,7 @@ export class WordsDatabase {
     private db: Database.Database;
 
     private constructor() {
-        this.db = new Database('zombbblob-minigame.db');
+        this.db = new Database(DB_PATH);
         
         // Create tables if they don't exist
         this.db.exec(`

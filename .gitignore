@@ -136,3 +136,4 @@ testing
 */zombbblob/*.txt
 zombbblob-minigame.db
 build/
+prod_data/
