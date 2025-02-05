@@ -2,7 +2,9 @@ services:
   bot:
     image: ghcr.io/toafdaloaf/zombbblob:latest
     restart: unless-stopped
-    environment:
-      TOKEN: ${TOKEN}
     volumes:
       - ./prod_data/:/app/prod_data/:rw
+      # bind to mount files
+      - type: bind
+        source: ./.env
+        target: /app/.env
