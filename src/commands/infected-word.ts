@@ -18,7 +18,15 @@ export const command: Command = {
 			return;
 		}
 
-		const infectedWord = WordsDatabase.getInstance().getInfectedWord();
+		const db = WordsDatabase.getInstance();
+
+		if (!db.isGameRunning()) {
+			const errorReply = await interaction.deferReply({ ephemeral: true });
+			await errorReply.edit(`The zombbblob minigame isn't running yet! Try \`/start-zombbblob\``);
+			return;
+		}
+
+		const infectedWord = db.getInfectedWord();
 		
 		if (infectedWord === null) {
 			const errorReply = await interaction.deferReply();
