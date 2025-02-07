@@ -6,6 +6,7 @@ export interface Config {
 	PERMANENT_INVITE_URL: string;
 	ZOMBBBLOB_EMOJI_ID: string;
 	DB_PATH: string;
+	PREVIOUS_COMMANDS_PATH: string;
 
 	Roles: Roles;
 	Channels: Channels;

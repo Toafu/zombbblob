@@ -3,19 +3,16 @@ require('dotenv').config()
 import { REST, Routes } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 import { ConfigHandler } from './config';
-const { CLIENT_ID, SERVER_ID } = ConfigHandler.getInstance().getConfig();
+const { CLIENT_ID, SERVER_ID, PREVIOUS_COMMANDS_PATH } = ConfigHandler.getInstance().getConfig();
 
 export const registerCommands = async function() {
-    console.log("Registering commands...");
-
     if (!process.env.TOKEN) {
         console.error("No TOKEN in ENV!");
         process.exit(1);
     }
-    
-    const restClient = new REST().setToken(process.env.TOKEN);
 
     const commandsDirectoryPath = path.join(__dirname, "commands/");
     const commandDatums = await Promise.all(fs.readdirSync(commandsDirectoryPath).map(async commandFileName => {
@@ -24,6 +21,26 @@ export const registerCommands = async function() {
         );
         return command.data.toJSON();
     }));
+
+    const currentCommandsHash = crypto
+                            .createHash('sha256')
+                            .update(
+                                JSON.stringify(
+                                    commandDatums.sort(
+                                        (dataA, dataB) => dataA.name.localeCompare(dataB.name)
+                                    )
+                                )
+                            )
+                            .digest("hex");
+
+    const previousCommandsHash = fs.existsSync(PREVIOUS_COMMANDS_PATH) ? fs.readFileSync(PREVIOUS_COMMANDS_PATH).toString() : null;
+    
+    if (currentCommandsHash === previousCommandsHash) {
+        console.log("Command registration data is up-to-date!");
+        return;
+    }
+
+    const restClient = new REST().setToken(process.env.TOKEN);
 
     console.log("Clearing old commands...");
     await restClient.put(
@@ -36,4 +53,6 @@ export const registerCommands = async function() {
         Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID),
         { body: commandDatums }
     );
+
+    fs.writeFileSync(PREVIOUS_COMMANDS_PATH, currentCommandsHash);
 }
