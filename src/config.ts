@@ -33,7 +33,8 @@ const devConfig: Config = {
 		updaterole: "1325692003471589387",
 		zombbblob: "1331472882236133439", // Can change,
 		zombbblob_trolling: "1337257408891850783",
-		staff_bot_commands: "1337258485305577535"
+		staff_bot_commands: "1337258485305577535",
+		category_above_newest_semester: "1325691669240086599"
 	}
 };
 
@@ -67,7 +68,8 @@ const prodConfig: Config = {
 		updaterole: '926625772595191859',
 		zombbblob: '1336203561738043414',
 		zombbblob_trolling: '1031779068116467775',
-		staff_bot_commands: '749407788156846162'
+		staff_bot_commands: '749407788156846162',
+		category_above_newest_semester: '1076598856634085446'
 	}
 };
 
