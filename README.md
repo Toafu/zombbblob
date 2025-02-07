@@ -15,15 +15,31 @@
 
 ulgut and slime are working on a verification feature  
 
-## Deploy
+## Development
+
+0. Install Node.js
+1. Clone the repo
+2. run `npm install`
+3. Create a file named `.env` in the project directory
+4. Define `TOKEN` with a discord bot token (e.g. `TOKEN=abcdef`)
+5. Start the bot
+
+    a. `npm start` to start regularly
+    
+    b. `npm run withoutRegistering` if you don't want to register changes to commands
+
+## Production (Linux Only)
 
 0. Install Docker and Docker Compose
 1. Clone the repo
-2. Create a file named `.env` in the project directory
-3. Define `TOKEN` with a discord bot token (e.g. `TOKEN=abcdef`)
-
-    a. If you want to run in production mode, also define `PROD`. The value of the variable does not matter.
-4. Run the following command:
+2. Create a folder named `prod_data` owned by UID 1001 (our docker user)
+    ```bash
+    mkdir prod_data/ && chown -R 1001:1001 prod_data/
+    ```
+3. Create a file named `.env` in the project directory
+4. Define `TOKEN` with a discord bot token (e.g. `TOKEN=abcdef`)
+5. Define `PROD`. The value of the variable does not matter.
+6. Run the following command:
     ```bash
     docker compose up -d
     ```
