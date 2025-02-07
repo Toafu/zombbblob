@@ -33,7 +33,7 @@ export const command: Command = {
 		await categoryChannel.setPosition(4); //Staff-Only Channels is at Position 0
 
 		const publicChannelNames = ['general', 'labs', 'random'];
-		const privateChannelNames = ['project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
+		const privateChannelNames = ['project-0', 'project-1', 'project-2', 'project-3', 'project-4', 'midterm-exam', 'final-exam'];
 		
 		// Create the public channels normally
 		for (const channelName of publicChannelNames) {
