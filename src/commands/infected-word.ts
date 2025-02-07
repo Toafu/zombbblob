@@ -22,7 +22,7 @@ export const command: Command = {
 
 		if (!db.isGameRunning()) {
 			const errorReply = await interaction.deferReply({ ephemeral: true });
-			await errorReply.edit(`The zombbblob minigame isn't running yet! Try \`/start-zombbblob\``);
+			await errorReply.edit(`The zombbblob minigame isn't currently running!`);
 			return;
 		}
 

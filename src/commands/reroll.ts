@@ -22,7 +22,7 @@ export const command: Command = {
 
 		if (!db.isGameRunning()) {
 			const errorReply = await interaction.deferReply({ ephemeral: true });
-			await errorReply.edit(`The zombbblob minigame isn't running yet! Try \`/start-zombbblob\``);
+			await errorReply.edit(`The zombbblob minigame isn't currently running!`);
 			return;
 		}
 
@@ -40,7 +40,7 @@ export const command: Command = {
 
 		const word = db.infectRandomWord();
 		if (word === null) {
-			const errorReply = await interaction.deferReply({ ephemeral: true });
+			const errorReply = await interaction.deferReply();
 			await errorReply.edit(`I was unable to infect a word! <@${MAINTAINER_ID}> pls fix`);
 			return;
 		}
