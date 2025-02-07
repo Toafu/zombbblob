@@ -1,6 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../command";
 
+import { ConfigHandler } from "../config";
+const { Channels } = ConfigHandler.getInstance().getConfig();
+
 //There should be a command to make PotatoBot send custom messages, but only accessible by staff in the staff chat
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -15,6 +18,7 @@ export const command: Command = {
 			.setRequired(true))	
 		.setDescription('sends a message as the bot in the specified channel'),
 	init: () => {},
+	permittedChannelIDs: [Channels.zombbblob_trolling, Channels.staff_bot_commands],
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const targetChannel = interaction.options.getChannel('channel', true);
 		if (!(targetChannel instanceof TextChannel)) {

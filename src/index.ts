@@ -437,6 +437,13 @@ client.on("interactionCreate", async (interaction) => {
 		return;
 	}
 
+	if (command.permittedChannelIDs && !command.permittedChannelIDs.some(channelID => channelID == interaction.channelId)) {
+		await interaction.reply({
+			content: `This command can only be used in the following channels:\n${command.permittedChannelIDs.map(channelID => `<#${channelID}>`).join('\n')}`
+		})
+		return;
+	}
+
 	return command.execute(interaction);
 });
 

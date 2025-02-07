@@ -5,4 +5,5 @@ export type Command = {
     init: (client: Client<boolean>) => Promise<void> | void,
     execute: (interaction: ChatInputCommandInteraction) => Promise<void>,
     authorizedRoleIDs?: Array<Snowflake>,
+    permittedChannelIDs?: Array<Snowflake>
 }

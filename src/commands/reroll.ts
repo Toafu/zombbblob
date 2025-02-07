@@ -3,7 +3,7 @@ import { Command } from "../command";
 
 import { WordsDatabase } from "../db";
 import { ConfigHandler } from '../config';
-const { MAINTAINER_ID, Roles } = ConfigHandler.getInstance().getConfig();
+const { MAINTAINER_ID, Roles, Channels } = ConfigHandler.getInstance().getConfig();
 
 const HOUR = 60 * 60 * 1000;
 
@@ -12,6 +12,7 @@ export const command: Command = {
 		.setName('reroll')
 		.setDescription('changes the infected word'),
 	init: () => {},
+	permittedChannelIDs: [Channels.zombbblob],
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		if (interaction.guild === null) {
 			return;
