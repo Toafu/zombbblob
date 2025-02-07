@@ -4,7 +4,7 @@ import { Command } from "../command";
 import { WordsDatabase } from "../db";
 
 import { ConfigHandler } from "../config";
-const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
+const { MAINTAINER_ID, Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -18,7 +18,15 @@ export const command: Command = {
 			return;
 		}
 
+		const infectedWord = WordsDatabase.getInstance().getInfectedWord();
+		
+		if (infectedWord === null) {
+			const errorReply = await interaction.deferReply();
+			await errorReply.edit(`I was unable to get the infected word! <@${MAINTAINER_ID}> pls fix`);
+			return;
+		}
+
 		const deferredReply = await interaction.deferReply();
-		await deferredReply.edit(`The infected word is \`${WordsDatabase.getInstance().getInfectedWord()}\``);
+		await deferredReply.edit(`The infected word is \`${infectedWord}\``);
 	}
 };
