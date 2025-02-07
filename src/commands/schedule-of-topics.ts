@@ -10,6 +10,7 @@ export const command: Command = {
 		if (interaction.guild === null) {
 			return;
 		}
-		interaction.reply("[Here's the schedule of topics!](https://docs.google.com/spreadsheets/d/1WB25XRF0XTL5HOgDNSinp4cHZN_pxxpetD_qj-PboqQ)");
+		
+		await interaction.reply("[Here's the schedule of topics!](https://docs.google.com/spreadsheets/d/1WB25XRF0XTL5HOgDNSinp4cHZN_pxxpetD_qj-PboqQ)");
 	}
 };
