@@ -2,6 +2,9 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 import { parseMessageLink } from "../utils";
 
+import { ConfigHandler } from "../config";
+const { Channels } = ConfigHandler.getInstance().getConfig();
+
 export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName('reply')
@@ -15,6 +18,7 @@ export const command: Command = {
 			.setRequired(true))	
 		.setDescription('replies to a message as the bot'),
 	init: () => {},
+	permittedChannelIDs: [Channels.zombbblob_trolling, Channels.staff_bot_commands],
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		if (interaction.guild === null) {
 			return;

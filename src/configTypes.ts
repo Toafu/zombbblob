@@ -30,4 +30,6 @@ interface Channels {
 	zombbblobdev: string;
 	updaterole: string;
 	zombbblob: string;
+	zombbblob_trolling: string;
+	staff_bot_commands: string;
 };

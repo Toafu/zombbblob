@@ -30,7 +30,9 @@ const devConfig: Config = {
 		welcomeandrules: "1325692579651518464", // use for /invite
 		zombbblobdev: "1325692710828511302",
 		updaterole: "1325692003471589387",
-		zombbblob: "1331472882236133439" // Can change
+		zombbblob: "1331472882236133439", // Can change,
+		zombbblob_trolling: "1337257408891850783",
+		staff_bot_commands: "1337258485305577535"
 	}
 };
 
@@ -61,7 +63,9 @@ const prodConfig: Config = {
 		welcomeandrules: '734492640757678083', // use for /invite
 		zombbblobdev: '926277044487200798',
 		updaterole: '926625772595191859',
-		zombbblob: '1336203561738043414'
+		zombbblob: '1336203561738043414',
+		zombbblob_trolling: '1031779068116467775',
+		staff_bot_commands: '749407788156846162'
 	}
 };
 
