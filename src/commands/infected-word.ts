@@ -19,9 +19,6 @@ export const command: Command = {
 		}
 
 		const deferredReply = await interaction.deferReply();
-
-		const db = WordsDatabase.getInstance();
-		const infectedWord = db.getInfectedWord();
-		await deferredReply.edit(`The infected word is \`${infectedWord}\``);
+		await deferredReply.edit(`The infected word is \`${WordsDatabase.getInstance().getInfectedWord()}\``);
 	}
 };
