@@ -27,7 +27,7 @@ export const command: Command = {
 		}
 
 		await targetChannel.send(interaction.options.getString('message', true))
-			.then(_ => interaction.reply(`Message sent in <#${targetChannel.id}>`))
+			.then(message => interaction.reply(`Message sent! ${message.url}`))
 			.catch(_ => interaction.reply("Failed to send message in that channel (I probably don't have permissions)."));
 	}
 };
