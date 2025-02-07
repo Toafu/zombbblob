@@ -1,10 +1,12 @@
+import { Snowflake } from "discord.js";
+
 export interface Config {
-	CLIENT_ID: string;
-	SERVER_ID: string;
-	MAINTAINER_ID: string;
-	UPDATE_ROLE_MESSAGE_ID: string;
+	CLIENT_ID: Snowflake;
+	SERVER_ID: Snowflake;
+	MAINTAINER_ID: Snowflake;
+	UPDATE_ROLE_MESSAGE_ID: Snowflake;
 	PERMANENT_INVITE_URL: string;
-	ZOMBBBLOB_EMOJI_ID: string;
+	ZOMBBBLOB_EMOJI_ID: Snowflake;
 	DB_PATH: string;
 	PREVIOUS_COMMANDS_PATH: string;
 
@@ -13,24 +15,24 @@ export interface Config {
 };
 
 interface Roles {
-	Student: string;
-	StudentAlumni: string;
-	Staff: string;
-	InfectedZombbblob: string; // This one can change
-	LightMode: string;
-	DarkMode: string;
-	GalacticNews: string;
+	Student: Snowflake;
+	StudentAlumni: Snowflake;
+	Staff: Snowflake;
+	InfectedZombbblob: Snowflake; // This one can change
+	LightMode: Snowflake;
+	DarkMode: Snowflake;
+	GalacticNews: Snowflake;
 };
 
 interface Channels {
-	pianogang: string;
-	oldtimers: string;
-	smallstudyrooms: string;
-	serverlog: string;
-	welcomeandrules: string; // use for /invite
-	zombbblobdev: string;
-	updaterole: string;
-	zombbblob: string;
-	zombbblob_trolling: string;
-	staff_bot_commands: string;
+	pianogang: Snowflake;
+	oldtimers: Snowflake;
+	smallstudyrooms: Snowflake;
+	serverlog: Snowflake;
+	welcomeandrules: Snowflake; // use for /invite
+	zombbblobdev: Snowflake;
+	updaterole: Snowflake;
+	zombbblob: Snowflake;
+	zombbblob_trolling: Snowflake;
+	staff_bot_commands: Snowflake;
 };
