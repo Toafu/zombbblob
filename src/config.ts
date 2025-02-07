@@ -11,6 +11,7 @@ const devConfig: Config = {
 	PERMANENT_INVITE_URL: "discord.gg/ZxfHgtBZvp",
 	ZOMBBBLOB_EMOJI_ID: '1332929961300066445',
 	DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
+	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../", "previousCommands.hash"),
 
 	Roles: {
 		Student: "1325692142865223732",
@@ -44,6 +45,7 @@ const prodConfig: Config = {
 	PERMANENT_INVITE_URL: "discord.gg/fnVXyhfh33",
 	ZOMBBBLOB_EMOJI_ID: "1026136422572372170",
 	DB_PATH: path.join(__dirname, "../prod_data/", "zombbblob-minigame.db"),
+	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../prod_data/", "previousCommands.hash"),
 
 	Roles: {
 		Student: '926186372572799037',
