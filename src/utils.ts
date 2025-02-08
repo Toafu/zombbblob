@@ -42,3 +42,6 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 		messageID: messageLinkParts[3]
 	}];
 }
+
+// Any character that is not a punctuation, symbol, number, or letter (in any language)
+export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
