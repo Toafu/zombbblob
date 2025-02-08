@@ -37,7 +37,7 @@ type RecentMessage = {
 	author: Snowflake;
 	time: number;
 };
-let recentMessages: RecentMessage[] = [];
+const recentMessages: RecentMessage[] = [];
 
 function preprocessMessageForSpam(messageContent: String) {
 	return messageContent.toLowerCase().replace(/\s/g, "");
