@@ -1,5 +1,6 @@
 services:
-  bot:
+  zombbblob:
+    container_name: zombbblob
     image: ghcr.io/toafu/zombbblob:latest
     restart: unless-stopped
     volumes:
@@ -8,3 +9,11 @@ services:
       - type: bind
         source: ./.env
         target: /app/.env
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    environment:
+      - WATCHTOWER_CLEANUP=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 60 zombbblob
