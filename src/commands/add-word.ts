@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
 import { WordsDatabase } from "../db";
+import { INVALID_ZOMBBBLOB_WORD_REGEX } from "../utils";
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -19,8 +20,8 @@ export const command: Command = {
 
 		const word = interaction.options.getString('word', true);
 
-		if (/\s/.test(word)) { // If word contains whitespace, throw
-			await interaction.reply(`The word should not have whitespace! \`${word}\``);
+		if (INVALID_ZOMBBBLOB_WORD_REGEX.test(word)) {
+			await interaction.reply(`That word has an invalid character! \`${word}\``);
 			return;
 		}
 
