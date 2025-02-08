@@ -17,14 +17,12 @@ export const command: Command = {
 			return;
 		}
 
-		const deferredReply = await interaction.deferReply();
-
 		const word = interaction.options.getString('word', true);
 		const success = WordsDatabase.getInstance().removeWord(word);
 		if (success) {
-			await deferredReply.edit(`Successfully deleted \`${word}\` from the zombbblob minigame`);
+			await interaction.reply(`Successfully deleted \`${word}\` from the zombbblob minigame`);
 		} else {
-			await deferredReply.edit(`Unable to delete \`${word}\` from the zombbblob minigame (the word doesn't exist or is currently infected)`);
+			await interaction.reply(`Unable to delete \`${word}\` from the zombbblob minigame (the word doesn't exist or is currently infected)`);
 		}
 	}
 };

@@ -17,16 +17,14 @@ export const command: Command = {
 			return;
 		}
 
-		const deferredReply = await interaction.deferReply();
-
 		const word = interaction.options.getString('word', true);
 
 		if (/\s/.test(word)) { // If word contains whitespace, throw
-			await deferredReply.edit(`The word should not have whitespace! \`${word}\``);
+			await interaction.reply(`The word should not have whitespace! \`${word}\``);
 			return;
 		}
 
 		WordsDatabase.getInstance().insertWord(word);
-		await deferredReply.edit(`Successfully added \`${word}\` to the zombbblob minigame`);
+		await interaction.reply(`Successfully added \`${word}\` to the zombbblob minigame`);
 	}
 };
