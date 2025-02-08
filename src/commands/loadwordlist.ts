@@ -49,7 +49,7 @@ export const command: Command = {
 				await deferredReply.edit(`Words in the file should not have whitespace! \`${word}\``);
 				return;
 			}
-			db.insertWord(word, false);
+			db.insertWord(word);
 		}
 		await deferredReply.edit(`Added ${words.length} infected words.`)
 	},

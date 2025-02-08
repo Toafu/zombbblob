@@ -46,13 +46,26 @@ export class WordsDatabase {
         return WordsDatabase.instance;
     }
 
-    public clearWords(): void {
-        this.db.prepare('DELETE FROM words').run();
+    public insertWord(word: string): void {
+        const statement = this.db.prepare('INSERT OR REPLACE INTO words (word, infected) VALUES (?, false)');
+        statement.run(word);
+    }
+    
+    // Remove the word from DB unless it's infected
+    // Returns boolean representing successful delete
+    public removeWord(word: string): boolean {
+        const checkInfectStatement = this.db.prepare('SELECT infected from words WHERE word = ?')
+        const isWordInfected = checkInfectStatement.get(word) as { infected: boolean } | undefined;
+        if (isWordInfected || isWordInfected === undefined) {
+            return false;
+        }
+        const statement = this.db.prepare('DELETE FROM words WHERE word = ?');
+        statement.run(word);
+        return true;
     }
 
-    public insertWord(word: string, infected: boolean): void {
-        const statement = this.db.prepare('INSERT OR REPLACE INTO words (word, infected) VALUES (?, ?)');
-        statement.run(word, infected ? 1 : 0);
+    public clearWords(): void {
+        this.db.prepare('DELETE FROM words').run();
     }
 
     public getAllWords(): Array<{ word: string; infected: boolean }> {
