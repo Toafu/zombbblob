@@ -438,9 +438,11 @@ client.on("interactionCreate", async (interaction) => {
 	}
 
 	if (command.permittedChannelIDs && !command.permittedChannelIDs.some(channelID => channelID == interaction.channelId)) {
+		const plurality = command.permittedChannelIDs.length != 1;
+		const channels = command.permittedChannelIDs.map(channelID => `<#${channelID}>`).join('\n');
 		await interaction.reply({
-			content: `This command can only be used in the following channels:\n${command.permittedChannelIDs.map(channelID => `<#${channelID}>`).join('\n')}`
-		})
+			content: `This command can only be used in ${plurality ? 'the following channels: ' : ''}${channels}`
+		});
 		return;
 	}
 
