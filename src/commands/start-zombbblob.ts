@@ -13,10 +13,8 @@ export const command: Command = {
 			return;
 		}
 
-		const deferredReply = await interaction.deferReply();
-
 		WordsDatabase.getInstance().setGameRunning(true);
 
-		await deferredReply.edit(`Started zombbblob minigame.`)
+		await interaction.reply(`Started zombbblob minigame.`)
 	}
 };
