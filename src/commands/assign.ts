@@ -32,7 +32,7 @@ export const command: Command = {
 		const interactionMember = await interaction.guild.members.fetch(interaction.user.id);
 		
 		if (targetRole.comparePositionTo(interactionMember.roles.highest) > 0 && !interactionMember.permissions.has(PermissionsBitField.Flags.Administrator)) {
-			await interaction.reply(`<:blobdisapproval:1039016273343951009> You cannot assign a role that is higher than your highest role (Administrators can bypass).`);
+			await interaction.reply("<:blobdisapproval:1039016273343951009> You cannot assign a role that is higher than your highest role (Administrators can bypass).");
 			return;
 		}
 
