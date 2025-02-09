@@ -21,8 +21,7 @@ export const command: Command = {
 		const db = WordsDatabase.getInstance()
 
 		if (!db.isGameRunning()) {
-			const errorReply = await interaction.deferReply({ ephemeral: true });
-			await errorReply.edit(`The zombbblob minigame isn't currently running!`);
+			await interaction.reply({content: `The zombbblob minigame isn't currently running!`, ephemeral: true});
 			return;
 		}
 
@@ -31,21 +30,21 @@ export const command: Command = {
 			const now = Date.now();
 			const timeDiff = now - lastInfected.getTime();
 			if (timeDiff < HOUR) {
-				const errorReply = await interaction.deferReply({ ephemeral: true });
-				await errorReply.edit(`Reroll is currently on cooldown. ` +
-								      `The cooldown will end on a new infection or <t:${Math.floor(((now + HOUR) - timeDiff) / 1000)}:R>`);
+				await interaction.reply({
+					content: `Reroll is currently on cooldown. ` +
+						`The cooldown will end on a new infection or <t:${Math.floor(((now + HOUR) - timeDiff) / 1000)}:R>`,
+					ephemeral: true
+				});
 				return;
 			}
 		}
 
 		const word = db.infectRandomWord();
 		if (word === null) {
-			const errorReply = await interaction.deferReply();
-			await errorReply.edit(`I was unable to infect a word! <@${MAINTAINER_ID}> pls fix`);
+			await interaction.reply(`I was unable to infect a word! <@${MAINTAINER_ID}> pls fix`);
 			return;
 		}
 		db.setLastInfected(new Date());
-		const deferredReply = await interaction.deferReply();
-		await deferredReply.edit(`The new infected word is \`${word}\``)
+		await interaction.reply(`The new infected word is \`${word}\``);
 	},
 };

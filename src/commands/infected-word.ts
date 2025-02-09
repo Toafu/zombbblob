@@ -21,20 +21,17 @@ export const command: Command = {
 		const db = WordsDatabase.getInstance();
 
 		if (!db.isGameRunning()) {
-			const errorReply = await interaction.deferReply({ ephemeral: true });
-			await errorReply.edit(`The zombbblob minigame isn't currently running!`);
+			await interaction.reply({content: `The zombbblob minigame isn't currently running!`, ephemeral: true});
 			return;
 		}
 
 		const infectedWord = db.getInfectedWord();
 		
 		if (infectedWord === null) {
-			const errorReply = await interaction.deferReply();
-			await errorReply.edit(`I was unable to get the infected word! <@${MAINTAINER_ID}> pls fix`);
+			await interaction.reply(`I was unable to get the infected word! <@${MAINTAINER_ID}> pls fix`);
 			return;
 		}
 
-		const deferredReply = await interaction.deferReply();
-		await deferredReply.edit(`The infected word is \`${infectedWord}\``);
+		await interaction.reply(`The infected word is \`${infectedWord}\``);
 	}
 };
