@@ -15,6 +15,6 @@ export const command: Command = {
 
 		WordsDatabase.getInstance().setGameRunning(true);
 
-		await interaction.reply(`Started zombbblob minigame.`)
+		await interaction.reply("Started zombbblob minigame.")
 	}
 };
