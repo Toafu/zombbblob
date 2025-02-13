@@ -18,7 +18,7 @@ export class WordsDatabase {
 
     private constructor() {
         this.db = new Database(DB_PATH);
-        
+
         // Create tables if they don't exist
         this.db.exec(`
             CREATE TABLE IF NOT EXISTS words (
@@ -35,7 +35,9 @@ export class WordsDatabase {
         // Initialize status if empty
         const status = this.db.prepare('SELECT * FROM status LIMIT 1').get();
         if (!status) {
-            this.db.prepare('INSERT INTO status (isRunning, lastInfectedUNIXSeconds) VALUES (?, ?)').run(0, 'NULL');
+            this.db
+                .prepare('INSERT INTO status (isRunning, lastInfectedUNIXSeconds) VALUES (?, ?)')
+                .run(0, 'NULL');
         }
     }
 
@@ -49,7 +51,7 @@ export class WordsDatabase {
     public insertWord(word: string): void {
         this.db.prepare('INSERT OR REPLACE INTO words (word, infected) VALUES (?, 0)').run(word);
     }
-    
+
     // Remove the word from DB unless it's infected
     // Returns boolean representing successful delete
     public removeWord(word: string): boolean {
@@ -66,8 +68,9 @@ export class WordsDatabase {
     }
 
     public infectRandomWord(): string | null {
-        const selectStatement = this.db.prepare('SELECT word FROM words ORDER BY RANDOM() LIMIT 1');
-        const result = selectStatement.get() as { word: string };
+        const result = this.db
+            .prepare('SELECT word FROM words ORDER BY RANDOM() LIMIT 1')
+            .get() as { word: string };
         if (!result) {
             return null;
         }
@@ -77,8 +80,9 @@ export class WordsDatabase {
     }
 
     public getInfectedWord(): string | null {
-        const stmt = this.db.prepare('SELECT word FROM words WHERE infected = 1');
-        const result = stmt.get() as { word: string } | undefined;
+        const result = this.db
+            .prepare('SELECT word FROM words WHERE infected = 1')
+            .get() as { word: string } | undefined;
         return result === undefined ? null : result.word;
     }
 
@@ -87,13 +91,16 @@ export class WordsDatabase {
     }
 
     public isGameRunning(): boolean {
-        const statement = this.db.prepare('SELECT isRunning FROM status LIMIT 1');
-        const result = statement.get() as { isRunning: boolean };
+        const result = this.db
+            .prepare('SELECT isRunning FROM status LIMIT 1')
+            .get() as { isRunning: boolean };
         return result?.isRunning ?? false;
     }
 
     public getLastInfected(): Date | null {
-        const result = this.db.prepare('SELECT lastInfectedUNIXSeconds FROM status LIMIT 1').get() as { lastInfectedUNIXSeconds: number | null };
+        const result = this.db
+            .prepare('SELECT lastInfectedUNIXSeconds FROM status LIMIT 1')
+            .get() as { lastInfectedUNIXSeconds: number | null };
         if (!result.lastInfectedUNIXSeconds) {
             return null;
         }
@@ -101,7 +108,8 @@ export class WordsDatabase {
     }
 
     private _setLastInfected(d: Date | null): void {
-        this.db.prepare('UPDATE status set lastInfectedUNIXSeconds = ?').run(d === null ? 'NULL' : Math.floor(d.getTime() / 1000));
+        this.db.prepare('UPDATE status set lastInfectedUNIXSeconds = ?')
+            .run(d === null ? 'NULL' : Math.floor(d.getTime() / 1000));
     }
 
     public setLastInfected(d: Date): void {
