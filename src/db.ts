@@ -47,8 +47,7 @@ export class WordsDatabase {
     }
 
     public insertWord(word: string): void {
-        const statement = this.db.prepare('INSERT OR REPLACE INTO words (word, infected) VALUES (?, 0)');
-        statement.run(word);
+        this.db.prepare('INSERT OR REPLACE INTO words (word, infected) VALUES (?, 0)').run(word);
     }
     
     // Remove the word from DB unless it's infected
@@ -72,23 +71,19 @@ export class WordsDatabase {
         if (!result) {
             return null;
         }
-        const resetInfectstatement = this.db.prepare('UPDATE words SET infected = 0 WHERE infected = 1');
-        resetInfectstatement.run();
-        const infectWordStatement = this.db.prepare('UPDATE words SET infected = 1 WHERE word = ?');
-        infectWordStatement.run(result.word);
+        this.db.prepare('UPDATE words SET infected = 0 WHERE infected = 1').run();
+        this.db.prepare('UPDATE words SET infected = 1 WHERE word = ?').run(result.word);
         return result.word;
     }
 
     public getInfectedWord(): string | null {
         const stmt = this.db.prepare('SELECT word FROM words WHERE infected = 1');
         const result = stmt.get() as { word: string } | undefined;
-
         return result === undefined ? null : result.word;
     }
 
     public setGameRunning(isRunning: boolean): void {
-        const statement = this.db.prepare('UPDATE status SET isRunning = ?');
-        statement.run(isRunning ? 1 : 0);
+        this.db.prepare('UPDATE status SET isRunning = ?').run(isRunning ? 1 : 0);
     }
 
     public isGameRunning(): boolean {
