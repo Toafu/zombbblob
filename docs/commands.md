@@ -1,15 +1,6 @@
 # zombbblob Commands Documentation
 
-## Administrative Commands
-
-### `/alumnize <start_date:String> <end_date:String>`
-Assigns students who joined between the specified dates with the Student Alumni role.
-- `start_date`: Date in YYYY-MM-DD format when students started joining
-- `end_date`: Date in YYYY-MM-DD format when students stopped joining
-
-### `/archive <semester:String>`
-Archives the requested channel category by renaming, disabling messages, and locking permissions.
-- `semester`: Semester code, starts with F/S/W followed by last two digits of year (e.g. F22, S23, W23)
+## Moderation and User Management
 
 ### `/assign <user:User> <role:Role>`
 Assigns a specified role to a user. Staff cannot assign roles higher than their own (Admins bypass).
@@ -28,6 +19,15 @@ Times out a user for the specified duration.
 - `reason` (Optional): Reason for the timeout
 
 ## Server Management
+
+### `/alumnize <start_date:String> <end_date:String>`
+Assigns students who joined between the specified dates with the Student Alumni role.
+- `start_date`: Date in YYYY-MM-DD format when students started joining
+- `end_date`: Date in YYYY-MM-DD format when students stopped joining
+
+### `/archive <semester:String>`
+Archives the requested channel category by renaming, disabling messages, and removing communication permissions from the Student role.
+- `semester`: Semester code, starts with F/S/W followed by last two digits of year (e.g. F22, S23, W23)
 
 ### `/create <semester:String>`
 Creates a category and channels for a new semester.
@@ -60,7 +60,7 @@ Loads words from a text file. Game must not be running.
 ### `/infected-word`
 Shows current infected word during active game.
 
-## Message Management
+## Being the Bot
 
 ### `/send <channel:TextChannel> <message:String>`
 Sends a message as the bot in specified channel.
