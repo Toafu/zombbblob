@@ -26,7 +26,7 @@ Assigns students who joined between the specified dates with the Student Alumni 
 - `end_date`: Date in YYYY-MM-DD format when students stopped joining
 
 ### `/archive <semester:String>`
-Archives the requested channel category by renaming, disabling messages, and removing communication permissions from the Student role.
+Archives the requested channel category by moving it down the channel list and disabling future messages from being sent.
 - `semester`: Semester code, starts with F/S/W followed by last two digits of year (e.g. F22, S23, W23)
 
 ### `/create <semester:String>`
