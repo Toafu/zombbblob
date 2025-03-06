@@ -15,21 +15,21 @@ export const command: Command = {
 			return;
 		}
 
+		const deferredReply = await interaction.deferReply({ephemeral: true});
+
 		const studentRole = await interaction.guild.roles.fetch(Roles.Student);
 		if (studentRole === null) {
-			await interaction.reply("Could not fetch Student role");
+			await deferredReply.edit("Could not fetch Student role");
 			return;
 		}
 
 		const examLockedRole = await interaction.guild.roles.fetch(Roles.ExamLocked);
 		if (examLockedRole === null) {
-			await interaction.reply("Could not fetch Exam Locked role");
+			await deferredReply.edit("Could not fetch Exam Locked role");
 			return;
 		}
 
 		await examLockedRole.setName(EXAM_LOCK_ENABLED_ROLE_NAME);
-
-		const deferredReply = await interaction.deferReply({ephemeral: true});
 
 		for (const student of studentRole.members.values()) {
 			try {
