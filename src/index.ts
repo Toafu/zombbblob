@@ -223,7 +223,7 @@ client.on("ready", async () => {
 		process.exit(1);
 	}
 
-	if (!zombbblobDevChannel.isTextBased()) {
+	if (!zombbblobDevChannel.isSendable()) {
 		console.error("Startup channel is not a text channel!");
 		process.exit(1);
 	}
@@ -231,7 +231,7 @@ client.on("ready", async () => {
 	await zombbblobDevChannel.send(`I have risen again. ${zombbblobEmote}`);
 
 	const infectedChannel = guild.channels.cache.get(Channels.zombbblob);
-	if (!infectedChannel?.isTextBased()) {
+	if (!infectedChannel?.isSendable()) {
 		console.error("Infected channel is not a text channel!");
 		process.exit(1);
 	}
@@ -270,7 +270,7 @@ client.on("messageCreate", async (message) => {
 			process.exit(1);
 		}
 
-		if (!serverLogChannel.isTextBased()) {
+		if (!serverLogChannel.isSendable()) {
 			console.error("Server log channel is not a text channel!");
 			return;
 		}

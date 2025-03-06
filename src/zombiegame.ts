@@ -1,4 +1,4 @@
-import { Message, TextBasedChannel, Client } from 'discord.js';
+import { Message, Client, SendableChannels } from 'discord.js';
 import { ConfigHandler } from "./config";
 const { Roles, Channels, ZOMBBBLOB_EMOJI_ID } = ConfigHandler.getInstance().getConfig()
 import { WordsDatabase } from './db';
@@ -15,7 +15,7 @@ export async function checkInfection(message: Message, bot: Client) {
 	const clean_message = message.content.toLowerCase()
 	if (clean_message.length <= 140 && clean_message.includes(infectedWord)) {
 		if (!message.member.roles.cache.some((role) => role.id === Roles.InfectedZombbblob)) {
-			const infectedChannel = (await bot.channels.fetch(Channels.zombbblob)) as TextBasedChannel
+			const infectedChannel = (await bot.channels.fetch(Channels.zombbblob)) as SendableChannels
 			if (!infectedChannel) {
 				console.log("Unable to find infected channel")
 				return;

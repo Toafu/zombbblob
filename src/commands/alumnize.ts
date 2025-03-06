@@ -83,7 +83,7 @@ export const command: Command = {
 		checkAlumnize();
 	},
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		if (interaction.guild === null || interaction.channel === null) {
+		if (interaction.guild === null || interaction.channel === null || !interaction.channel.isSendable()) {
 			return;
 		}
 
