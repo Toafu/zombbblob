@@ -15,7 +15,7 @@ export const command: Command = {
 			return;
 		}
 
-		const studentRole = await interaction.guild.roles.fetch(Roles.Student, {force: true});
+		const studentRole = await interaction.guild.roles.fetch(Roles.Student);
 		if (studentRole === null) {
 			await interaction.reply("Could not fetch Student role");
 			return;
