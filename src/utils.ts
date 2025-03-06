@@ -50,10 +50,7 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
 
 export const addLockRollPermsToChannel = (
-	channel: Exclude<
-				GuildBasedChannel, 
-				PrivateThreadChannel | PublicThreadChannel
-			>
+	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>
 ) => channel.permissionOverwrites.create(Roles.ExamLocked, {
 		SendMessages: false,
 		SendMessagesInThreads: false,
