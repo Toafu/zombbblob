@@ -106,6 +106,7 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildPresences
 	],
 	partials: [Partials.Channel, Partials.Message, Partials.Reaction],
 });
