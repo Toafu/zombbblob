@@ -22,6 +22,7 @@ interface Roles {
 	LightMode: Snowflake;
 	DarkMode: Snowflake;
 	GalacticNews: Snowflake;
+	ExamLocked: Snowflake;
 };
 
 interface Channels {

@@ -11,7 +11,7 @@ import {
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-import { MEE6_ID } from "./utils";
+import { addLockRollPermsToChannel, EXAM_LOCK_ENABLED_ROLE_NAME, MEE6_ID } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./zombiegame";
@@ -447,6 +447,29 @@ client.on("interactionCreate", async (interaction) => {
 	}
 
 	return command.execute(interaction);
+});
+
+client.on("channelCreate", async (channel) => {
+	if (channel.guild === null) {
+		return;
+	}
+
+	await addLockRollPermsToChannel(channel);
+});
+
+client.on("guildMemberUpdate", async (oldMember, newMember) => {
+	if (oldMember.roles.resolve(Roles.Student) && !newMember.roles.resolve(Roles.Student)) {
+		await newMember.roles.remove(Roles.ExamLocked);
+	}
+
+	if (!oldMember.roles.resolve(Roles.Student) && newMember.roles.resolve(Roles.Student)) {
+		const examLockedRole = await oldMember.guild.roles.fetch(Roles.ExamLocked);
+		if (examLockedRole === null || examLockedRole.name != EXAM_LOCK_ENABLED_ROLE_NAME) {
+			return;
+		}
+
+		await newMember.roles.add(Roles.ExamLocked);
+	}
 });
 
 (async function () {

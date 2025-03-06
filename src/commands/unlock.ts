@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { communicationsPermissions } from '../utils';
+import { EXAM_LOCK_DISABLED_ROLE_NAME } from '../utils';
 import { Command } from '../command';
 
 import { ConfigHandler } from "../config";
@@ -21,10 +21,26 @@ export const command: Command = {
 			return;
 		}
 
-		const resultMessage = await studentRole.setPermissions(studentRole.permissions.add(communicationsPermissions))
-			.then(() => "Server unlocked to the Student role")
-			.catch(() => "Unable to add permissions to Student");
+		const examLockedRole = await interaction.guild.roles.fetch(Roles.ExamLocked);
+		if (examLockedRole === null) {
+			await interaction.reply("Could not fetch Exam Locked role");
+			return;
+		}
 
-		await interaction.reply(resultMessage);
+		await examLockedRole.setName(EXAM_LOCK_DISABLED_ROLE_NAME);
+
+		const deferredReply = await interaction.deferReply({ephemeral: true});
+
+		for (const student of studentRole.members.values()) {
+			try {
+				await student.roles.remove(Roles.ExamLocked);
+			} catch (e) {
+				console.error(e);
+				await deferredReply.edit(`Failed to give Exam Locked role to <@${student.id}>... Terminating...`);
+				return;
+			}
+		}
+
+		await deferredReply.edit("Server unlocked!");
 	}
 };

@@ -20,7 +20,8 @@ const devConfig: Config = {
 		InfectedZombbblob: "1325692190512644117", // This one can change
 		LightMode: "1325692192613994600",
 		DarkMode: "1325692206748532799",
-		GalacticNews: "1325692269164236831"
+		GalacticNews: "1325692269164236831",
+		ExamLocked: "1347332952773623910"
 	},
 
 	Channels: {
@@ -55,7 +56,8 @@ const prodConfig: Config = {
 		InfectedZombbblob: '1336203447900569650', // This one can change
 		LightMode: '1065432702431526932',
 		DarkMode: '1065432906111135784',
-		GalacticNews: '1068940763792158720'
+		GalacticNews: '1068940763792158720',
+		ExamLocked: '1347341885974249472'
 	},
 
 	Channels: {

@@ -1,4 +1,7 @@
-import { PermissionsBitField, Snowflake } from 'discord.js';
+import { GuildBasedChannel, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Snowflake } from 'discord.js';
+
+import { ConfigHandler } from "./config";
+const { Roles } = ConfigHandler.getInstance().getConfig();
 
 export const MEE6_ID = '159985870458322944';
 
@@ -45,3 +48,15 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 
 // Any character that is not a punctuation, symbol, number, or letter (in any language)
 export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
+
+export const addLockRollPermsToChannel = (
+	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>
+) => channel.permissionOverwrites.create(Roles.ExamLocked, {
+		SendMessages: false,
+		SendMessagesInThreads: false,
+		Connect: false,
+		Speak: false
+	});
+
+export const EXAM_LOCK_ENABLED_ROLE_NAME = "Exam Lock Enabled";
+export const EXAM_LOCK_DISABLED_ROLE_NAME = "Exam Lock Disabled";
