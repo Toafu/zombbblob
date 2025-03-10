@@ -35,7 +35,8 @@ const devConfig: Config = {
 		zombbblob: "1331472882236133439", // Can change,
 		zombbblob_trolling: "1337257408891850783",
 		staff_bot_commands: "1337258485305577535",
-		category_above_newest_semester: "1325691669240086599"
+		category_above_newest_semester: "1325691669240086599",
+		server_lock_explanation: "1348505587004084274"
 	}
 };
 
@@ -71,7 +72,8 @@ const prodConfig: Config = {
 		zombbblob: '1336203561738043414',
 		zombbblob_trolling: '1031779068116467775',
 		staff_bot_commands: '749407788156846162',
-		category_above_newest_semester: '1076598856634085446'
+		category_above_newest_semester: '1076598856634085446',
+		server_lock_explanation: '1348505517328433213'
 	}
 };
 

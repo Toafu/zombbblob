@@ -1,7 +1,7 @@
-import { GuildBasedChannel, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Snowflake } from 'discord.js';
+import { GuildBasedChannel, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Snowflake } from 'discord.js';
 
 import { ConfigHandler } from "./config";
-const { Roles } = ConfigHandler.getInstance().getConfig();
+const { Roles, Channels, SERVER_ID } = ConfigHandler.getInstance().getConfig();
 
 export const MEE6_ID = '159985870458322944';
 
@@ -49,14 +49,25 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 // Any character that is not a punctuation, symbol, number, or letter (in any language)
 export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
 
-export const addLockRollPermsToChannel = (
+export async function addLockRollPermsToChannel(
 	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>
-) => channel.permissionOverwrites.create(Roles.ExamLocked, {
+) {
+	const permissionOverwrites: PermissionOverwriteOptions = {
 		SendMessages: false,
 		SendMessagesInThreads: false,
 		Connect: false,
 		Speak: false
-	});
+	};
+
+	if (channel.id === Channels.server_lock_explanation) {
+		// Only the people with the lock role should be able to see
+		// the channel explaining the lock
+		await channel.permissionOverwrites.create(SERVER_ID, {ViewChannel: false});
+		permissionOverwrites.ViewChannel = true;
+	}
+
+	await channel.permissionOverwrites.create(Roles.ExamLocked, permissionOverwrites);
+} 
 
 export const EXAM_LOCK_ENABLED_ROLE_NAME = "Exam Lock Enabled";
 export const EXAM_LOCK_DISABLED_ROLE_NAME = "Exam Lock Disabled";
