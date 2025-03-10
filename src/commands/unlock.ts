@@ -11,7 +11,7 @@ export const command: Command = {
 		.setDescription('unlocks the server to Students (able to communicate)'),
 	init: () => {},
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		if (interaction.guild === null) {
+		if (interaction.guild === null || interaction.channel === null || !interaction.channel.isSendable()) {
 			return;
 		}
 
@@ -42,5 +42,6 @@ export const command: Command = {
 		}
 
 		await deferredReply.edit("Server unlocked!");
+		await interaction.channel.send("Server unlocked for Student role!");
 	}
 };

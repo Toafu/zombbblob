@@ -11,7 +11,7 @@ export const command: Command = {
 		.setDescription('locks the server to Students (unable to communicate)'),
 	init: () => {},
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		if (interaction.guild === null) {
+		if (interaction.guild === null || interaction.channel === null || !interaction.channel.isSendable()) {
 			return;
 		}
 
@@ -42,5 +42,6 @@ export const command: Command = {
 		}
 
 		await deferredReply.edit("Server locked!");
+		await interaction.channel.send("Server locked for Student role.");
 	}
 };
