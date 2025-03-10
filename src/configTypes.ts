@@ -37,4 +37,5 @@ interface Channels {
 	zombbblob_trolling: Snowflake;
 	staff_bot_commands: Snowflake;
     category_above_newest_semester: Snowflake;
+	server_lock_explanation: Snowflake;
 };
