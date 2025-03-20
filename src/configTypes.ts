@@ -6,12 +6,12 @@ export interface Config {
 	MAINTAINER_ID: Snowflake;
 	UPDATE_ROLE_MESSAGE_ID: Snowflake;
 	PERMANENT_INVITE_URL: string;
-	ZOMBBBLOB_EMOJI_ID: Snowflake;
 	DB_PATH: string;
 	PREVIOUS_COMMANDS_PATH: string;
 
 	Roles: Roles;
 	Channels: Channels;
+	Emojis: Emojis;
 };
 
 interface Roles {
@@ -39,3 +39,8 @@ interface Channels {
     category_above_newest_semester: Snowflake;
 	server_lock_explanation: Snowflake;
 };
+
+interface Emojis {
+	zombbblob: Snowflake,
+	endorsed: Snowflake,
+}

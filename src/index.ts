@@ -2,8 +2,10 @@ import {
 	ActivityType,
 	Client,
 	GatewayIntentBits,
+	Guild,
 	GuildMember,
 	Message,
+	messageLink,
 	MessageReaction,
 	Partials,
 	Snowflake,
@@ -23,7 +25,7 @@ const {
 	Roles,
 	SERVER_ID,
 	UPDATE_ROLE_MESSAGE_ID,
-	ZOMBBBLOB_EMOJI_ID,
+	Emojis,
 	MAINTAINER_ID,
 } = ConfigHandler.getInstance().getConfig();
 
@@ -180,7 +182,7 @@ client.on("ready", async () => {
 	}
 
 	console.log("Validating zombbblob emoji...");
-	const zombbblobEmote = guild.emojis.cache.get(ZOMBBBLOB_EMOJI_ID);
+	const zombbblobEmote = guild.emojis.cache.get(Emojis.zombbblob);
 	if (zombbblobEmote === null) {
 		console.error("Failed to validate zombbblob emoji!");
 		process.exit(1);
@@ -352,11 +354,11 @@ client.on("messageReactionAdd", async (potentiallyPartialReaction, user) => {
 		reaction = potentiallyPartialReaction;
 	}
 
+	const { guild } = reaction.message; //Extract EECS281 server
+	if (guild === null) {
+		return;
+	}
 	if (reaction.message.id === UPDATE_ROLE_MESSAGE_ID) {
-		const { guild } = reaction.message; //Extract EECS281 server
-		if (guild === null) {
-			return;
-		}
 		await guild.members.fetch(user.id).then(async (member) => {
 			//Reacting to one role should remove the other
 			if (reaction.emoji.name === "🧠") {
@@ -393,7 +395,13 @@ client.on("messageReactionAdd", async (potentiallyPartialReaction, user) => {
 				});
 			}
 		});
-	} //if reaction is added to reaction role message
+	}
+	if (reaction.emoji.id === Emojis.endorsed) {
+		const guildMember = await guild.members.fetch(user.id)
+		if (!guildMember.roles.cache.has(Roles.Staff)) {
+			await reaction.remove();
+		}
+	}
 	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	// else if (reaction.message.id === '1069347684059709532') {
 	// 	const { guild } = reaction.message; //Extract EECS281 server

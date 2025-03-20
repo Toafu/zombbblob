@@ -9,7 +9,6 @@ const devConfig: Config = {
 	MAINTAINER_ID: "269910487133716480",
 	UPDATE_ROLE_MESSAGE_ID: "1325692036539744256",
 	PERMANENT_INVITE_URL: "discord.gg/ZxfHgtBZvp",
-	ZOMBBBLOB_EMOJI_ID: '1332929961300066445',
 	DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
 	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../", "previousCommands.hash"),
 
@@ -37,6 +36,11 @@ const devConfig: Config = {
 		staff_bot_commands: "1337258485305577535",
 		category_above_newest_semester: "1325691669240086599",
 		server_lock_explanation: "1348505587004084274"
+	},
+
+	Emojis: {
+		zombbblob: '1332929961300066445',
+		endorsed: '1352129361159000137'
 	}
 };
 
@@ -46,7 +50,6 @@ const prodConfig: Config = {
 	MAINTAINER_ID: "269910487133716480",
 	UPDATE_ROLE_MESSAGE_ID: "926654292524404817",
 	PERMANENT_INVITE_URL: "discord.gg/fnVXyhfh33",
-	ZOMBBBLOB_EMOJI_ID: "1026136422572372170",
 	DB_PATH: path.join(__dirname, "../prod_data/", "zombbblob-minigame.db"),
 	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../prod_data/", "previousCommands.hash"),
 
@@ -74,6 +77,11 @@ const prodConfig: Config = {
 		staff_bot_commands: '749407788156846162',
 		category_above_newest_semester: '1076598856634085446',
 		server_lock_explanation: '1348505517328433213'
+	},
+
+	Emojis: {
+		zombbblob: '1026136422572372170',
+		endorsed: '1336899188704673803'
 	}
 };
 
