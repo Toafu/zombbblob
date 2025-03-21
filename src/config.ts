@@ -40,7 +40,7 @@ const devConfig: Config = {
 
 	Emojis: {
 		zombbblob: '1332929961300066445',
-		endorsed: '1352129361159000137'
+		endorsed: '1352487589432786954'
 	}
 };
 

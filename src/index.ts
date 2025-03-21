@@ -114,6 +114,7 @@ const client = new Client({
 });
 
 const commands: Map<String, Command> = new Map();
+const endorsedReactRemoves: Map<Snowflake, Array<MessageReaction>> = new Map();
 
 client.on("ready", async () => {
 	console.log("Checking CLIENT_ID...");
@@ -399,7 +400,14 @@ client.on("messageReactionAdd", async (potentiallyPartialReaction, user) => {
 	if (reaction.emoji.id === Emojis.endorsed) {
 		const guildMember = await guild.members.fetch(user.id)
 		if (!guildMember.roles.cache.has(Roles.Staff)) {
-			await reaction.remove();
+			// Check what reactions the user has and remove the latest one
+			if (!endorsedReactRemoves.has(user.id)) {
+				endorsedReactRemoves.set(user.id, [reaction]);
+			} else {
+				const userReactions = endorsedReactRemoves.get(user.id);
+				// TODO: FIX THIS
+				userReactions?.pop()?.remove();
+			}
 		}
 	}
 	// ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
