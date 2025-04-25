@@ -55,7 +55,7 @@ export async function addLockRollPermsToChannel(
 	const permissionOverwrites: PermissionOverwriteOptions = {
 		SendMessages: false,
 		SendMessagesInThreads: false,
-  AddReactions: false,
+		AddReactions: false,
 		Connect: false,
 		Speak: false
 	};
