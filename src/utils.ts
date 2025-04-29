@@ -127,11 +127,11 @@ export function canCommunicate(channel: Exclude<GuildBasedChannel, PrivateThread
 	const deniedPermissions = channel.permissionOverwrites.cache.get(role.id)?.deny;
 
 	if (channel.isVoiceBased()) {
-		return deniedPermissions === undefined || (deniedPermissions.has('Connect') && deniedPermissions.has('Speak'));
+		return deniedPermissions === undefined || (!deniedPermissions.has('Connect') && !deniedPermissions.has('Speak'));
 	}
 
 	if (channel.isTextBased()) {
-		return deniedPermissions === undefined || (deniedPermissions.has('SendMessages') && deniedPermissions.has('SendMessagesInThreads'));
+		return deniedPermissions === undefined || (!deniedPermissions.has('SendMessages') && !deniedPermissions.has('SendMessagesInThreads'));
 	}
 }
 
