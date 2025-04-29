@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from 'discord.js';
-import { addLockRollPermsToChannels, EXAM_LOCK_DISABLED_ROLE_NAME } from '../utils';
+import { applyLockRollPermsToChannels, EXAM_LOCK_DISABLED_ROLE_NAME } from '../utils';
 import { Command } from '../command';
 
 import { ConfigHandler } from "../config";
@@ -16,12 +16,6 @@ export const command: Command = {
 		}
 
 		const deferredReply = await interaction.deferReply({ephemeral: true});
-
-		const studentRole = await interaction.guild.roles.fetch(Roles.Student);
-		if (studentRole === null) {
-			await deferredReply.edit("Could not fetch Student role");
-			return;
-		}
 
 		const examLockedRole = await interaction.guild.roles.fetch(Roles.ExamLocked);
 		if (examLockedRole === null) {
@@ -42,7 +36,7 @@ export const command: Command = {
 
 		await examLockedRole.setName(EXAM_LOCK_DISABLED_ROLE_NAME);
 
-		await addLockRollPermsToChannels(interaction.guild, studentRole, examLockedRole, serverLockExplanationChannel, deferredReply);
+		await applyLockRollPermsToChannels(interaction.guild, examLockedRole, serverLockExplanationChannel, deferredReply);
 
 		await deferredReply.edit("Server unlocked!");
 		await interaction.channel.send("Server unlocked for Student role!");

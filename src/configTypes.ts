@@ -11,6 +11,7 @@ export interface Config {
 	PREVIOUS_COMMANDS_PATH: string;
 
 	Roles: Roles;
+	NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT: Array<keyof Roles>;
 	Channels: Channels;
 };
 

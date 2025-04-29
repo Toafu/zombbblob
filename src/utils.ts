@@ -1,7 +1,7 @@
 import { Guild, GuildBasedChannel, InteractionResponse, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Role, Snowflake, TextChannel } from 'discord.js';
 
 import { ConfigHandler } from "./config";
-const { Roles, Channels, SERVER_ID } = ConfigHandler.getInstance().getConfig();
+const { Roles, SERVER_ID, NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT } = ConfigHandler.getInstance().getConfig();
 
 export const MEE6_ID = '159985870458322944';
 
@@ -49,28 +49,30 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 // Any character that is not a punctuation, symbol, number, or letter (in any language)
 export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
 
-export async function addLockRollPermsToChannel(
-	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>,
-	studentRole?: Role,
-	lockRole?: Role,
-) {
-	if (studentRole === undefined) {
-		const _studentRole = await channel.guild.roles.fetch(Roles.Student);
-		if (_studentRole === null) {
-			return;
+export async function getPossibleRolesForStudent(guild: Guild) {
+	let possibleRolesForStudent: Role[] = [];
+
+	for (const roleName of NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT) {
+		const role = await guild.roles.fetch(Roles[roleName]);
+		if (role === null) {
+			throw new Error(`Failed to fetch ${roleName}`);
 		}
-		studentRole = _studentRole;
-	}
-	
-	if (lockRole === undefined) {
-		const _lockRole = await channel.guild.roles.fetch(Roles.ExamLocked);
-		if (_lockRole === null) {
-			return;
-		}
-		lockRole = _lockRole;
+
+		possibleRolesForStudent.push(role);
 	}
 
-	if (!canCommunicate(channel, channel.guild.roles.everyone) || !canCommunicate(channel, studentRole)) {
+	return possibleRolesForStudent;
+}
+
+export async function applyLockRollPermsToChannel(
+	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>,
+	possibleRolesForStudent?: Role[],
+) {
+	if (possibleRolesForStudent === undefined) {
+		possibleRolesForStudent = await getPossibleRolesForStudent(channel.guild);
+	}
+
+	if (!possibleRolesForStudent?.some(role => canCommunicate(channel, role))) {
 		return;
 	}
 
@@ -82,6 +84,11 @@ export async function addLockRollPermsToChannel(
 		Speak: false
 	};
 
+	const lockRole = await channel.guild.roles.fetch(Roles.ExamLocked);
+	if (lockRole === null) {
+		return;
+	}
+
 	if (lockRole.name === EXAM_LOCK_ENABLED_ROLE_NAME && !hasLockRollPerms(channel)) {
 		await channel.permissionOverwrites.create(Roles.ExamLocked, permissionOverwrites);
 	} else if (lockRole.name !== EXAM_LOCK_ENABLED_ROLE_NAME && hasLockRollPerms(channel)) {
@@ -90,13 +97,14 @@ export async function addLockRollPermsToChannel(
 			
 }
 
-export async function addLockRollPermsToChannels(
+export async function applyLockRollPermsToChannels(
 	guild: Guild, 
-	studentRole: Role, 
 	examLockedRole: Role, 
 	serverLockExplanationChannel: TextChannel, 
 	deferredReply: InteractionResponse<boolean>
 ) {
+	const possibleRolesForStudent = await getPossibleRolesForStudent(guild);
+
 	for (const channel of (await guild.channels.fetch()).values()) {
 		if (channel === null) {
 			continue;
@@ -104,7 +112,7 @@ export async function addLockRollPermsToChannels(
 
 		try {
 			console.log("Processing " + channel.name);
-			await addLockRollPermsToChannel(channel, studentRole);
+			await applyLockRollPermsToChannel(channel, possibleRolesForStudent);
 		} catch (e) {
 			console.error(e);
 			await deferredReply.edit(`Failed to set permissions for <#${channel.id}>... Terminating...`);
@@ -123,15 +131,30 @@ export async function addLockRollPermsToChannels(
 	}
 }
 
+function canViewChannel(channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>, role: Role) {
+	// (@everyone is not prevented from seeing channel OR <role> can explicitly see the channel) AND (<role> is not prevented from seeing channel)
+	return (!channel.permissionOverwrites.cache.get(channel.guild.roles.everyone.id)?.deny?.has('ViewChannel')
+				|| channel.permissionOverwrites.cache.get(role.id)?.allow?.has('ViewChannel'))
+			&& !channel.permissionOverwrites.cache.get(role.id)?.deny?.has('ViewChannel');
+}
+
 export function canCommunicate(channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>, role: Role) {
+	if (!canViewChannel(channel, role)) {
+		return false;
+	}
+	
 	const deniedPermissions = channel.permissionOverwrites.cache.get(role.id)?.deny;
 
+	if (deniedPermissions === undefined) {
+		return true;
+	}
+
 	if (channel.isVoiceBased()) {
-		return deniedPermissions === undefined || (!deniedPermissions.has('Connect') && !deniedPermissions.has('Speak'));
+		return !deniedPermissions.has('Connect') && !deniedPermissions.has('Speak');
 	}
 
 	if (channel.isTextBased()) {
-		return deniedPermissions === undefined || (!deniedPermissions.has('SendMessages') && !deniedPermissions.has('SendMessagesInThreads'));
+		return !deniedPermissions.has('SendMessages') && !deniedPermissions.has('SendMessagesInThreads');
 	}
 }
 

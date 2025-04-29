@@ -21,8 +21,10 @@ const devConfig: Config = {
 		LightMode: "1325692192613994600",
 		DarkMode: "1325692206748532799",
 		GalacticNews: "1325692269164236831",
-		ExamLocked: "1366846791898894438"
+		ExamLocked: "1366895854815940681"
 	},
+
+	NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT: ['Student', 'InfectedZombbblob', 'LightMode', 'DarkMode', 'GalacticNews'],
 
 	Channels: {
 		pianogang: "1325692447749177344",
@@ -60,6 +62,8 @@ const prodConfig: Config = {
 		GalacticNews: '1068940763792158720',
 		ExamLocked: '1347341885974249472'
 	},
+
+	NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT: ['Student', 'InfectedZombbblob', 'LightMode', 'DarkMode', 'GalacticNews'],
 
 	Channels: {
 		pianogang: '1023026145169514586',
