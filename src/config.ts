@@ -21,7 +21,7 @@ const devConfig: Config = {
 		LightMode: "1325692192613994600",
 		DarkMode: "1325692206748532799",
 		GalacticNews: "1325692269164236831",
-		ExamLocked: "1347332952773623910"
+		ExamLocked: "1366846791898894438"
 	},
 
 	Channels: {
@@ -32,7 +32,7 @@ const devConfig: Config = {
 		welcomeandrules: "1325692579651518464", // use for /invite
 		zombbblobdev: "1325692710828511302",
 		updaterole: "1325692003471589387",
-		zombbblob: "1331472882236133439", // Can change,
+		zombbblob: "1366845661634363402", // Can change,
 		zombbblob_trolling: "1337257408891850783",
 		staff_bot_commands: "1337258485305577535",
 		category_above_newest_semester: "1325691669240086599",
