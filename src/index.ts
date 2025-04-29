@@ -12,7 +12,7 @@ import {
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-import { addLockRollPermsToChannel, MEE6_ID } from "./utils";
+import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./zombiegame";
@@ -456,15 +456,21 @@ client.on("channelCreate", async (channel) => {
 		return;
 	}
 
-	await addLockRollPermsToChannel(channel);
+	await applyLockRollPermsToChannel(channel);
 });
 
 client.on("channelUpdate", async (oldChannel, newChannel) => {
 	if (!(newChannel instanceof GuildChannel)) {
 		return;
 	}
+	
+	const possibleRolesForStudent = await getPossibleRolesForStudent(newChannel.guild);
+	if (!(possibleRolesForStudent).some(role => canCommunicate(newChannel, role))) {
+		await newChannel.permissionOverwrites.delete(Roles.ExamLocked);
+		return;
+	}
 
-	await addLockRollPermsToChannel(newChannel);
+	await applyLockRollPermsToChannel(newChannel, possibleRolesForStudent);
 });
 
 client.on("guildMemberUpdate", async (oldMember, newMember) => {
