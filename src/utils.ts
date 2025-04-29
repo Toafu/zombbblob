@@ -1,4 +1,4 @@
-import { GuildBasedChannel, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Snowflake } from 'discord.js';
+import { Guild, GuildBasedChannel, InteractionResponse, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Role, Snowflake, TextChannel } from 'discord.js';
 
 import { ConfigHandler } from "./config";
 const { Roles, Channels, SERVER_ID } = ConfigHandler.getInstance().getConfig();
@@ -50,8 +50,30 @@ export function parseMessageLink(messageLink: string): [Error | null, DecodedMes
 export const INVALID_ZOMBBBLOB_WORD_REGEX = /[^\p{P}\p{S}\p{N}\p{L}]/u;
 
 export async function addLockRollPermsToChannel(
-	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>
+	channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>,
+	studentRole?: Role,
+	lockRole?: Role,
 ) {
+	if (studentRole === undefined) {
+		const _studentRole = await channel.guild.roles.fetch(Roles.Student);
+		if (_studentRole === null) {
+			return;
+		}
+		studentRole = _studentRole;
+	}
+	
+	if (lockRole === undefined) {
+		const _lockRole = await channel.guild.roles.fetch(Roles.ExamLocked);
+		if (_lockRole === null) {
+			return;
+		}
+		lockRole = _lockRole;
+	}
+
+	if (!canCommunicate(channel, channel.guild.roles.everyone) || !canCommunicate(channel, studentRole)) {
+		return;
+	}
+
 	const permissionOverwrites: PermissionOverwriteOptions = {
 		SendMessages: false,
 		SendMessagesInThreads: false,
@@ -60,15 +82,69 @@ export async function addLockRollPermsToChannel(
 		Speak: false
 	};
 
-	if (channel.id === Channels.server_lock_explanation) {
-		// Only the people with the lock role should be able to see
-		// the channel explaining the lock
-		await channel.permissionOverwrites.create(SERVER_ID, {ViewChannel: false});
-		permissionOverwrites.ViewChannel = true;
+	if (lockRole.name === EXAM_LOCK_ENABLED_ROLE_NAME && !hasLockRollPerms(channel)) {
+		await channel.permissionOverwrites.create(Roles.ExamLocked, permissionOverwrites);
+	} else if (lockRole.name !== EXAM_LOCK_ENABLED_ROLE_NAME && hasLockRollPerms(channel)) {
+		await channel.permissionOverwrites.delete(Roles.ExamLocked);
+	}
+			
+}
+
+export async function addLockRollPermsToChannels(
+	guild: Guild, 
+	studentRole: Role, 
+	examLockedRole: Role, 
+	serverLockExplanationChannel: TextChannel, 
+	deferredReply: InteractionResponse<boolean>
+) {
+	for (const channel of (await guild.channels.fetch()).values()) {
+		if (channel === null) {
+			continue;
+		}
+
+		try {
+			console.log("Processing " + channel.name);
+			await addLockRollPermsToChannel(channel, studentRole);
+		} catch (e) {
+			console.error(e);
+			await deferredReply.edit(`Failed to set permissions for <#${channel.id}>... Terminating...`);
+			return;
+		}
 	}
 
-	await channel.permissionOverwrites.create(Roles.ExamLocked, permissionOverwrites);
-} 
+	if (!serverLockExplanationChannel.permissionOverwrites.cache.get(SERVER_ID)?.deny?.has('ViewChannel')) {
+		await serverLockExplanationChannel.permissionOverwrites.create(SERVER_ID, {ViewChannel: false});
+	}
+
+	if (examLockedRole.name === EXAM_LOCK_ENABLED_ROLE_NAME) {
+		await serverLockExplanationChannel.permissionOverwrites.create(examLockedRole, {ViewChannel: true});
+	} else {
+		await serverLockExplanationChannel.permissionOverwrites.delete(examLockedRole);
+	}
+}
+
+export function canCommunicate(channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>, role: Role) {
+	const deniedPermissions = channel.permissionOverwrites.cache.get(role.id)?.deny;
+
+	if (channel.isVoiceBased()) {
+		return deniedPermissions === undefined || (deniedPermissions.has('Connect') && deniedPermissions.has('Speak'));
+	}
+
+	if (channel.isTextBased()) {
+		return deniedPermissions === undefined || (deniedPermissions.has('SendMessages') && deniedPermissions.has('SendMessagesInThreads'));
+	}
+}
+
+export function hasLockRollPerms(channel: Exclude<GuildBasedChannel, PrivateThreadChannel | PublicThreadChannel>) {
+	const deniedPermissions = channel.permissionOverwrites.cache.get(Roles.ExamLocked)?.deny;
+
+	if (channel.isVoiceBased())
+		return deniedPermissions !== undefined && deniedPermissions.has('Connect') && deniedPermissions.has('Speak');
+	if (channel.isTextBased())
+		return deniedPermissions !== undefined && deniedPermissions.has('SendMessages') && deniedPermissions.has('SendMessagesInThreads')
+
+	return true;
+}
 
 export const EXAM_LOCK_ENABLED_ROLE_NAME = "Exam Lock Enabled";
 export const EXAM_LOCK_DISABLED_ROLE_NAME = "Exam Lock Disabled";

@@ -2,6 +2,7 @@ import {
 	ActivityType,
 	Client,
 	GatewayIntentBits,
+	GuildChannel,
 	GuildMember,
 	Message,
 	MessageReaction,
@@ -11,7 +12,7 @@ import {
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-import { addLockRollPermsToChannel, EXAM_LOCK_ENABLED_ROLE_NAME, MEE6_ID } from "./utils";
+import { addLockRollPermsToChannel, MEE6_ID } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./zombiegame";
@@ -458,17 +459,18 @@ client.on("channelCreate", async (channel) => {
 	await addLockRollPermsToChannel(channel);
 });
 
+client.on("channelUpdate", async (oldChannel, newChannel) => {
+	if (!(newChannel instanceof GuildChannel)) {
+		return;
+	}
+
+	await addLockRollPermsToChannel(newChannel);
+});
+
 client.on("guildMemberUpdate", async (oldMember, newMember) => {
 	if (oldMember.roles.resolve(Roles.Student) && !newMember.roles.resolve(Roles.Student)) {
 		await newMember.roles.remove(Roles.ExamLocked);
-	}
-
-	if (!oldMember.roles.resolve(Roles.Student) && newMember.roles.resolve(Roles.Student)) {
-		const examLockedRole = await oldMember.guild.roles.fetch(Roles.ExamLocked);
-		if (examLockedRole === null || examLockedRole.name != EXAM_LOCK_ENABLED_ROLE_NAME) {
-			return;
-		}
-
+	} else if (!oldMember.roles.resolve(Roles.Student) && newMember.roles.resolve(Roles.Student)) {
 		await newMember.roles.add(Roles.ExamLocked);
 	}
 });
