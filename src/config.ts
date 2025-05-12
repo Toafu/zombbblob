@@ -10,8 +10,9 @@ const devConfig: Config = {
 	UPDATE_ROLE_MESSAGE_ID: "1325692036539744256",
 	PERMANENT_INVITE_URL: "discord.gg/ZxfHgtBZvp",
 	ZOMBBBLOB_EMOJI_ID: '1332929961300066445',
-	DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
+	ZOMBBBLOB_DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
 	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../", "previousCommands.hash"),
+	ZIPGAME_DB_PATH: path.join(__dirname, "../", "zip-game.db"),
 
 	Roles: {
 		Student: "1325692142865223732",
@@ -49,7 +50,8 @@ const prodConfig: Config = {
 	UPDATE_ROLE_MESSAGE_ID: "926654292524404817",
 	PERMANENT_INVITE_URL: "discord.gg/fnVXyhfh33",
 	ZOMBBBLOB_EMOJI_ID: "1026136422572372170",
-	DB_PATH: path.join(__dirname, "../prod_data/", "zombbblob-minigame.db"),
+	ZOMBBBLOB_DB_PATH: path.join(__dirname, "../prod_data/", "zombbblob-minigame.db"),
+	ZIPGAME_DB_PATH: path.join(__dirname, "../prod_data/", "zip-game.db"),
 	PREVIOUS_COMMANDS_PATH: path.join(__dirname, "../prod_data/", "previousCommands.hash"),
 
 	Roles: {

@@ -135,6 +135,7 @@ testing
 !/minigames/**
 */zombbblob/*.txt
 zombbblob-minigame.db
+zip-game.db
 build/
 prod_data/
 previousCommands.hash

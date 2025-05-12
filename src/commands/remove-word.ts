@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
-import { WordsDatabase } from "../db";
+import { WordsDatabase } from "../games/zombbblobdb";
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
