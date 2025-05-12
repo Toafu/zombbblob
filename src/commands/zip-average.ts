@@ -3,7 +3,7 @@ import { Command } from "../command";
 import { AverageStatsResponse, ZipGameDatabase } from "../games/zipgamedb";
 
 import { ConfigHandler } from "../config";
-const { Channels } = ConfigHandler.getInstance().getConfig();
+const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): string {
 	if (averageStats.average_time === null || averageStats.average_backtracks === null) {
@@ -22,6 +22,7 @@ export const command: Command = {
 		.setName("zip-average")
 		.setDescription("average stats of Zip game"),
 	permittedChannelIDs: [Channels.oldtimers],
+	authorizedRoleIDs: [Roles.Student, Roles.StudentAlumni],
 	init: () => { },
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const averageStats = ZipGameDatabase.getInstance().getAverageStats();
