@@ -25,8 +25,8 @@ export const command: Command = {
 		await interaction.reply(
 			"Average Zip stats for the EECS281 Discord over " + 
 			`${averageStats.num_submissions} submissions and ${averageStats.days_played} days:\n` +
-			`Time: ${averageTimeMinutes}:${averageTimeSeconds.toString().padStart(2, "0")}\n` +
-			`Backtracks: ${averageStats.average_backtracks}`
+			`Time: ${averageTimeMinutes}:${averageTimeSeconds.toFixed(0).padStart(2, "0")}\n` +
+			`Backtracks: ${averageStats.average_backtracks.toFixed(1)}`
 		)
 	},
 };
