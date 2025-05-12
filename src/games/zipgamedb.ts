@@ -19,6 +19,12 @@ export interface AverageStatsResponse {
     num_submissions: number
 }
 
+const AVERAGE_STATS_QUERY = "SELECT AVG(time_seconds) as average_time, " +
+                            "       AVG(backtracks) as average_backtracks, " + 
+                            "       COUNT(*) as num_submissions, " + 
+                            "       COUNT(DISTINCT game_number) as days_played " +
+                            "FROM results";
+
 export class ZipGameDatabase {
     private static instance: ZipGameDatabase;
     private db: Database.Database;
@@ -59,13 +65,13 @@ export class ZipGameDatabase {
 
     public getAverageStats(): AverageStatsResponse {
         return this.db
-                    .prepare(
-                        "SELECT AVG(time_seconds) as average_time, " +
-                        "       AVG(backtracks) as average_backtracks, " + 
-                        "       COUNT(*) as num_submissions, " + 
-                        "       COUNT(DISTINCT game_number) as days_played " +
-                        "FROM results"
-                    )
+                    .prepare(AVERAGE_STATS_QUERY)
+                    .get() as AverageStatsResponse;
+    }
+
+    public getTodaysAverageStats(): AverageStatsResponse {
+        return this.db
+                    .prepare(AVERAGE_STATS_QUERY + " WHERE game_number = (SELECT MAX(game_number) FROM results)")
                     .get() as AverageStatsResponse;
     }
 }
