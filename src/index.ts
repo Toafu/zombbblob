@@ -15,7 +15,8 @@ import path from "path";
 import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
-import { checkInfection } from "./zombiegame";
+import { checkInfection } from "./games/zombiegame";
+import { zipMessageHandler } from "./games/zipgame";
 
 import { ConfigHandler } from "./config";
 const {
@@ -28,7 +29,7 @@ const {
 	MAINTAINER_ID,
 } = ConfigHandler.getInstance().getConfig();
 
-import { WordsDatabase } from "./db";
+import { WordsDatabase } from "./games/zombbblobdb";
 
 require("dotenv").config();
 const topTen: Snowflake[] = [];
@@ -285,6 +286,7 @@ client.on("messageCreate", async (message) => {
 	if (WordsDatabase.getInstance().isGameRunning()) {
 		await checkInfection(message, client);
 	}
+	await zipMessageHandler(message);
 	const words = message.content.toLowerCase().split(" ");
 	if (message.content.startsWith("!rank")) {
 		//if person types !rank

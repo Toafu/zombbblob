@@ -7,7 +7,8 @@ export interface Config {
 	UPDATE_ROLE_MESSAGE_ID: Snowflake;
 	PERMANENT_INVITE_URL: string;
 	ZOMBBBLOB_EMOJI_ID: Snowflake;
-	DB_PATH: string;
+	ZOMBBBLOB_DB_PATH: string;
+	ZIPGAME_DB_PATH: string;
 	PREVIOUS_COMMANDS_PATH: string;
 
 	Roles: Roles;

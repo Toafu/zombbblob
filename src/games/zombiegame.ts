@@ -1,7 +1,7 @@
 import { Message, Client, SendableChannels } from 'discord.js';
-import { ConfigHandler } from "./config";
+import { ConfigHandler } from "../config";
 const { Roles, Channels, ZOMBBBLOB_EMOJI_ID } = ConfigHandler.getInstance().getConfig()
-import { WordsDatabase } from './db';
+import { WordsDatabase } from './zombbblobdb';
 
 export async function checkInfection(message: Message, bot: Client) {
 	if (!message.member || !message.guild) {
