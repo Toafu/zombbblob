@@ -2,10 +2,10 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from "dis
 import { Command } from "../command";
 
 import { ConfigHandler } from "../config";
-import { zipMessageHandler } from "../games/zipgame";
+import { ZIP_RELEASE_TIMESTAMP, zipMessageHandler } from "../games/zipgame";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
-const ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(1742270399000);
+const ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMESTAMP);
 
 export const command: Command = {
 	data: new SlashCommandBuilder()

@@ -3,6 +3,7 @@ import { Command } from "../command";
 import { AverageStatsResponse, ZipGameDatabase } from "../games/zipgamedb";
 
 import { ConfigHandler } from "../config";
+import { secondsToTimeString } from "../games/zipgame";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): string {
@@ -10,10 +11,7 @@ function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): str
 		return "No results!";
 	}
 
-	const averageTimeSeconds = averageStats.average_time % 60;
-	const averageTimeMinutes = Math.floor(averageStats.average_time / 60);
-
-	return  `Time: ${averageTimeMinutes}:${averageTimeSeconds.toFixed(0).padStart(2, "0")}\n` +
+	return  `Time: ${secondsToTimeString(averageStats.average_time)}\n` +
 			`Backtracks: ${averageStats.average_backtracks.toFixed(1)}\n`;
 }
 
