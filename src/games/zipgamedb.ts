@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 
 import { ConfigHandler } from '../config';
 import { Snowflake } from 'discord.js';
+import { getTodaysZipNumber } from './zipgame';
 const { ZIPGAME_DB_PATH } = ConfigHandler.getInstance().getConfig();
 
 export interface Result {
@@ -71,7 +72,7 @@ export class ZipGameDatabase {
 
     public getTodaysAverageStats(): AverageStatsResponse {
         return this.db
-                    .prepare(AVERAGE_STATS_QUERY + " WHERE game_number = (SELECT MAX(game_number) FROM results)")
-                    .get() as AverageStatsResponse;
+                    .prepare(AVERAGE_STATS_QUERY + " WHERE game_number = ?")
+                    .get(getTodaysZipNumber()) as AverageStatsResponse;
     }
 }

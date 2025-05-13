@@ -7,6 +7,12 @@ const { Channels } = ConfigHandler.getInstance().getConfig();
 
 const ZIP_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
 
+export const ZIP_RELEASE_TIMESTAMP = 1742270399000;
+
+export function getTodaysZipNumber(): number {
+    return Math.ceil((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24))
+}
+
 export async function zipMessageHandler(
     message: OmitPartialGroupDMChannel<Message<boolean>>,
     replyOnDuplicateError: boolean = true
