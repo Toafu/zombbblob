@@ -11,7 +11,7 @@ export function secondsToTimeString(seconds: number): string {
 	const minutes = Math.floor(seconds / 60);
 	const remainingSeconds = seconds % 60;
 
-    return `${minutes}:${remainingSeconds.toFixed(0).padStart(2, "0")}`
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
 }
 
 export const ZIP_RELEASE_TIMESTAMP = 1742270399000;
@@ -68,7 +68,7 @@ export async function zipMessageHandler(
                 return;
             }
 
-            if (Math.round(newAverageStats.average_time) < Math.round(previousAverageStats.average_time)) {
+            if (newAverageStats.average_time < previousAverageStats.average_time) {
                 await message.reply({
                     content: `You improved today's server average from ${secondsToTimeString(previousAverageStats.average_time)} ` +
                             `to ${secondsToTimeString(newAverageStats.average_time)}!`,

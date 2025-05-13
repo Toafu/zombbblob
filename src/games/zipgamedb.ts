@@ -20,7 +20,7 @@ export interface AverageStatsResponse {
     num_submissions: number
 }
 
-const AVERAGE_STATS_QUERY = "SELECT AVG(time_seconds) as average_time, " +
+const AVERAGE_STATS_QUERY = "SELECT ROUND(AVG(time_seconds)) as average_time, " +
                             "       AVG(backtracks) as average_backtracks, " + 
                             "       COUNT(*) as num_submissions, " + 
                             "       COUNT(DISTINCT game_number) as days_played " +
