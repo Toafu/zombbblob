@@ -39,6 +39,8 @@ export const command: Command = {
 		await applyLockRollPermsToChannels(interaction.guild, examLockedRole, serverLockExplanationChannel, deferredReply);
 
 		await deferredReply.edit("Server locked!");
-		await interaction.channel.send("Server locked for Student role.");
+		await interaction.channel.send(`Server locked for <@&${Roles.Student}> role.\n` +
+									   "Attempting to bypass the server lock by changing roles or other methods will lead to a timeout and/or ban. " +
+									   "Remember this server is subject to the Honor Code.");
 	}
 };
