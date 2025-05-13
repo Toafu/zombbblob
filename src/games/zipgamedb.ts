@@ -64,6 +64,12 @@ export class ZipGameDatabase {
         console.log(result);
     }
 
+    public removeSubmission(messageID: string): Database.RunResult {
+        return this.db
+            .prepare("DELETE FROM results WHERE message_id = ?")
+            .run(messageID);
+    }
+
     public getAverageStats(): AverageStatsResponse {
         return this.db
                     .prepare(AVERAGE_STATS_QUERY)
