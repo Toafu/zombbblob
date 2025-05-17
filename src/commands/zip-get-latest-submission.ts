@@ -3,6 +3,9 @@ import { Command } from "../command";
 
 import { ZipGameDatabase } from "../games/zipgamedb";
 
+import { ConfigHandler } from "../config";
+const { SERVER_ID, Channels } = ConfigHandler.getInstance().getConfig();
+
 export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName("zip-get-latest-submission")
@@ -27,7 +30,7 @@ export const command: Command = {
 		}
 
 		await interaction.reply({
-			content: `https://discord.com/channels/1325691299713777684/1325692497741221929/${result.message_id}`,
+			content: `https://discord.com/channels/${SERVER_ID}/${Channels.oldtimers}/${result.message_id}`,
 			flags: "Ephemeral"
 		});
 	},
