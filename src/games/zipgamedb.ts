@@ -60,8 +60,6 @@ export class ZipGameDatabase {
                 "VALUES (?, ?, ?, ?, ?)"
             )
             .run(result.message_id, result.author_id, result.game_number, result.time_seconds, result.backtracks);
-
-        console.log(result);
     }
 
     public getSubmission(authorID: string): Result | undefined {
