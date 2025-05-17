@@ -1,7 +1,10 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../command";
 
 import { ZipGameDatabase } from "../games/zipgamedb";
+
+import { ConfigHandler } from "../config";
+const { SERVER_ID, Channels } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -16,7 +19,7 @@ export const command: Command = {
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const result = 
 			ZipGameDatabase.getInstance()
-							.getSubmission(interaction.options.getUser("submitter", true).id);
+							.getLatestSubmission(interaction.options.getUser("submitter", true).id);
 
 		if (result === undefined) {
 			await interaction.reply({
@@ -27,7 +30,7 @@ export const command: Command = {
 		}
 
 		await interaction.reply({
-			content: `https://discord.com/channels/1325691299713777684/1325692497741221929/${result.message_id}`,
+			content: `https://discord.com/channels/${SERVER_ID}/${Channels.oldtimers}/${result.message_id}`,
 			flags: "Ephemeral"
 		});
 	},
