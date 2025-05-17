@@ -5,7 +5,7 @@ import { ZipGameDatabase } from "./zipgamedb";
 import { SqliteError } from "better-sqlite3";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
-const ZIP_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
+const ZIP_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
 
 export function secondsToTimeString(seconds: number): string {
 	const minutes = Math.floor(seconds / 60);
