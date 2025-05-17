@@ -60,8 +60,6 @@ export class ZipGameDatabase {
                 "VALUES (?, ?, ?, ?, ?)"
             )
             .run(result.messageID, result.authorID, result.gameNumber, result.timeSeconds, result.backtracks);
-
-        console.log(result);
     }
 
     public removeSubmission(messageID: string): Database.RunResult {
