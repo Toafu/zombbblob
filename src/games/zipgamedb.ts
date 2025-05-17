@@ -6,10 +6,10 @@ import { getTodaysZipNumber } from './zipgame';
 const { ZIPGAME_DB_PATH } = ConfigHandler.getInstance().getConfig();
 
 export interface Result {
-    messageID: Snowflake,
-    authorID: Snowflake,
-    gameNumber: number,
-    timeSeconds: number,
+    message_id: Snowflake,
+    author_id: Snowflake,
+    game_number: number,
+    time_seconds: number,
     backtracks: number
 };
 
@@ -59,7 +59,7 @@ export class ZipGameDatabase {
                 "(message_id, author_id, game_number, time_seconds, backtracks) " + 
                 "VALUES (?, ?, ?, ?, ?)"
             )
-            .run(result.messageID, result.authorID, result.gameNumber, result.timeSeconds, result.backtracks);
+            .run(result.message_id, result.author_id, result.game_number, result.time_seconds, result.backtracks);
 
         console.log(result);
     }

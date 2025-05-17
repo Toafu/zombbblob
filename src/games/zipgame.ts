@@ -54,10 +54,10 @@ export async function zipMessageHandler(
 		const previousAverageStats = ZipGameDatabase.getInstance().getTodaysAverageStats();
 
         ZipGameDatabase.getInstance().addSubmission({
-            messageID: message.id, 
-            authorID: message.author.id,
-            gameNumber: zipNumber, 
-            timeSeconds: timeSeconds, 
+            message_id: message.id, 
+            author_id: message.author.id,
+            game_number: zipNumber, 
+            time_seconds: timeSeconds, 
             backtracks: numBacktracks
         });
 
