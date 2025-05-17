@@ -62,9 +62,9 @@ export class ZipGameDatabase {
             .run(result.message_id, result.author_id, result.game_number, result.time_seconds, result.backtracks);
     }
 
-    public getSubmission(authorID: string): Result | undefined {
+    public getLatestSubmission(authorID: string): Result | undefined {
         return this.db
-            .prepare("SELECT * FROM results WHERE author_id = ?")
+            .prepare("SELECT * FROM results WHERE author_id = ? ORDER BY game_number DESC")
             .get(authorID) as Result;
     }
 

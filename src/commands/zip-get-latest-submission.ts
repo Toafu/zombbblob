@@ -19,7 +19,7 @@ export const command: Command = {
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const result = 
 			ZipGameDatabase.getInstance()
-							.getSubmission(interaction.options.getUser("submitter", true).id);
+							.getLatestSubmission(interaction.options.getUser("submitter", true).id);
 
 		if (result === undefined) {
 			await interaction.reply({
