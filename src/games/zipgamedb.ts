@@ -64,6 +64,12 @@ export class ZipGameDatabase {
         console.log(result);
     }
 
+    public getSubmission(authorID: string): Result | undefined {
+        return this.db
+            .prepare("SELECT * FROM results WHERE author_id = ?")
+            .get(authorID) as Result;
+    }
+
     public removeSubmission(messageID: string): Database.RunResult {
         return this.db
             .prepare("DELETE FROM results WHERE message_id = ?")
