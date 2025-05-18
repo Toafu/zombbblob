@@ -1,6 +1,7 @@
 import {
 	ActivityType,
 	Client,
+	DiscordAPIError,
 	GatewayIntentBits,
 	GuildChannel,
 	GuildMember,
@@ -12,7 +13,7 @@ import {
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate } from "./utils";
+import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./games/zombiegame";
@@ -26,7 +27,7 @@ const {
 	SERVER_ID,
 	UPDATE_ROLE_MESSAGE_ID,
 	ZOMBBBLOB_EMOJI_ID,
-	MAINTAINER_ID,
+	MAINTAINER_IDS,
 } = ConfigHandler.getInstance().getConfig();
 
 import { WordsDatabase } from "./games/zombbblobdb";
@@ -188,11 +189,18 @@ client.on("ready", async () => {
 		process.exit(1);
 	}
 
-	console.log("Validating maintainer...");
-	const maintainer = await guild.members.fetch(MAINTAINER_ID);
-	if (!maintainer) {
-		console.error("Failed to validate maintainer!");
-		process.exit(1);
+	console.log("Validating maintainers...");
+	for (const maintainerID of MAINTAINER_IDS) {
+        try {
+            await guild.members.fetch(maintainerID);
+        } catch (err) {
+            if (!(err instanceof DiscordAPIError)) {
+				throw err;
+			}
+
+            console.error(`Failed to validate maintainer ${maintainerID}!`);
+            process.exit(1);
+        }
 	}
 
 	console.log("Initializing commands...");
@@ -243,7 +251,10 @@ client.on("ready", async () => {
 
 	if (db.isGameRunning()) {
 		if (db.getAllWords().length === 0) {
-			await zombbblobDevChannel.send(`<@${MAINTAINER_ID}>, the game is running without any words! Run \`/loadwordlist\``);
+			await zombbblobDevChannel.send(
+				`${maintainersPingString}, `
+				+ "the game is running without any words! Run `/loadwordlist`"
+			);
 		} else {
 			const infectedWord = db.getInfectedWord();
 			if (infectedWord === null) {
