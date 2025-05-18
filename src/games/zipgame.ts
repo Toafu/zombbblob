@@ -14,10 +14,12 @@ export function secondsToTimeString(seconds: number): string {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
 }
 
-export const ZIP_RELEASE_TIMESTAMP = 1742270399000;
+export const ZIP_RELEASE_TIMESTAMP = 1742281200000;
 
 export function getTodaysZipNumber(): number {
-    return Math.ceil((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24))
+    // Number of days (rounded down) since the start of Zip + 1 
+    // because the first day is game #1 and is 0 away from the start of Zip.
+    return Math.floor((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24)) + 1
 }
 
 export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
