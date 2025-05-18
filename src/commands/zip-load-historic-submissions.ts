@@ -7,7 +7,7 @@ import { parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../games/zipgame";
 import { ZipGameDatabase } from "../games/zipgamedb";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
-const ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMESTAMP);
+const BEFORE_ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMESTAMP-1);
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -27,7 +27,7 @@ export const command: Command = {
 		const deferredReply = await interaction.deferReply({flags: "Ephemeral"});
 
 		let messages = await oldTimersChannel.messages.fetch({
-			after: ZIP_RELEASE_SNOWFLAKE
+			after: BEFORE_ZIP_RELEASE_SNOWFLAKE
 		});
 
 		while (messages.size > 0) {
