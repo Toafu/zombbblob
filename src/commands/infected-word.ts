@@ -4,7 +4,8 @@ import { Command } from "../command";
 import { WordsDatabase } from "../games/zombbblobdb";
 
 import { ConfigHandler } from "../config";
-const { MAINTAINER_ID, Channels, Roles } = ConfigHandler.getInstance().getConfig();
+import { maintainersPingString } from "../utils";
+const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
@@ -28,7 +29,7 @@ export const command: Command = {
 		const infectedWord = db.getInfectedWord();
 		
 		if (infectedWord === null) {
-			await interaction.reply(`I was unable to get the infected word! <@${MAINTAINER_ID}> pls fix`);
+			await interaction.reply(`I was unable to get the infected word! ${maintainersPingString} pls fix`);
 			return;
 		}
 

@@ -3,7 +3,7 @@ import { Snowflake } from "discord.js";
 export interface Config {
 	CLIENT_ID: Snowflake;
 	SERVER_ID: Snowflake;
-	MAINTAINER_ID: Snowflake;
+	MAINTAINER_IDS: Snowflake[];
 	UPDATE_ROLE_MESSAGE_ID: Snowflake;
 	PERMANENT_INVITE_URL: string;
 	ZOMBBBLOB_EMOJI_ID: Snowflake;

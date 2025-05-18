@@ -1,7 +1,7 @@
 import { Guild, GuildBasedChannel, InteractionResponse, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Role, Snowflake, TextChannel } from 'discord.js';
 
 import { ConfigHandler } from "./config";
-const { Roles, SERVER_ID, NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT } = ConfigHandler.getInstance().getConfig();
+const { Roles, SERVER_ID, NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT, MAINTAINER_IDS } = ConfigHandler.getInstance().getConfig();
 
 export const MEE6_ID = '159985870458322944';
 
@@ -171,3 +171,5 @@ export function hasLockRollPerms(channel: Exclude<GuildBasedChannel, PrivateThre
 
 export const EXAM_LOCK_ENABLED_ROLE_NAME = "Exam Lock Enabled";
 export const EXAM_LOCK_DISABLED_ROLE_NAME = "Exam Lock Disabled";
+
+export const maintainersPingString = MAINTAINER_IDS.map(maintainerID => `<@${maintainerID}>`).join(' ');
