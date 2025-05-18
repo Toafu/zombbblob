@@ -12,7 +12,7 @@ function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): str
 	}
 
 	return  `Time: ${secondsToTimeString(averageStats.average_time)}\n` +
-			`Backtracks: ${averageStats.average_backtracks.toFixed(1)}\n`;
+			`Backtracks: ${averageStats.average_backtracks.toFixed(1)}`;
 }
 
 export const command: Command = {
@@ -28,7 +28,7 @@ export const command: Command = {
 		await interaction.reply(
 			"Average Zip stats for the EECS281 Discord\n\n" + 
 			"Today:\n" +
-			`${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getTodaysAverageStats())}\n` +
+			`${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getTodaysAverageStats())}\n\n` +
 			`All time (${averageStats.num_submissions} submissions and ${averageStats.days_played} days):\n` +
 			averageTimeAndBacktracksString(averageStats)
 		)
