@@ -1,7 +1,7 @@
 import { Message, MessageFlags, OmitPartialGroupDMChannel } from "discord.js";
 
 import { ConfigHandler } from "../config";
-import { ZipGameDatabase } from "./zipgamedb";
+import { Result, ZipGameDatabase } from "./zipgamedb";
 import { SqliteError } from "better-sqlite3";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
@@ -20,17 +20,14 @@ export function getTodaysZipNumber(): number {
     return Math.ceil((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24))
 }
 
-export async function zipMessageHandler(
-    message: OmitPartialGroupDMChannel<Message<boolean>>,
-    replyOnDuplicateError: boolean = true
-): Promise<void> {
+export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
     if (message.channel.id !== Channels.oldtimers) {
-        return;
+        return null;
     }
 
     const data = message.content.match(ZIP_REGEX);
     if (data === null) {
-        return;
+        return null;
     }
 
     const zipNumber = Number(data[1]);
@@ -38,28 +35,38 @@ export async function zipMessageHandler(
     const seconds = Number(data[3]);
     const numBacktracks = data[4] == "no" ? 0 : Number(data[4]);
 
+    return {
+        message_id: message.id, 
+        author_id: message.author.id,
+        game_number: zipNumber, 
+        time_seconds: minutes * 60 + seconds, 
+        backtracks: numBacktracks
+    };
+}
+
+export async function zipMessageHandler(
+    message: OmitPartialGroupDMChannel<Message<boolean>>
+): Promise<void> {
+    const parsedData = parseZipMessage(message)
+    
+    if (parsedData === null) {
+        return;
+    }
+
     const todaysZipNumber = getTodaysZipNumber();
 
-    if (zipNumber != todaysZipNumber) {
+    if (parsedData.game_number != todaysZipNumber) {
         await message.reply(
-            `I think the current zip number is ${todaysZipNumber}, but you submitted ${zipNumber}... ` +
+            `I think the current zip number is ${todaysZipNumber}, but you submitted ${parsedData.game_number}... ` +
             "If this is a mistake, please let me know."
         )
         return;
     }
 
-    const timeSeconds = minutes * 60 + seconds;
-
     try {
 		const previousAverageStats = ZipGameDatabase.getInstance().getTodaysAverageStats();
 
-        ZipGameDatabase.getInstance().addSubmission({
-            message_id: message.id, 
-            author_id: message.author.id,
-            game_number: zipNumber, 
-            time_seconds: timeSeconds, 
-            backtracks: numBacktracks
-        });
+        ZipGameDatabase.getInstance().addSubmission(parsedData);
 
         if (previousAverageStats.average_time !== null) {
             const newAverageStats = ZipGameDatabase.getInstance().getTodaysAverageStats();
@@ -82,10 +89,8 @@ export async function zipMessageHandler(
             throw error;
         }
 
-        if (replyOnDuplicateError) {
-            await message.reply({
-                content: "You've already submitted a time for this game, ignoring this submission...",
-            });
-        }
+        await message.reply({
+            content: "You've already submitted a time for this game, ignoring this submission...",
+        });
     }
 }

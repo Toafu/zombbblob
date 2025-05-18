@@ -1,8 +1,10 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { SqliteError } from "better-sqlite3";
 import { Command } from "../command";
 
 import { ConfigHandler } from "../config";
-import { ZIP_RELEASE_TIMESTAMP, zipMessageHandler } from "../games/zipgame";
+import { parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../games/zipgame";
+import { ZipGameDatabase } from "../games/zipgamedb";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
 const ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMESTAMP);
@@ -41,7 +43,18 @@ export const command: Command = {
 					return; // satisfy typescript linter
 				}
 
-				await zipMessageHandler(message, false);
+				const parsedData = parseZipMessage(message);
+
+				if (parsedData !== null) {
+					try {
+						ZipGameDatabase.getInstance().addSubmission(parsedData);
+					} catch (error) {
+						if (!(error instanceof SqliteError) 
+							|| error.code !== "SQLITE_CONSTRAINT_PRIMARYKEY") {
+							throw error;
+						}
+					}
+				}
 			}
 
 			const mostRecentMessageID = sortedMessageIDs[sortedMessageIDs.length-1];
