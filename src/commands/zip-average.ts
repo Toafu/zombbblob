@@ -7,12 +7,14 @@ import { secondsToTimeString } from "../games/zipgame";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): string {
-	if (averageStats.average_time === null || averageStats.average_backtracks === null) {
+	if (averageStats.average_time === null) {
 		return "No results!";
 	}
 
 	return  `Time: ${secondsToTimeString(averageStats.average_time)}\n` +
-			`Backtracks: ${averageStats.average_backtracks.toFixed(1)}`;
+			`Backtracks: ${averageStats.average_backtracks === null ? 
+							"N/A" :
+							averageStats.average_backtracks.toFixed(1)}`;
 }
 
 export const command: Command = {

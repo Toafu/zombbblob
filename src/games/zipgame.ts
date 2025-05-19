@@ -5,7 +5,8 @@ import { Result, ZipGameDatabase } from "./zipgamedb";
 import { SqliteError } from "better-sqlite3";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
-const ZIP_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
+const ZIP_LOGGED_IN_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
+const ZIP_NOT_LOGGED_IN_REGEX = /^Zip #(\d+)\n(\d+):(\d+) 🏁\nlnkd\.in\/zip\./u;
 
 export function secondsToTimeString(seconds: number): string {
 	const minutes = Math.floor(seconds / 60);
@@ -22,12 +23,8 @@ export function getTodaysZipNumber(): number {
     return Math.floor((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24)) + 1
 }
 
-export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
-    if (message.channel.id !== Channels.oldtimers) {
-        return null;
-    }
-
-    const data = message.content.match(ZIP_REGEX);
+function parseLoggedInZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
+    const data = message.content.match(ZIP_LOGGED_IN_REGEX);
     if (data === null) {
         return null;
     }
@@ -44,6 +41,33 @@ export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boole
         time_seconds: minutes * 60 + seconds, 
         backtracks: numBacktracks
     };
+}
+
+function parseNotLoggedInZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
+    const data = message.content.match(ZIP_NOT_LOGGED_IN_REGEX);
+    if (data === null) {
+        return null;
+    }
+
+    const zipNumber = Number(data[1]);
+    const minutes = Number(data[2]);
+    const seconds = Number(data[3]);
+
+    return {
+        message_id: message.id, 
+        author_id: message.author.id,
+        game_number: zipNumber, 
+        time_seconds: minutes * 60 + seconds, 
+        backtracks: null
+    };
+}
+
+export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
+    if (message.channel.id !== Channels.oldtimers) {
+        return null;
+    }
+
+    return parseLoggedInZipMessage(message) || parseNotLoggedInZipMessage(message);
 }
 
 export async function zipMessageHandler(
