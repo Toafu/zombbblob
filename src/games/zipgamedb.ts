@@ -10,7 +10,7 @@ export interface Result {
     author_id: Snowflake,
     game_number: number,
     time_seconds: number,
-    backtracks: number
+    backtracks: number | null
 };
 
 export interface AverageStatsResponse {
@@ -39,7 +39,7 @@ export class ZipGameDatabase {
                 author_id TEXT NOT NULL,
                 game_number INTEGER NOT NULL,
                 time_seconds INTEGER NOT NULL,
-                backtracks INTEGER NOT NULL,
+                backtracks INTEGER,
                 PRIMARY KEY (author_id, game_number)
             );
         `);
