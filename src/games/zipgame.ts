@@ -1,4 +1,4 @@
-import { Message, MessageFlags, OmitPartialGroupDMChannel } from "discord.js";
+import { Message, MessageFlags, OmitPartialGroupDMChannel, PartialMessage } from "discord.js";
 
 import { ConfigHandler } from "../config";
 import { Result, ZipGameDatabase } from "./zipgamedb";
@@ -70,7 +70,7 @@ export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boole
     return parseLoggedInZipMessage(message) || parseNotLoggedInZipMessage(message);
 }
 
-export async function zipMessageHandler(
+export async function zipMessageCreateHandler(
     message: OmitPartialGroupDMChannel<Message<boolean>>
 ): Promise<void> {
     const parsedData = parseZipMessage(message)
@@ -120,4 +120,10 @@ export async function zipMessageHandler(
             content: "You've already submitted a time for this game, ignoring this submission...",
         });
     }
+}
+
+export function zipMessageDeleteHandler(
+    message: OmitPartialGroupDMChannel<Message<boolean> | PartialMessage>
+): void {
+    ZipGameDatabase.getInstance().removeSubmission(message.id);
 }
