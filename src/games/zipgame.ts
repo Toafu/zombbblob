@@ -69,6 +69,7 @@ export async function zipMessageHandler(
 		const previousAverageStats = ZipGameDatabase.getInstance().getTodaysAverageStats();
 
         ZipGameDatabase.getInstance().addSubmission(parsedData);
+        await message.react("✅");
 
         if (previousAverageStats.average_time !== null) {
             const newAverageStats = ZipGameDatabase.getInstance().getTodaysAverageStats();
