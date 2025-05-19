@@ -17,7 +17,7 @@ import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCo
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./games/zombiegame";
-import { zipMessageHandler } from "./games/zipgame";
+import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./games/zipgame";
 
 import { ConfigHandler } from "./config";
 const {
@@ -297,7 +297,7 @@ client.on("messageCreate", async (message) => {
 	if (WordsDatabase.getInstance().isGameRunning()) {
 		await checkInfection(message, client);
 	}
-	await zipMessageHandler(message);
+	await zipMessageCreateHandler(message);
 	const words = message.content.toLowerCase().split(" ");
 	if (message.content.startsWith("!rank")) {
 		//if person types !rank
@@ -416,6 +416,10 @@ client.on("messageReactionAdd", async (potentiallyPartialReaction, user) => {
 	// 	});
 	// }
 	// ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑
+});
+
+client.on("messageDelete", async (message) => {
+	zipMessageDeleteHandler(message);
 });
 
 // ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
