@@ -3,7 +3,7 @@ import { SqliteError } from "better-sqlite3";
 import { Command } from "../command";
 
 import { ConfigHandler } from "../config";
-import { parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../games/zipgame";
+import { getTodaysZipNumber, parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../games/zipgame";
 import { ZipGameDatabase } from "../games/zipgamedb";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
@@ -45,7 +45,7 @@ export const command: Command = {
 
 				const parsedData = parseZipMessage(message);
 
-				if (parsedData !== null) {
+				if (parsedData !== null && parsedData.game_number <= getTodaysZipNumber()) {
 					try {
 						ZipGameDatabase.getInstance().addSubmission(parsedData);
 					} catch (error) {
