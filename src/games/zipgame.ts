@@ -36,6 +36,16 @@ const zipParseOptionsArr: ZipParseOptions[] = [
             seconds: 3,
             backtracks: null
         },
+    },
+    {   // Logged-in w/ Chinese (Traditional)
+        regex: /^Zip #(\d+) \| (\d+):(\d+) (?:且零失誤 )? ?🏁\n(?:(?:零折返)|(?:折返了 (\d+) 次)) (?:🛑|🟢)\nlnkd\.in\/zip\./u,
+        groups: {
+            zipNumber: 1,
+            minutes: 2,
+            seconds: 3,
+            backtracks: 4
+        },
+        noBacktracksExpr: "零折返"
     }
 ]
 
