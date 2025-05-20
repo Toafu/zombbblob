@@ -12,7 +12,7 @@ interface ZipParseOptions {
         minutes: number,
         seconds: number,
         backtracks: number,
-        noBacktracks: number
+        backtrackEmoji: number
     }
 };
 
@@ -24,7 +24,7 @@ const zipParseOptionsArr: ZipParseOptions[] = [
             minutes: 2,
             seconds: 3,
             backtracks: 4,
-            noBacktracks: 5
+            backtrackEmoji: 5
         }
     }
     // TODO: Turkish (Zip number in front)
@@ -62,9 +62,9 @@ export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boole
         const zipNumber = Number(data[zipParseOptions.groups.zipNumber]);
         const minutes = Number(data[zipParseOptions.groups.minutes]);
         const seconds = Number(data[zipParseOptions.groups.seconds]);
-        const numBacktracks = data[zipParseOptions.groups.noBacktracks] === undefined ?
+        const numBacktracks = data[zipParseOptions.groups.backtrackEmoji] === undefined ?
                                 null :
-                                data[zipParseOptions.groups.noBacktracks] === NO_BACKTRACKS_EXPR ?
+                                data[zipParseOptions.groups.backtrackEmoji] === NO_BACKTRACKS_EXPR ?
                                     0 :
                                     Number(data[zipParseOptions.groups.backtracks]);
 
