@@ -34,7 +34,7 @@ const zipParseOptionsArr: ZipParseOptions[] = [
             * (🛑|🟢) - captures colored emoji (🛑 iff backtracks)
         
         */
-        regex: /^Zip\D*?(\d+)[\S\s]*?(\d+):(\d+)\D*?(?:\D*?(\d*)\D*?(🛑|🟢))?/mu,
+        regex: /^Zip\D*?(\d+)[\S\s]*?(\d+):(\d{2})\D*?(?:\D*?(\d*)\D*?(🛑|🟢))?/mu,
         groups: {
             zipNumber: 1,
             minutes: 2,
