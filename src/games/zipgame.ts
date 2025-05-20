@@ -5,8 +5,49 @@ import { Result, ZipGameDatabase } from "./zipgamedb";
 import { SqliteError } from "better-sqlite3";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
-const ZIP_LOGGED_IN_REGEX = /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u
-const ZIP_NOT_LOGGED_IN_REGEX = /^Zip #(\d+)\n(\d+):(\d+) 🏁\nlnkd\.in\/zip\./u;
+interface ZipParseOptions {
+    regex: RegExp,
+    groups: {
+        zipNumber: number,
+        minutes: number,
+        seconds: number,
+        backtracks: number | null
+    },
+    // iff the message contains no backtracks, noBacktracksExpr is in the matching string (group 0)
+    noBacktracksExpr?: string 
+};
+
+const zipParseOptionsArr: ZipParseOptions[] = [
+    {   // Logged-in w/ English
+        regex: /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u,
+        groups: {
+            zipNumber: 1,
+            minutes: 2,
+            seconds: 3,
+            backtracks: 4
+        },
+        noBacktracksExpr: "no backtrack"
+    },
+    {   // Not logged-in
+        regex: /^Zip #(\d+)\n(\d+):(\d+) 🏁\nlnkd\.in\/zip\./u,
+        groups: {
+            zipNumber: 1,
+            minutes: 2,
+            seconds: 3,
+            backtracks: null
+        },
+    },
+    {   // Logged-in w/ Chinese (Traditional)
+        regex: /^Zip #(\d+) \| (\d+):(\d+) (?:且零失誤 )? ?🏁\n(?:(?:零折返)|(?:折返了 (\d+) 次)) (?:🛑|🟢)\nlnkd\.in\/zip\./u,
+        groups: {
+            zipNumber: 1,
+            minutes: 2,
+            seconds: 3,
+            backtracks: 4
+        },
+        noBacktracksExpr: "零折返"
+    }
+]
 
 export function secondsToTimeString(seconds: number): string {
 	const minutes = Math.floor(seconds / 60);
@@ -23,51 +64,37 @@ export function getTodaysZipNumber(): number {
     return Math.floor((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24)) + 1
 }
 
-function parseLoggedInZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
-    const data = message.content.match(ZIP_LOGGED_IN_REGEX);
-    if (data === null) {
-        return null;
-    }
-
-    const zipNumber = Number(data[1]);
-    const minutes = Number(data[2]);
-    const seconds = Number(data[3]);
-    const numBacktracks = data[4] == "no" ? 0 : Number(data[4]);
-
-    return {
-        message_id: message.id, 
-        author_id: message.author.id,
-        game_number: zipNumber, 
-        time_seconds: minutes * 60 + seconds, 
-        backtracks: numBacktracks
-    };
-}
-
-function parseNotLoggedInZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
-    const data = message.content.match(ZIP_NOT_LOGGED_IN_REGEX);
-    if (data === null) {
-        return null;
-    }
-
-    const zipNumber = Number(data[1]);
-    const minutes = Number(data[2]);
-    const seconds = Number(data[3]);
-
-    return {
-        message_id: message.id, 
-        author_id: message.author.id,
-        game_number: zipNumber, 
-        time_seconds: minutes * 60 + seconds, 
-        backtracks: null
-    };
-}
-
 export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
     if (message.channel.id !== Channels.oldtimers) {
         return null;
     }
 
-    return parseLoggedInZipMessage(message) || parseNotLoggedInZipMessage(message);
+    for (const zipParseOptions of zipParseOptionsArr) {
+        const data = message.content.match(zipParseOptions.regex);
+        if (data === null) {
+            continue;
+        }
+
+        const zipNumber = Number(data[zipParseOptions.groups.zipNumber]);
+        const minutes = Number(data[zipParseOptions.groups.minutes]);
+        const seconds = Number(data[zipParseOptions.groups.seconds]);
+        const numBacktracks = zipParseOptions.groups.backtracks === null 
+                                || zipParseOptions.noBacktracksExpr === undefined ? 
+                                    null :
+                                    data[0].includes(zipParseOptions.noBacktracksExpr) ? 
+                                        0 : 
+                                        Number(data[zipParseOptions.groups.backtracks]);
+
+        return {
+            message_id: message.id, 
+            author_id: message.author.id,
+            game_number: zipNumber, 
+            time_seconds: minutes * 60 + seconds, 
+            backtracks: numBacktracks
+        };
+    }
+
+    return null;
 }
 
 export async function zipMessageCreateHandler(
