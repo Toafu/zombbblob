@@ -11,42 +11,24 @@ interface ZipParseOptions {
         zipNumber: number,
         minutes: number,
         seconds: number,
-        backtracks: number | null
-    },
-    // iff the message contains no backtracks, noBacktracksExpr is in the matching string (group 0)
-    noBacktracksExpr?: string 
+        backtracks: number,
+        backtrackEmoji: number
+    }
 };
 
 const zipParseOptionsArr: ZipParseOptions[] = [
-    {   // Logged-in w/ English
-        regex: /^Zip #(\d+) \| (\d+):(\d+) (?:and flawless )? ?🏁\nWith (\d+|no) backtrack(?:s?) (?:🛑|🟢)\nlnkd\.in\/zip\./u,
+    {   // Generic (logged-out and most languages)
+        regex: /^Zip\D*?(\d+)[\S\s]*?(\d+):(\d+)\D*?(?:\D*?(\d*)\D*?(🛑|🟢))?/mu,
         groups: {
             zipNumber: 1,
             minutes: 2,
             seconds: 3,
-            backtracks: 4
-        },
-        noBacktracksExpr: "no backtrack"
-    },
-    {   // Not logged-in
-        regex: /^Zip #(\d+)\n(\d+):(\d+) 🏁\nlnkd\.in\/zip\./u,
-        groups: {
-            zipNumber: 1,
-            minutes: 2,
-            seconds: 3,
-            backtracks: null
-        },
-    },
-    {   // Logged-in w/ Chinese (Traditional)
-        regex: /^Zip #(\d+) \| (\d+):(\d+) (?:且零失誤 )? ?🏁\n(?:(?:零折返)|(?:折返了 (\d+) 次)) (?:🛑|🟢)\nlnkd\.in\/zip\./u,
-        groups: {
-            zipNumber: 1,
-            minutes: 2,
-            seconds: 3,
-            backtracks: 4
-        },
-        noBacktracksExpr: "零折返"
+            backtracks: 4,
+            backtrackEmoji: 5
+        }
     }
+    // TODO: Turkish (Zip number in front)
+    // TODO: Arabic, Bangla, Persian, and Marathi (Zip number in unique numerals)
 ]
 
 export function secondsToTimeString(seconds: number): string {
@@ -57,6 +39,8 @@ export function secondsToTimeString(seconds: number): string {
 }
 
 export const ZIP_RELEASE_TIMESTAMP = 1742281200000;
+
+const NO_BACKTRACKS_EXPR = "🟢";
 
 export function getTodaysZipNumber(): number {
     // Number of days (rounded down) since the start of Zip + 1 
@@ -78,12 +62,11 @@ export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boole
         const zipNumber = Number(data[zipParseOptions.groups.zipNumber]);
         const minutes = Number(data[zipParseOptions.groups.minutes]);
         const seconds = Number(data[zipParseOptions.groups.seconds]);
-        const numBacktracks = zipParseOptions.groups.backtracks === null 
-                                || zipParseOptions.noBacktracksExpr === undefined ? 
-                                    null :
-                                    data[0].includes(zipParseOptions.noBacktracksExpr) ? 
-                                        0 : 
-                                        Number(data[zipParseOptions.groups.backtracks]);
+        const numBacktracks = data[zipParseOptions.groups.backtrackEmoji] === undefined ?
+                                null :
+                                data[zipParseOptions.groups.backtrackEmoji] === NO_BACKTRACKS_EXPR ?
+                                    0 :
+                                    Number(data[zipParseOptions.groups.backtracks]);
 
         return {
             message_id: message.id, 
