@@ -26,7 +26,7 @@ const zipParseOptionsArr: ZipParseOptions[] = [
             * (\d+) - captures actual number
         * \D+? - matches any text between previous and the time
         * (\d+):(\d{2}) - captures the minutes and seconds
-        * (?:\D*?(\d*)\D*?(🛑|🟢))? - optional non-capturing group for backtracks
+        * (?:\D+?(\d*)\D*?(🛑|🟢))? - optional non-capturing group for backtracks
             * \D+? - matches text before backtracks
             * (\d*) - captures the backtrack count (or empty if none)
             * \D*? - matches text after backtrack count (if any)
