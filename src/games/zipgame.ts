@@ -27,13 +27,13 @@ const zipParseOptionsArr: ZipParseOptions[] = [
         * \D+? - matches any text between previous and the time
         * (\d+):(\d{2}) - captures the minutes and seconds
         * (?:\D*?(\d*)\D*?(🛑|🟢))? - optional non-capturing group for backtracks
-            * \D*? - matches text before backtracks
+            * \D+? - matches text before backtracks
             * (\d*) - captures the backtrack count (or empty if none)
             * \D*? - matches text after backtrack count (if any)
             * (🛑|🟢) - captures colored emoji (🛑 iff backtracks)
         
         */
-        regex: /^Zip\D*?(\d+)\D+?(\d+):(\d{2})(?:\D*?(\d*)\D*?(🛑|🟢))?/mu,
+        regex: /^Zip\D*?(\d+)\D+?(\d+):(\d{2})(?:\D+?(\d*)\D*?(🛑|🟢))?/mu,
         groups: {
             zipNumber: 1,
             minutes: 2,
