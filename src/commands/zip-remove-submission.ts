@@ -14,11 +14,11 @@ export const command: Command = {
 		.setDescription("remove zip submission from database"),
 	init: () => { },
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		const removeResult = 
+		const resultRemoved = 
 			ZipGameDatabase.getInstance()
 							.removeSubmission(interaction.options.getString('message_id', true));
 
-		if (removeResult.changes === 0) {
+		if (resultRemoved) {
 			await interaction.reply({
 				content: "There is no submission in the database with that message ID.",
 				flags: "Ephemeral"

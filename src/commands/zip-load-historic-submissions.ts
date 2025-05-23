@@ -47,7 +47,10 @@ export const command: Command = {
 
 				if (parsedData !== null && parsedData.game_number <= getTodaysZipNumber()) {
 					try {
-						ZipGameDatabase.getInstance().addSubmission(parsedData);
+						if (!ZipGameDatabase.getInstance().isSubmissionRemoved(message.id) &&
+							!ZipGameDatabase.getInstance().isDenyListed(message.author.id)) {
+							ZipGameDatabase.getInstance().addSubmission(parsedData);
+						}
 					} catch (error) {
 						if (!(error instanceof SqliteError) 
 							|| error.code !== "SQLITE_CONSTRAINT_PRIMARYKEY") {

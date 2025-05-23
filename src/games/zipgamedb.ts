@@ -43,6 +43,20 @@ export class ZipGameDatabase {
                 PRIMARY KEY (author_id, game_number)
             );
         `);
+
+        this.db.exec(`
+            CREATE TABLE IF NOT EXISTS removed_results (
+                message_id TEXT,
+                PRIMARY KEY (message_id)
+            );
+        `);
+
+        this.db.exec(`
+            CREATE TABLE IF NOT EXISTS denylist (
+                user_id TEXT,
+                PRIMARY KEY (user_id)
+            );
+        `);
     }
 
     public static getInstance(): ZipGameDatabase {
@@ -68,10 +82,20 @@ export class ZipGameDatabase {
             .get(authorID) as Result;
     }
 
-    public removeSubmission(messageID: string): Database.RunResult {
-        return this.db
+    public removeSubmission(messageID: string): boolean {
+        const deleteResult = this.db
             .prepare("DELETE FROM results WHERE message_id = ?")
             .run(messageID);
+
+        if (deleteResult.changes === 0) {
+            return false;
+        }
+
+        this.db
+            .prepare("INSERT INTO removed_results VALUES (?)")
+            .run(messageID);
+
+        return true;
     }
 
     public getAverageStats(): AverageStatsResponse {
@@ -84,5 +108,29 @@ export class ZipGameDatabase {
         return this.db
                     .prepare(AVERAGE_STATS_QUERY + " WHERE game_number = ?")
                     .get(getTodaysZipNumber()) as AverageStatsResponse;
+    }
+
+    public isSubmissionRemoved(messageID: Snowflake): boolean {
+        return this.db
+                    .prepare(
+                        "SELECT * FROM removed_results " +
+                        "WHERE message_id = ?"
+                    )
+                    .get(messageID) !== undefined;
+    }
+
+    public addToDenyList(userID: Snowflake): void {
+        this.db
+            .prepare("INSERT INTO denylist VALUES (?)")
+            .run(userID);
+    }
+
+    public isDenyListed(userID: Snowflake): boolean {
+        return this.db
+                    .prepare(
+                        "SELECT * FROM denylist " +
+                        "WHERE user_id = ?"
+                    )
+                    .get(userID) !== undefined;
     }
 }

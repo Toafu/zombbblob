@@ -105,6 +105,10 @@ export async function zipMessageCreateHandler(
         return;
     }
 
+    if (ZipGameDatabase.getInstance().isDenyListed(message.author.id)) {
+        return;
+    }
+
     const todaysZipNumber = getTodaysZipNumber();
 
     if (parsedData.game_number != todaysZipNumber) {
