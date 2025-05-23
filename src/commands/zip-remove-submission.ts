@@ -18,7 +18,7 @@ export const command: Command = {
 			ZipGameDatabase.getInstance()
 							.removeSubmission(interaction.options.getString('message_id', true));
 
-		if (resultRemoved) {
+		if (!resultRemoved) {
 			await interaction.reply({
 				content: "There is no submission in the database with that message ID.",
 				flags: "Ephemeral"
