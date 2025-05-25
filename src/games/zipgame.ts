@@ -58,10 +58,14 @@ export const ZIP_RELEASE_TIMESTAMP = 1742281200000;
 
 const NO_BACKTRACKS_EXPR = "🟢";
 
-export function getTodaysZipNumber(): number {
+export function getZipNumberFromUnixMillis(millis: number): number {
     // Number of days (rounded down) since the start of Zip + 1 
     // because the first day is game #1 and is 0 away from the start of Zip.
-    return Math.floor((Date.now()-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24)) + 1
+    return Math.floor((millis-ZIP_RELEASE_TIMESTAMP) / (1000 * 60 * 60 * 24)) + 1
+}
+
+export function getTodaysZipNumber() {
+    return getZipNumberFromUnixMillis(Date.now());
 }
 
 export function parseZipMessage(message: OmitPartialGroupDMChannel<Message<boolean>>): Result | null {
