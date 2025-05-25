@@ -2,7 +2,8 @@ import Database from 'better-sqlite3';
 
 import { ConfigHandler } from '../config';
 import { Snowflake } from 'discord.js';
-import { getTodaysZipNumber } from './zipgame';
+import { getTodaysZipNumber, getZipNumberFromUnixMillis } from './zipgame';
+import { DateTime } from 'luxon';
 const { ZIPGAME_DB_PATH } = ConfigHandler.getInstance().getConfig();
 
 export interface Result {
@@ -108,6 +109,20 @@ export class ZipGameDatabase {
         return this.db
                     .prepare(AVERAGE_STATS_QUERY + " WHERE game_number = ?")
                     .get(getTodaysZipNumber()) as AverageStatsResponse;
+    }
+
+    public getWeeksAverageStats(): AverageStatsResponse {
+        const sundayZipReset = DateTime.now()
+                                     .setZone('America/Vancouver') // in PST
+                                     .startOf('week') // Monday
+                                     .minus({days: 1}) // Sunday
+                                     .plus({hours: 3}); // 3am (when Zip resets)
+        
+        const startOfWeekZipNumber = getZipNumberFromUnixMillis(sundayZipReset.toMillis());
+
+        return this.db
+                    .prepare(AVERAGE_STATS_QUERY + " WHERE game_number BETWEEN ? and ?")
+                    .get(startOfWeekZipNumber, getTodaysZipNumber()) as AverageStatsResponse;
     }
 
     public isSubmissionRemoved(messageID: Snowflake): boolean {

@@ -7,14 +7,15 @@ import { secondsToTimeString } from "../games/zipgame";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): string {
-	if (averageStats.average_time === null) {
-		return "No results!";
-	}
+	const timeString = averageStats.average_time === null ? 
+							"N/A " : 
+							secondsToTimeString(averageStats.average_time);
 
-	return  `Time: ${secondsToTimeString(averageStats.average_time)}\n` +
-			`Backtracks: ${averageStats.average_backtracks === null ? 
-							"N/A" :
-							averageStats.average_backtracks.toFixed(1)}`;
+	const backtracksString = averageStats.average_backtracks === null ?
+							"N/A " :
+							averageStats.average_backtracks.toFixed(1);
+	
+	return `${timeString}    ${backtracksString}      `
 }
 
 export const command: Command = {
@@ -27,12 +28,22 @@ export const command: Command = {
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const averageStats = ZipGameDatabase.getInstance().getAverageStats();
 
+		/*
+
+		**`          Time    Backtracks`**
+		`Today:    0:15    N/A       `
+		`Week:     0:25    4.2       `
+		`All-Time: 0:30    3.3       `
+
+		*/
+
 		await interaction.reply(
-			"Average Zip stats for the EECS281 Discord\n\n" + 
-			"Today:\n" +
-			`${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getTodaysAverageStats())}\n\n` +
-			`All time (${averageStats.num_submissions} submissions and ${averageStats.days_played} days):\n` +
-			averageTimeAndBacktracksString(averageStats)
+			"**" +
+			`\`          Time    Backtracks\``+
+			"**\n" +
+			`\`Today:    ${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getTodaysAverageStats())}\`\n` + 
+			`\`Week:     ${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getWeeksAverageStats())}\`\n` + 
+			`\`All-Time: ${averageTimeAndBacktracksString(ZipGameDatabase.getInstance().getAverageStats())}\``
 		)
 	},
 };
