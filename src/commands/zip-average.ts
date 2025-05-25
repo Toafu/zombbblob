@@ -15,7 +15,7 @@ function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): str
 							"N/A " :
 							averageStats.average_backtracks.toFixed(1);
 	
-	return `${timeString}    ${backtracksString}      `
+	return `${timeString}    ${backtracksString}       `
 }
 
 export const command: Command = {
