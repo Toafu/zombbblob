@@ -34,7 +34,7 @@ export const command: Command = {
 				`(Rank ${userStats.backtracksRank}/${userStats.usersWithBacktracksCount})\n`) + 
 				
 			`Submissions: ${userStats.submissionsCount} ` + 
-			`(Rank ${userStats.submissionsCount}/${userStats.userCount})`
+			`(Rank ${userStats.submissionsRank}/${userStats.userCount})`
 		)
 	}
 };
