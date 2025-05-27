@@ -21,6 +21,20 @@ export interface AverageStatsResponse {
     num_submissions: number
 }
 
+export interface UserStats {
+
+                            averageTime: number, 
+                            averageBacktracks: number | null, 
+                            submissionsCount: number, 
+
+                            timeRank: number,
+                            backtracksRank: number | null, 
+                            submissionsRank: number, 
+
+                            userCount: number, 
+                            usersWithBacktracksCount: number
+}
+
 const AVERAGE_STATS_QUERY = "SELECT ROUND(AVG(time_seconds)) as average_time, " +
                             "       AVG(backtracks) as average_backtracks, " + 
                             "       COUNT(*) as num_submissions, " + 
@@ -147,5 +161,49 @@ export class ZipGameDatabase {
                         "WHERE user_id = ?"
                     )
                     .get(userID) !== undefined;
+    }
+
+    public getUserStats(userID: Snowflake): UserStats | undefined {
+        return this.db
+                    .prepare(
+                        `SELECT 
+                            author_id,
+
+                            ROUND(averageTime) AS averageTime,
+                            ROUND(averageBacktracks, 1) AS averageBacktracks,
+                            submissionsCount,
+
+                            timeRank,
+                            backtracksRank,
+                            submissionsRank,
+
+                            userCount,
+                            usersWithBacktracksCount
+                        FROM (
+                            SELECT 
+                                author_id,
+
+                                AVG(time_seconds) AS averageTime,
+                                AVG(backtracks) AS averageBacktracks,
+                                COUNT(*) AS submissionsCount,
+
+                                RANK() OVER (ORDER BY AVG(time_seconds)) AS timeRank,
+                                CASE WHEN AVG(backtracks) IS NULL THEN NULL ELSE
+                                    RANK() OVER 
+                                        (ORDER BY CASE WHEN AVG(backtracks) IS NULL THEN 1 ELSE 0 END, AVG(backtracks)) 
+                                END AS backtracksRank,
+                                RANK() OVER (ORDER BY COUNT(*) DESC) AS submissionsRank,
+
+                                
+                                COUNT(*) OVER () AS userCount,
+                                SUM(CASE WHEN AVG(backtracks) IS NOT NULL THEN 1 ELSE 0 END) OVER () AS usersWithBacktracksCount
+
+                            FROM results
+                            GROUP BY author_id
+                            HAVING submissionsCount > 5
+                        )
+                        WHERE author_id = ?;`
+                    )
+                    .get(userID) as UserStats;
     }
 }
