@@ -7,7 +7,7 @@ const devConfig: Config = {
 	CLIENT_ID: "1276685924822024326",
 	SERVER_ID: "1325691299713777684",
 	MAINTAINER_IDS: ["269910487133716480", "1032320122460839997"],
-	UPDATE_ROLE_MESSAGE_ID: "1325692036539744256",
+	UPDATE_ROLE_MESSAGE_ID: "1377814011633991773",
 	PERMANENT_INVITE_URL: "discord.gg/ZxfHgtBZvp",
 	ZOMBBBLOB_EMOJI_ID: '1332929961300066445',
 	ZOMBBBLOB_DB_PATH: path.join(__dirname, "../", "zombbblob-minigame.db"),
@@ -15,31 +15,31 @@ const devConfig: Config = {
 	ZIPGAME_DB_PATH: path.join(__dirname, "../", "zip-game.db"),
 
 	Roles: {
-		Student: "1325692142865223732",
-		StudentAlumni: "1325692165501747221",
-		Staff: "1325692186725056534",
-		InfectedZombbblob: "1325692190512644117", // This one can change
-		LightMode: "1325692192613994600",
-		DarkMode: "1325692206748532799",
-		GalacticNews: "1325692269164236831",
-		ExamLocked: "1366895854815940681"
+		Student: "1377812169948921949",
+		StudentAlumni: "1377812168711475362",
+		Staff: "1377812160490770583",
+		InfectedZombbblob: "1377812170854895698", // This one can change
+		LightMode: "1377812176605024266",
+		DarkMode: "1377812177129570325",
+		GalacticNews: "1377812178442260480",
+		ExamLocked: "1377812162172555346"
 	},
 
 	NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT: ['Student', 'InfectedZombbblob', 'LightMode', 'DarkMode', 'GalacticNews'],
 
 	Channels: {
-		pianogang: "1325692447749177344",
-		oldtimers: "1325692497741221929",
-		smallstudyrooms: "1325691789981646900",
-		serverlog: "1325691838941626421",
-		welcomeandrules: "1325692579651518464", // use for /invite
-		zombbblobdev: "1325692710828511302",
-		updaterole: "1325692003471589387",
-		zombbblob: "1366845661634363402", // Can change,
-		zombbblob_trolling: "1337257408891850783",
-		staff_bot_commands: "1337258485305577535",
-		category_above_newest_semester: "1325691669240086599",
-		server_lock_explanation: "1348505587004084274"
+		pianogang: "1377812353554321409",
+		oldtimers: "1377812306653876265",
+		smallstudyrooms: "1377812205797376055",
+		serverlog: "1377812216174350367",
+		welcomeandrules: "1377812228547416094", // use for /invite
+		zombbblobdev: "1377812244712128513",
+		updaterole: "1377812412748533841",
+		zombbblob: "1377812473142575194", // Can change,
+		zombbblob_trolling: "1377812297895907439",
+		staff_bot_commands: "1377812261170712699",
+		category_above_newest_semester: "1377812181122289784",
+		server_lock_explanation: "1377812423859503164"
 	}
 };
 
