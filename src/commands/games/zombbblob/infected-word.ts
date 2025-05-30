@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
+import { Command } from "../../../command";
 
-import { WordsDatabase } from "../games/zombbblobdb";
+import { WordsDatabase } from "../../../games/zombbblobdb";
 
-import { ConfigHandler } from "../config";
-import { maintainersPingString } from "../utils";
+import { ConfigHandler } from "../../../config";
+import { maintainersPingString } from "../../../utils";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {

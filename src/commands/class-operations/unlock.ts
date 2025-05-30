@@ -1,14 +1,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from 'discord.js';
-import { applyLockRollPermsToChannels, EXAM_LOCK_ENABLED_ROLE_NAME } from '../utils';
-import { Command } from '../command';
+import { applyLockRollPermsToChannels, EXAM_LOCK_DISABLED_ROLE_NAME } from '../../utils';
+import { Command } from '../../command';
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Roles, Channels } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
-		.setName('lock')
-		.setDescription('locks the server to Students (unable to communicate)'),
+		.setName('unlock')
+		.setDescription('unlocks the server to Students (able to communicate)'),
 	init: () => {},
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		if (interaction.guild === null || interaction.channel === null || !interaction.channel.isSendable()) {
@@ -22,7 +22,7 @@ export const command: Command = {
 			await deferredReply.edit("Could not fetch Exam Locked role");
 			return;
 		}
-
+		
 		const serverLockExplanationChannel = await interaction.guild.channels.fetch(Channels.server_lock_explanation);
 		if (serverLockExplanationChannel === null) {
 			await deferredReply.edit("Could not fetch server lock explanation channel.");
@@ -34,11 +34,11 @@ export const command: Command = {
 			return;
 		}
 
-		await examLockedRole.setName(EXAM_LOCK_ENABLED_ROLE_NAME);
+		await examLockedRole.setName(EXAM_LOCK_DISABLED_ROLE_NAME);
 
 		await applyLockRollPermsToChannels(interaction.guild, examLockedRole, serverLockExplanationChannel, deferredReply);
 
-		await deferredReply.edit("Server locked!");
-		await interaction.channel.send("Server locked for Student role.");
+		await deferredReply.edit("Server unlocked!");
+		await interaction.channel.send("Server unlocked for Student role!");
 	}
 };

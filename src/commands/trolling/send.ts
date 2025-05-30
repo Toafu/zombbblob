@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
-import { Command } from "../command";
+import { Command } from "../../command";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
 //There should be a command to make PotatoBot send custom messages, but only accessible by staff in the staff chat

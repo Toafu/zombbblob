@@ -1,13 +1,13 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { Command } from '../command';
+import { Command } from '../../command';
 
-import { ConfigHandler } from '../config';
+import { ConfigHandler } from '../../config';
 const { Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
-		.setName('ia-notes')
-		.setDescription('sends the ia notes'),
+		.setName('schedule-of-topics')
+		.setDescription('sends the schedule of topics'),
 	init: () => {},
 	authorizedRoleIDs: [Roles.Student],
 	execute: async (interaction: ChatInputCommandInteraction) => {
@@ -15,6 +15,6 @@ export const command: Command = {
 			return;
 		}
 		
-		await interaction.reply("[Here you go!](https://ajzhou.gitlab.io/eecs281/notes/)");
+		await interaction.reply("[Here's the schedule of topics!](https://docs.google.com/spreadsheets/d/1WB25XRF0XTL5HOgDNSinp4cHZN_pxxpetD_qj-PboqQ)");
 	}
 };

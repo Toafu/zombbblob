@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { Command } from '../command';
+import { Command } from '../../command';
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {

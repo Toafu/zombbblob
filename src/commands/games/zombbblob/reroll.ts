@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
+import { Command } from "../../../command";
 
-import { WordsDatabase } from "../games/zombbblobdb";
-import { ConfigHandler } from '../config';
-import { maintainersPingString } from "../utils";
+import { WordsDatabase } from "../../../games/zombbblobdb";
+import { ConfigHandler } from '../../../config';
+import { maintainersPingString } from "../../../utils";
 const { Roles, Channels } = ConfigHandler.getInstance().getConfig();
 
 const HOUR = 60 * 60 * 1000;

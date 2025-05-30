@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from "discord.js";
-import { Command } from "../command";
+import { Command } from "../../../command";
 
-import { ZipGameDatabase } from "../games/zipgamedb";
+import { ZipGameDatabase } from "../../../games/zipgamedb";
 
 export const command: Command = {
 	data: new SlashCommandBuilder()

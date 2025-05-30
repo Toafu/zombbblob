@@ -11,9 +11,8 @@ import {
 	Snowflake,
 } from "discord.js";
 import fetch from "node-fetch";
-import fs from "fs";
 import path from "path";
-import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString } from "./utils";
+import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString, allFilesInFolderAndSubfolders } from "./utils";
 import { registerCommands } from "./registerCommands";
 import { Command } from "./command";
 import { checkInfection } from "./games/zombiegame";
@@ -204,11 +203,8 @@ client.on("ready", async () => {
 	}
 
 	console.log("Initializing commands...");
-	const commandsDirectoryPath = path.join(__dirname, "commands/");
-	for (const commandFileName of fs.readdirSync(commandsDirectoryPath)) {
-		const { command } = await import(
-			path.join(commandsDirectoryPath, commandFileName)
-		);
+	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))) {
+		const { command } = await import(commandPath);
 		command.init(client);
 		commands.set(command.data.name, command);
 	}

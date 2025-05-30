@@ -1,6 +1,8 @@
 import { Guild, GuildBasedChannel, InteractionResponse, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Role, Snowflake, TextChannel } from 'discord.js';
 
 import { ConfigHandler } from "./config";
+import fs from "fs";
+import path from "path";
 const { Roles, SERVER_ID, NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT, MAINTAINER_IDS } = ConfigHandler.getInstance().getConfig();
 
 export const MEE6_ID = '159985870458322944';
@@ -167,6 +169,26 @@ export function hasLockRollPerms(channel: Exclude<GuildBasedChannel, PrivateThre
 		return deniedPermissions !== undefined && deniedPermissions.has('SendMessages') && deniedPermissions.has('SendMessagesInThreads')
 
 	return true;
+}
+
+export function allFilesInFolderAndSubfolders(startingPath: string): string[] {
+	const files: string[] = [];
+
+	const searchContainer = [startingPath];
+	while (searchContainer.length > 0) {
+		let top = searchContainer.shift()!;
+
+		if (fs.statSync(top).isFile()) {
+			files.push(top);
+			continue;
+		}
+
+		for (const name of fs.readdirSync(top)) {
+			searchContainer.push(path.join(top, name));
+		}
+	}
+
+	return files;
 }
 
 export const EXAM_LOCK_ENABLED_ROLE_NAME = "Exam Lock Enabled";

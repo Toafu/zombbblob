@@ -1,8 +1,8 @@
 import { BaseGuildTextChannel, ChannelType, ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import { semesterStringToCategoryName } from '../utils';
-import { Command } from "../command";
+import { semesterStringToCategoryName } from '../../utils';
+import { Command } from "../../command";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 //the ability to create channels for a semester (e.g. /create F22)

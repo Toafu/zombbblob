@@ -1,8 +1,8 @@
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
-import { WordsDatabase } from "../games/zombbblobdb";
+import { Command } from "../../../command";
+import { WordsDatabase } from "../../../games/zombbblobdb";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../../config";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {
