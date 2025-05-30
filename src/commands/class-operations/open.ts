@@ -1,5 +1,5 @@
 import { BaseGuildTextChannel, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { Command } from '../command';
+import { Command } from '../../command';
 
 export const command: Command = {
 	data: new SlashCommandBuilder()

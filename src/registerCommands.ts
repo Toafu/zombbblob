@@ -8,19 +8,21 @@ import crypto from 'crypto';
 import { ConfigHandler } from './config';
 const { CLIENT_ID, SERVER_ID, PREVIOUS_COMMANDS_PATH } = ConfigHandler.getInstance().getConfig();
 
+import { allFilesInFolderAndSubfolders } from "./utils";
+
 export const registerCommands = async function() {
     if (!process.env.TOKEN) {
         console.error("No TOKEN in ENV!");
         process.exit(1);
     }
 
-    const commandsDirectoryPath = path.join(__dirname, "commands/");
-    const commandDatums = await Promise.all(fs.readdirSync(commandsDirectoryPath).map(async commandFileName => {
-        const { command } = await import(
-            path.join(commandsDirectoryPath, commandFileName)
-        );
-        return command.data.toJSON();
-    }));
+    const commandDatums = await Promise.all(
+        allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))
+            .map(async commandPath => {
+                const { command } = await import(commandPath);
+                return command.data.toJSON();
+            })
+    );
 
     const currentCommandsHash = crypto
                             .createHash('sha256')

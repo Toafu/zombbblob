@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
-import { parseMessageLink } from "../utils";
+import { Command } from "../../command";
+import { parseMessageLink } from "../../utils";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {

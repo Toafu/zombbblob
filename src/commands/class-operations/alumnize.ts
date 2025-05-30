@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Client, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
+import { Command } from "../../command";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../../config";
 const { Channels, Roles, SERVER_ID } = ConfigHandler.getInstance().getConfig();
 
 const beforeMap = {

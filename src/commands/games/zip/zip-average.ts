@@ -1,9 +1,9 @@
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../command";
-import { AverageStatsResponse, ZipGameDatabase } from "../games/zipgamedb";
+import { Command } from "../../../command";
+import { AverageStatsResponse, ZipGameDatabase } from "../../../games/zipgamedb";
 
-import { ConfigHandler } from "../config";
-import { secondsToTimeString } from "../games/zipgame";
+import { ConfigHandler } from "../../../config";
+import { secondsToTimeString } from "../../../games/zipgame";
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 function averageTimeAndBacktracksString(averageStats: AverageStatsResponse): string {
