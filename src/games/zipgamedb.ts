@@ -126,13 +126,11 @@ export class ZipGameDatabase {
     }
 
     public getWeeksAverageStats(): AverageStatsResponse {
-        const sundayZipReset = DateTime.now()
+        const weeklyAverageResetDatetime = DateTime.now()
                                      .setZone('America/Vancouver') // in PST
-                                     .startOf('week') // Monday
-                                     .minus({days: 1}) // Sunday
-                                     .plus({hours: 3}); // 3am (when Zip resets)
+                                     .startOf('week') // Monday 12AM
         
-        const startOfWeekZipNumber = getZipNumberFromUnixMillis(sundayZipReset.toMillis());
+        const startOfWeekZipNumber = getZipNumberFromUnixMillis(weeklyAverageResetDatetime.toMillis());
 
         return this.db
                     .prepare(AVERAGE_STATS_QUERY + " WHERE game_number BETWEEN ? and ?")
