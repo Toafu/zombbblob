@@ -476,6 +476,11 @@ client.on("channelUpdate", async (oldChannel, newChannel) => {
 	if (!(newChannel instanceof GuildChannel)) {
 		return;
 	}
+
+	// TODO: Remove. Temp Spec Dub Patch
+	if (newChannel.id === "1040790867826442331") {
+		return;
+	}
 	
 	const possibleRolesForStudent = await getPossibleRolesForStudent(newChannel.guild);
 	if (!(possibleRolesForStudent).some(role => canCommunicate(newChannel, role))) {
