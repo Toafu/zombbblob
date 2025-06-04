@@ -14,8 +14,9 @@ import path from "path";
 import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString, allFilesInFolderAndSubfolders } from "./utils";
 import { registerCommands } from "./command/registerCommands";
 import { Command } from "./command/command";
-import { checkInfection } from "./games/zombiegame";
-import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./games/zipgame";
+import { checkInfection } from "./fun/zombiegame";
+import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./fun/zipgame";
+import { rankCommandMessageHandler } from "./fun/mee6";
 
 import { ConfigHandler } from "./config/config";
 const {
@@ -26,11 +27,10 @@ const {
 	ZOMBBBLOB_EMOJI_ID
 } = ConfigHandler.getInstance().getConfig();
 
-import { WordsDatabase } from "./games/zombbblobdb";
+import { WordsDatabase } from "./fun/zombbblobdb";
 import { validateInvariants } from "./config/validator";
 
 require("dotenv").config();
-const topTen: Snowflake[] = [];
 
 type RecentMessage = {
 	content: String;
@@ -75,29 +75,29 @@ function isSpam(messageContent: String, authorID: Snowflake) {
 	);
 }
 
+// Spam detector (if same message sent over 10 times in a row)
+async function spamCheck(message: Message) {
+	if (isSpam(message.content, message.author.id)) {
+		const serverLogChannel = client.channels.cache.get(Channels.serverlog);
+		if (!serverLogChannel) {
+			console.error("server log channel invalid!");
+			process.exit(1);
+		}
+
+		if (!serverLogChannel.isSendable()) {
+			console.error("Server log channel is not a text channel!");
+			return;
+		}
+
+		await serverLogChannel.send(
+			`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`
+		);
+		await message.member!.timeout(30 * 1000); // timeout for 30 seconds
+	}
+}
+
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
-
-let topTenUpdated: number = -1;
-
-async function updateTopTen() {
-	if (topTenUpdated != -1 && Date.now() - topTenUpdated < 60 * 1000) {
-		return; //no
-	}
-	await fetch(`https://mee6.xyz/api/plugins/levels/leaderboard/${SERVER_ID}`, {
-		headers: {
-			accept: "application/json",
-		},
-		method: "GET",
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			for (let i = 0; i < 10; ++i) {
-				topTen[i] = data["players"][i]["id"];
-			}
-		});
-	topTenUpdated = Date.now();
-}
 
 const client = new Client({
 	intents: [
@@ -110,6 +110,7 @@ const client = new Client({
 	],
 	partials: [Partials.Channel, Partials.Message, Partials.Reaction],
 });
+
 
 const commands: Map<String, Command> = new Map();
 
@@ -162,77 +163,15 @@ client.on("ready", async () => {
 client.on("messageCreate", async (message) => {
 	if (message.author.bot) return; //if message is from a bot
 	if (message.member === null) return;
-	if (isSpam(message.content, message.author.id)) {
-		// Spam detector (if same message sent over 10 times in a row)
-		const serverLogChannel = client.channels.cache.get(Channels.serverlog);
-		if (!serverLogChannel) {
-			console.error("server log channel invalid!");
-			process.exit(1);
-		}
+	
+	await spamCheck(message);
 
-		if (!serverLogChannel.isSendable()) {
-			console.error("Server log channel is not a text channel!");
-			return;
-		}
-
-		await serverLogChannel.send(
-			`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`
-		);
-		await message.member.timeout(30 * 1000); // timeout for 30 seconds
-	}
 	if (WordsDatabase.getInstance().isGameRunning()) {
 		await checkInfection(message, client);
 	}
 	await zipMessageCreateHandler(message);
-	const words = message.content.toLowerCase().split(" ");
 	if (message.content.startsWith("!rank")) {
-		//if person types !rank
-		const filter = (m: Message) => m.author.id.toString() === MEE6_ID;
-		const collector = message.channel.createMessageCollector({
-			filter,
-			time: 5000,
-			max: 1,
-		});
-		collector.on("collect", async (m) => {
-			//collected following MEE6 message
-			let rankQuery = message.author.id.toString();
-			if (words.length > 1) {
-				//assumes user is querying another user
-				const regexQuery = words[1].match(/\d+/);
-				if (regexQuery) {
-					rankQuery = regexQuery[0];
-				}
-			}
-			await updateTopTen();
-			if (rankQuery === topTen[0]) {
-				//per request of slime
-				const arayL = [
-					"<:burgerKingBlobL:1026644796703510599>",
-					"🤡",
-					"💀",
-					"👎",
-					"📉",
-					"🇱",
-					"<:blobL:1023692287185801376>",
-					"<:blobsweats:1052600617568317531>",
-					"<:notlikeblob:1027966505922592779>",
-					"<:blobdisapproval:1039016273343951009>",
-					"<:blobyikes:1046967593132630056>",
-					"<:blobbruh:936493734592380988>",
-					"<:blobRecursive:1026705949605507093>",
-					"<:blobEveryone:1026656071856685117>",
-					"<:D_:1029092005416009748>",
-				];
-				arayL.forEach(async (emote) => {
-					await m.react(emote);
-				});
-			} else if (topTen.includes(rankQuery)) {
-				//if user is in top 10
-				m.react("<:blobL:1023692287185801376>"); //react blobL
-			} else {
-				m.react("<:blobW:1023691935552118945>"); //react blobW
-			}
-		});
+		await rankCommandMessageHandler(message);
 	}
 });
 

@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../../command";
-import { WordsDatabase } from "../../../../games/zombbblobdb";
+import { WordsDatabase } from "../../../../fun/zombbblobdb";
 import { INVALID_ZOMBBBLOB_WORD_REGEX } from "../../../../utils";
 
 export const command: Command = {

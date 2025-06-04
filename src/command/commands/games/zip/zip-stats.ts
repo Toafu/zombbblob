@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../../command';
 
 import { ConfigHandler } from '../../../../config/config';
-import { ZipGameDatabase } from '../../../../games/zipgamedb';
-import { secondsToTimeString } from '../../../../games/zipgame';
+import { ZipGameDatabase } from '../../../../fun/zipgamedb';
+import { secondsToTimeString } from '../../../../fun/zipgame';
 const { Channels, Roles } = ConfigHandler.getInstance().getConfig();
 
 export const command: Command = {

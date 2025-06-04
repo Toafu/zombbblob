@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../../command";
 
-import { ZipGameDatabase } from "../../../../games/zipgamedb";
+import { ZipGameDatabase } from "../../../../fun/zipgamedb";
 
 import { ConfigHandler } from "../../../../config/config";
 const { SERVER_ID, Channels } = ConfigHandler.getInstance().getConfig();

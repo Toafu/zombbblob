@@ -3,8 +3,8 @@ import { SqliteError } from "better-sqlite3";
 import { Command } from "../../../command";
 
 import { ConfigHandler } from "../../../../config/config";
-import { getTodaysZipNumber, parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../../../../games/zipgame";
-import { ZipGameDatabase } from "../../../../games/zipgamedb";
+import { getTodaysZipNumber, parseZipMessage, ZIP_RELEASE_TIMESTAMP } from "../../../../fun/zipgame";
+import { ZipGameDatabase } from "../../../../fun/zipgamedb";
 const { Channels } = ConfigHandler.getInstance().getConfig();
 
 const BEFORE_ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMESTAMP-1);

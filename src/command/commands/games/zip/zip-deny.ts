@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { SqliteError } from "better-sqlite3";
 
 import { Command } from "../../../command";
-import { ZipGameDatabase } from "../../../../games/zipgamedb";
+import { ZipGameDatabase } from "../../../../fun/zipgamedb";
 
 export const command: Command = {
 	data: new SlashCommandBuilder()
