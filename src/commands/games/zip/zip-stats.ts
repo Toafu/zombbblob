@@ -17,7 +17,7 @@ export const command: Command = {
 		const userStats = ZipGameDatabase.getInstance().getUserStats(interaction.user.id);
 		
 		if (userStats === undefined) {
-			await interaction.reply("You have at least 5 submissions to use this command!");
+			await interaction.reply("You need at least 5 submissions to use this command!");
 			return;
 		}
 
