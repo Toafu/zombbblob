@@ -1,6 +1,6 @@
 import { Message, MessageFlags, OmitPartialGroupDMChannel, PartialMessage } from "discord.js";
 
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../config/config";
 import { Result, ZipGameDatabase } from "./zipgamedb";
 import { SqliteError } from "better-sqlite3";
 const { Channels } = ConfigHandler.getInstance().getConfig();

@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-import { ConfigHandler } from '../config';
+import { ConfigHandler } from '../config/config';
 import { Snowflake } from 'discord.js';
 import { getTodaysZipNumber, getZipNumberFromUnixMillis } from './zipgame';
 import { DateTime } from 'luxon';

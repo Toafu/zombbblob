@@ -1,5 +1,5 @@
 import { Message, Client, SendableChannels } from 'discord.js';
-import { ConfigHandler } from "../config";
+import { ConfigHandler } from "../config/config";
 const { Roles, Channels, ZOMBBBLOB_EMOJI_ID } = ConfigHandler.getInstance().getConfig()
 import { WordsDatabase } from './zombbblobdb';
 

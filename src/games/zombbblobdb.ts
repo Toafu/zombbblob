@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-import { ConfigHandler } from '../config';
+import { ConfigHandler } from '../config/config';
 const { ZOMBBBLOB_DB_PATH: DB_PATH } = ConfigHandler.getInstance().getConfig();
 
 export interface Status {

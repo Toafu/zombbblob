@@ -13,12 +13,12 @@ import {
 import fetch from "node-fetch";
 import path from "path";
 import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString, allFilesInFolderAndSubfolders } from "./utils";
-import { registerCommands } from "./registerCommands";
-import { Command } from "./command";
+import { registerCommands } from "./command/registerCommands";
+import { Command } from "./command/command";
 import { checkInfection } from "./games/zombiegame";
 import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./games/zipgame";
 
-import { ConfigHandler } from "./config";
+import { ConfigHandler } from "./config/config";
 const {
 	Channels,
 	CLIENT_ID,
