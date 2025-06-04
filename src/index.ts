@@ -1,7 +1,6 @@
 import {
 	ActivityType,
 	Client,
-	DiscordAPIError,
 	GatewayIntentBits,
 	GuildChannel,
 	GuildMember,
@@ -21,15 +20,14 @@ import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./games/zipgam
 import { ConfigHandler } from "./config/config";
 const {
 	Channels,
-	CLIENT_ID,
 	Roles,
 	SERVER_ID,
 	UPDATE_ROLE_MESSAGE_ID,
-	ZOMBBBLOB_EMOJI_ID,
-	MAINTAINER_IDS,
+	ZOMBBBLOB_EMOJI_ID
 } = ConfigHandler.getInstance().getConfig();
 
 import { WordsDatabase } from "./games/zombbblobdb";
+import { validateInvariants } from "./config/validator";
 
 require("dotenv").config();
 const topTen: Snowflake[] = [];
@@ -116,91 +114,7 @@ const client = new Client({
 const commands: Map<String, Command> = new Map();
 
 client.on("ready", async () => {
-	console.log("Checking CLIENT_ID...");
-
-	// This is probably impossible
-	if (client.user === null) {
-		console.error("client.user is null at ready time!");
-		process.exit(1);
-	}
-
-	if (client.user.id !== CLIENT_ID) {
-		console.error(
-			`CLIENT_ID (${CLIENT_ID}) does not match client.user.id ${client.user.id}`
-		);
-		process.exit(1);
-	}
-
-	console.log("Checking SERVER_ID...");
-	const guild = await client.guilds
-		.fetch(SERVER_ID)
-		.then((guild) => guild)
-		.catch((_) => null);
-
-	if (guild === null) {
-		console.error(`Could not fetch guild with id ${SERVER_ID}`);
-		process.exit(1);
-	}
-
-	console.log("Checking Roles...");
-	for (const [roleName, roleID] of Object.entries(Roles)) {
-		const role = await guild.roles.fetch(roleID);
-
-		if (role === null) {
-			console.error(`Role "${roleName}" could not be fetched!`);
-			process.exit(1);
-		}
-	}
-
-	console.log("Checking Channels...");
-	for (const [channelName, channelID] of Object.entries(Channels)) {
-		const channel = await guild.channels.fetch(channelID).catch((_) => null);
-		if (channel === null) {
-			console.error(`Channel "${channelName}" could not be fetched!`);
-			process.exit(1);
-		}
-	}
-
-	console.log("Validating update-role message...");
-	const updateRoleChannel = guild.channels.cache.get(Channels.updaterole);
-	if (updateRoleChannel === undefined) {
-		console.error("Failed to validate #update-role!");
-		process.exit(1);
-	}
-
-	if (!updateRoleChannel.isTextBased()) {
-		console.error("#update-role is not a text channel!");
-		process.exit(1);
-	}
-
-	const updateRoleMessage = await updateRoleChannel.messages
-		.fetch(UPDATE_ROLE_MESSAGE_ID)
-		.catch((_) => null);
-	if (updateRoleMessage === null) {
-		console.error("Failed to fetch update-role message!");
-		process.exit(1);
-	}
-
-	console.log("Validating zombbblob emoji...");
-	const zombbblobEmote = guild.emojis.cache.get(ZOMBBBLOB_EMOJI_ID);
-	if (zombbblobEmote === null) {
-		console.error("Failed to validate zombbblob emoji!");
-		process.exit(1);
-	}
-
-	console.log("Validating maintainers...");
-	for (const maintainerID of MAINTAINER_IDS) {
-        try {
-            await guild.members.fetch(maintainerID);
-        } catch (err) {
-            if (!(err instanceof DiscordAPIError)) {
-				throw err;
-			}
-
-            console.error(`Failed to validate maintainer ${maintainerID}!`);
-            process.exit(1);
-        }
-	}
+	await validateInvariants(client);
 
 	console.log("Initializing commands...");
 	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))) {
@@ -209,12 +123,7 @@ client.on("ready", async () => {
 		commands.set(command.data.name, command);
 	}
 
-	console.log("zombbblob has awoken");
-	process.on("unhandledRejection", (error) => {
-		console.error("Unhandled promise rejection:", error);
-	});
-
-	client.user.setPresence({
+	client.user!.setPresence({
 		activities: [
 			{
 				type: ActivityType.Custom,
@@ -224,42 +133,23 @@ client.on("ready", async () => {
 		],
 		status: "online",
 	});
-	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev);
-	if (!zombbblobDevChannel) {
-		console.error("Startup channel invalid!");
-		process.exit(1);
-	}
+
+	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev)!;
 
 	if (!zombbblobDevChannel.isSendable()) {
 		console.error("Startup channel is not a text channel!");
 		process.exit(1);
 	}
 
+    const guild = await client.guilds.fetch(SERVER_ID)!;
+    const zombbblobEmote = guild.emojis.cache.get(ZOMBBBLOB_EMOJI_ID)!;
+
 	await zombbblobDevChannel.send(`I have risen again. ${zombbblobEmote}`);
 
-	const infectedChannel = guild.channels.cache.get(Channels.zombbblob);
-	if (!infectedChannel?.isSendable()) {
-		console.error("Infected channel is not a text channel!");
-		process.exit(1);
-	}
-
-	const db = WordsDatabase.getInstance();
-
-	if (db.isGameRunning()) {
-		if (db.getAllWords().length === 0) {
-			await zombbblobDevChannel.send(
-				`${maintainersPingString}, `
-				+ "the game is running without any words! Run `/loadwordlist`"
-			);
-		} else {
-			const infectedWord = db.getInfectedWord();
-			if (infectedWord === null) {
-				await infectedChannel.send("There is no infected word! Run `/reroll`");
-			} else {
-				await infectedChannel.send(`The infected word is \`${infectedWord}\``);
-			}
-		}
-	}
+	console.log("zombbblob has awoken");
+	process.on("unhandledRejection", (error) => {
+		console.error("Unhandled promise rejection:", error);
+	});
 
 	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
 	client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');

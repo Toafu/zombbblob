@@ -1,7 +1,34 @@
-import { Message, Client, SendableChannels } from 'discord.js';
+import { Message, Client, SendableChannels, Guild, TextChannel } from 'discord.js';
 import { ConfigHandler } from "../config/config";
 const { Roles, Channels, ZOMBBBLOB_EMOJI_ID } = ConfigHandler.getInstance().getConfig()
 import { WordsDatabase } from './zombbblobdb';
+import { maintainersPingString } from '../utils';
+
+export async function onClientStartup(guild: Guild, zombbblobDevChannel: TextChannel) {
+	const infectedChannel = guild.channels.cache.get(Channels.zombbblob);
+	if (!infectedChannel?.isSendable()) {
+		console.error("Infected channel is not a text channel!");
+		process.exit(1);
+	}
+
+	const db = WordsDatabase.getInstance();
+
+	if (db.isGameRunning()) {
+		if (db.getAllWords().length === 0) {
+			await zombbblobDevChannel.send(
+				`${maintainersPingString}, `
+				+ "the game is running without any words! Run `/loadwordlist`"
+			);
+		} else {
+			const infectedWord = db.getInfectedWord();
+			if (infectedWord === null) {
+				await infectedChannel.send("There is no infected word! Run `/reroll`");
+			} else {
+				await infectedChannel.send(`The infected word is \`${infectedWord}\``);
+			}
+		}
+	}
+}
 
 export async function checkInfection(message: Message, bot: Client) {
 	if (!message.member || !message.guild) {
