@@ -1,6 +1,6 @@
 import { Guild, GuildBasedChannel, InteractionResponse, PermissionOverwriteOptions, PermissionsBitField, PrivateThreadChannel, PublicThreadChannel, Role, Snowflake, TextChannel } from 'discord.js';
 
-import { ConfigHandler } from "./config/config";
+import { ConfigHandler } from "./config";
 import fs from "fs";
 import path from "path";
 const { Roles, SERVER_ID, NAMES_OF_POSSIBLE_ROLES_FOR_STUDENT, MAINTAINER_IDS } = ConfigHandler.getInstance().getConfig();
