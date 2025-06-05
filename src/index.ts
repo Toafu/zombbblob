@@ -473,7 +473,7 @@ client.on("channelCreate", async (channel) => {
 });
 
 client.on("channelUpdate", async (oldChannel, newChannel) => {
-	if (!(newChannel instanceof GuildChannel)) {
+	if (newChannel.isDMBased()) {
 		return;
 	}
 	
