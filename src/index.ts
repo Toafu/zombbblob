@@ -1,7 +1,6 @@
 import {
 	ActivityType,
 	Client,
-	DiscordAPIError,
 	GatewayIntentBits,
 	GuildChannel,
 	GuildMember,
@@ -13,26 +12,25 @@ import {
 import fetch from "node-fetch";
 import path from "path";
 import { applyLockRollPermsToChannel, MEE6_ID, getPossibleRolesForStudent, canCommunicate, maintainersPingString, allFilesInFolderAndSubfolders } from "./utils";
-import { registerCommands } from "./registerCommands";
-import { Command } from "./command";
-import { checkInfection } from "./games/zombiegame";
-import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./games/zipgame";
+import { registerCommands } from "./command/registerCommands";
+import { Command } from "./command/command";
+import { checkInfection } from "./fun/zombiegame";
+import { zipMessageCreateHandler, zipMessageDeleteHandler } from "./fun/zipgame";
+import { rankCommandMessageHandler } from "./fun/mee6";
 
-import { ConfigHandler } from "./config";
+import { ConfigHandler } from "./config/config";
 const {
 	Channels,
-	CLIENT_ID,
 	Roles,
 	SERVER_ID,
 	UPDATE_ROLE_MESSAGE_ID,
-	ZOMBBBLOB_EMOJI_ID,
-	MAINTAINER_IDS,
+	ZOMBBBLOB_EMOJI_ID
 } = ConfigHandler.getInstance().getConfig();
 
-import { WordsDatabase } from "./games/zombbblobdb";
+import { WordsDatabase } from "./fun/zombbblobdb";
+import { validateInvariants } from "./config/validator";
 
 require("dotenv").config();
-const topTen: Snowflake[] = [];
 
 type RecentMessage = {
 	content: String;
@@ -77,203 +75,9 @@ function isSpam(messageContent: String, authorID: Snowflake) {
 	);
 }
 
-process.on("SIGINT", () => process.exit(0));
-process.on("SIGTERM", () => process.exit(0));
-
-let topTenUpdated: number = -1;
-
-async function updateTopTen() {
-	if (topTenUpdated != -1 && Date.now() - topTenUpdated < 60 * 1000) {
-		return; //no
-	}
-	await fetch(`https://mee6.xyz/api/plugins/levels/leaderboard/${SERVER_ID}`, {
-		headers: {
-			accept: "application/json",
-		},
-		method: "GET",
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			for (let i = 0; i < 10; ++i) {
-				topTen[i] = data["players"][i]["id"];
-			}
-		});
-	topTenUpdated = Date.now();
-}
-
-const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.GuildPresences
-	],
-	partials: [Partials.Channel, Partials.Message, Partials.Reaction],
-});
-
-const commands: Map<String, Command> = new Map();
-
-client.on("ready", async () => {
-	console.log("Checking CLIENT_ID...");
-
-	// This is probably impossible
-	if (client.user === null) {
-		console.error("client.user is null at ready time!");
-		process.exit(1);
-	}
-
-	if (client.user.id !== CLIENT_ID) {
-		console.error(
-			`CLIENT_ID (${CLIENT_ID}) does not match client.user.id ${client.user.id}`
-		);
-		process.exit(1);
-	}
-
-	console.log("Checking SERVER_ID...");
-	const guild = await client.guilds
-		.fetch(SERVER_ID)
-		.then((guild) => guild)
-		.catch((_) => null);
-
-	if (guild === null) {
-		console.error(`Could not fetch guild with id ${SERVER_ID}`);
-		process.exit(1);
-	}
-
-	console.log("Checking Roles...");
-	for (const [roleName, roleID] of Object.entries(Roles)) {
-		const role = await guild.roles.fetch(roleID);
-
-		if (role === null) {
-			console.error(`Role "${roleName}" could not be fetched!`);
-			process.exit(1);
-		}
-	}
-
-	console.log("Checking Channels...");
-	for (const [channelName, channelID] of Object.entries(Channels)) {
-		const channel = await guild.channels.fetch(channelID).catch((_) => null);
-		if (channel === null) {
-			console.error(`Channel "${channelName}" could not be fetched!`);
-			process.exit(1);
-		}
-	}
-
-	console.log("Validating update-role message...");
-	const updateRoleChannel = guild.channels.cache.get(Channels.updaterole);
-	if (updateRoleChannel === undefined) {
-		console.error("Failed to validate #update-role!");
-		process.exit(1);
-	}
-
-	if (!updateRoleChannel.isTextBased()) {
-		console.error("#update-role is not a text channel!");
-		process.exit(1);
-	}
-
-	const updateRoleMessage = await updateRoleChannel.messages
-		.fetch(UPDATE_ROLE_MESSAGE_ID)
-		.catch((_) => null);
-	if (updateRoleMessage === null) {
-		console.error("Failed to fetch update-role message!");
-		process.exit(1);
-	}
-
-	console.log("Validating zombbblob emoji...");
-	const zombbblobEmote = guild.emojis.cache.get(ZOMBBBLOB_EMOJI_ID);
-	if (zombbblobEmote === null) {
-		console.error("Failed to validate zombbblob emoji!");
-		process.exit(1);
-	}
-
-	console.log("Validating maintainers...");
-	for (const maintainerID of MAINTAINER_IDS) {
-        try {
-            await guild.members.fetch(maintainerID);
-        } catch (err) {
-            if (!(err instanceof DiscordAPIError)) {
-				throw err;
-			}
-
-            console.error(`Failed to validate maintainer ${maintainerID}!`);
-            process.exit(1);
-        }
-	}
-
-	console.log("Initializing commands...");
-	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))) {
-		const { command } = await import(commandPath);
-		command.init(client);
-		commands.set(command.data.name, command);
-	}
-
-	console.log("zombbblob has awoken");
-	process.on("unhandledRejection", (error) => {
-		console.error("Unhandled promise rejection:", error);
-	});
-
-	client.user.setPresence({
-		activities: [
-			{
-				type: ActivityType.Custom,
-				name: "custom", // name is exposed through the API but not shown in the client for ActivityType.Custom
-				state: "Welcome to EECS281!",
-			},
-		],
-		status: "online",
-	});
-	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev);
-	if (!zombbblobDevChannel) {
-		console.error("Startup channel invalid!");
-		process.exit(1);
-	}
-
-	if (!zombbblobDevChannel.isSendable()) {
-		console.error("Startup channel is not a text channel!");
-		process.exit(1);
-	}
-
-	await zombbblobDevChannel.send(`I have risen again. ${zombbblobEmote}`);
-
-	const infectedChannel = guild.channels.cache.get(Channels.zombbblob);
-	if (!infectedChannel?.isSendable()) {
-		console.error("Infected channel is not a text channel!");
-		process.exit(1);
-	}
-
-	const db = WordsDatabase.getInstance();
-
-	if (db.isGameRunning()) {
-		if (db.getAllWords().length === 0) {
-			await zombbblobDevChannel.send(
-				`${maintainersPingString}, `
-				+ "the game is running without any words! Run `/loadwordlist`"
-			);
-		} else {
-			const infectedWord = db.getInfectedWord();
-			if (infectedWord === null) {
-				await infectedChannel.send("There is no infected word! Run `/reroll`");
-			} else {
-				await infectedChannel.send(`The infected word is \`${infectedWord}\``);
-			}
-		}
-	}
-
-	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
-	client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
-	client.guilds.fetch('734492640216744017').then(g => {
-		g.members.fetch(); //Caches all users so we can count how many users have a role later
-	});
-	   ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑ */
-});
-
-client.on("messageCreate", async (message) => {
-	if (message.author.bot) return; //if message is from a bot
-	if (message.member === null) return;
+// Spam detector (if same message sent over 10 times in a row)
+async function spamCheck(message: Message) {
 	if (isSpam(message.content, message.author.id)) {
-		// Spam detector (if same message sent over 10 times in a row)
 		const serverLogChannel = client.channels.cache.get(Channels.serverlog);
 		if (!serverLogChannel) {
 			console.error("server log channel invalid!");
@@ -288,61 +92,86 @@ client.on("messageCreate", async (message) => {
 		await serverLogChannel.send(
 			`<@${message.author.id}> was marked for spamming; timing out for 30 seconds`
 		);
-		await message.member.timeout(30 * 1000); // timeout for 30 seconds
+		await message.member!.timeout(30 * 1000); // timeout for 30 seconds
 	}
+}
+
+process.on("SIGINT", () => process.exit(0));
+process.on("SIGTERM", () => process.exit(0));
+
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildPresences
+	],
+	partials: [Partials.Channel, Partials.Message, Partials.Reaction],
+});
+
+
+const commands: Map<String, Command> = new Map();
+
+client.on("ready", async () => {
+	await validateInvariants(client);
+
+	console.log("Initializing commands...");
+	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))) {
+		const { command } = await import(commandPath);
+		command.init(client);
+		commands.set(command.data.name, command);
+	}
+
+	client.user!.setPresence({
+		activities: [
+			{
+				type: ActivityType.Custom,
+				name: "custom", // name is exposed through the API but not shown in the client for ActivityType.Custom
+				state: "Welcome to EECS281!",
+			},
+		],
+		status: "online",
+	});
+
+	const zombbblobDevChannel = client.channels.cache.get(Channels.zombbblobdev)!;
+
+	if (!zombbblobDevChannel.isSendable()) {
+		console.error("Startup channel is not a text channel!");
+		process.exit(1);
+	}
+
+    const guild = await client.guilds.fetch(SERVER_ID)!;
+    const zombbblobEmote = guild.emojis.cache.get(ZOMBBBLOB_EMOJI_ID)!;
+
+	await zombbblobDevChannel.send(`I have risen again. ${zombbblobEmote}`);
+
+	console.log("zombbblob has awoken");
+	process.on("unhandledRejection", (error) => {
+		console.error("Unhandled promise rejection:", error);
+	});
+
+	/* ↓↓↓ ONLY ACTIVE FOR STAR WARS GAME ↓↓↓
+	client.channels.cache.get('1067620211504709656').messages.fetch('1069347684059709532');
+	client.guilds.fetch('734492640216744017').then(g => {
+		g.members.fetch(); //Caches all users so we can count how many users have a role later
+	});
+	   ↑↑↑ ONLY ACTIVE FOR STAR WARS GAME ↑↑↑ */
+});
+
+client.on("messageCreate", async (message) => {
+	if (message.author.bot) return; //if message is from a bot
+	if (message.member === null) return;
+	
+	await spamCheck(message);
+
 	if (WordsDatabase.getInstance().isGameRunning()) {
 		await checkInfection(message, client);
 	}
 	await zipMessageCreateHandler(message);
-	const words = message.content.toLowerCase().split(" ");
 	if (message.content.startsWith("!rank")) {
-		//if person types !rank
-		const filter = (m: Message) => m.author.id.toString() === MEE6_ID;
-		const collector = message.channel.createMessageCollector({
-			filter,
-			time: 5000,
-			max: 1,
-		});
-		collector.on("collect", async (m) => {
-			//collected following MEE6 message
-			let rankQuery = message.author.id.toString();
-			if (words.length > 1) {
-				//assumes user is querying another user
-				const regexQuery = words[1].match(/\d+/);
-				if (regexQuery) {
-					rankQuery = regexQuery[0];
-				}
-			}
-			await updateTopTen();
-			if (rankQuery === topTen[0]) {
-				//per request of slime
-				const arayL = [
-					"<:burgerKingBlobL:1026644796703510599>",
-					"🤡",
-					"💀",
-					"👎",
-					"📉",
-					"🇱",
-					"<:blobL:1023692287185801376>",
-					"<:blobsweats:1052600617568317531>",
-					"<:notlikeblob:1027966505922592779>",
-					"<:blobdisapproval:1039016273343951009>",
-					"<:blobyikes:1046967593132630056>",
-					"<:blobbruh:936493734592380988>",
-					"<:blobRecursive:1026705949605507093>",
-					"<:blobEveryone:1026656071856685117>",
-					"<:D_:1029092005416009748>",
-				];
-				arayL.forEach(async (emote) => {
-					await m.react(emote);
-				});
-			} else if (topTen.includes(rankQuery)) {
-				//if user is in top 10
-				m.react("<:blobL:1023692287185801376>"); //react blobL
-			} else {
-				m.react("<:blobW:1023691935552118945>"); //react blobW
-			}
-		});
+		await rankCommandMessageHandler(message);
 	}
 });
 
@@ -473,7 +302,7 @@ client.on("channelCreate", async (channel) => {
 });
 
 client.on("channelUpdate", async (oldChannel, newChannel) => {
-	if (!(newChannel instanceof GuildChannel)) {
+	if (newChannel.isDMBased()) {
 		return;
 	}
 	
