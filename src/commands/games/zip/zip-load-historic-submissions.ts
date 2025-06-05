@@ -38,7 +38,10 @@ export const command: Command = {
 			});
 
 			for (const messageID of sortedMessageIDs) {
-				const message = messages.get(messageID)!;
+				const message = messages.get(messageID);
+				if (message === undefined) {
+					return; // satisfy typescript linter
+				}
 
 				const parsedData = parseZipMessage(message);
 
@@ -57,7 +60,10 @@ export const command: Command = {
 				}
 			}
 
-			const mostRecentMessageID = sortedMessageIDs[sortedMessageIDs.length-1]!;
+			const mostRecentMessageID = sortedMessageIDs[sortedMessageIDs.length-1];
+			if (mostRecentMessageID === undefined) {
+				return; // satisfy typescript linter
+			}
 			
 			messages = await oldTimersChannel.messages.fetch({
 				after: mostRecentMessageID
