@@ -12,7 +12,11 @@ const BEFORE_ZIP_RELEASE_SNOWFLAKE = unixTimestampToSnowflake(ZIP_RELEASE_TIMEST
 export const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName("zip-load-historic-submissions")
-		.setDescription("load historic zip submissions into database"),
+		.setDescription("load historic zip submissions into database")
+		.addBooleanOption(option => option
+			.setName("react_to_messages")
+			.setDescription("whether or not to react with a checkmark to loaded submissions")
+		),
 	init: () => { },
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		if (interaction.guild === null) {
@@ -23,6 +27,8 @@ export const command: Command = {
 		if (oldTimersChannel === null || !oldTimersChannel.isTextBased()) {
 			return;
 		}
+
+		const shouldReact = interaction.options.getBoolean("react_to_messages", false) ?? false;
 
 		const deferredReply = await interaction.deferReply({flags: "Ephemeral"});
 
@@ -47,6 +53,9 @@ export const command: Command = {
 						if (!ZipGameDatabase.getInstance().isSubmissionRemoved(message.id) &&
 							!ZipGameDatabase.getInstance().isDenyListed(message.author.id)) {
 							ZipGameDatabase.getInstance().addSubmission(parsedData);
+							if (shouldReact) {
+								await message.react("✅");
+							}
 						}
 					} catch (error) {
 						if (!(error instanceof SqliteError) 
