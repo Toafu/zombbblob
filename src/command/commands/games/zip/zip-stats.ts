@@ -21,8 +21,6 @@ export const command: Command = {
 			return;
 		}
 
-		console.log(userStats)
-
 		await interaction.reply(
 			`Average Time: ${secondsToTimeString(userStats.averageTime)} ` +
 			`(Rank ${userStats.timeRank}/${userStats.userCount})\n` +
