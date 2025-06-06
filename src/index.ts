@@ -118,7 +118,7 @@ client.on("ready", async () => {
 	await validateInvariants(client);
 
 	console.log("Initializing commands...");
-	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "commands/"))) {
+	for (const commandPath of allFilesInFolderAndSubfolders(path.join(__dirname, "command/commands/"))) {
 		const { command } = await import(commandPath);
 		command.init(client);
 		commands.set(command.data.name, command);
