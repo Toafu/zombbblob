@@ -198,7 +198,7 @@ export class ZipGameDatabase {
 
                             FROM results
                             GROUP BY author_id
-                            HAVING submissionsCount > 5
+                            HAVING submissionsCount >= 5
                         )
                         WHERE author_id = ?;`
                     )
