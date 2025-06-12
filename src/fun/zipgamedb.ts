@@ -152,6 +152,14 @@ export class ZipGameDatabase {
             .run(userID);
     }
 
+    public removeFromDenyList(userID: string): boolean {
+        const deleteResult = this.db
+            .prepare("DELETE FROM denylist WHERE user_id = ?")
+            .run(userID);
+
+        return deleteResult.changes !== 0;
+    }
+
     public isDenyListed(userID: Snowflake): boolean {
         return this.db
                     .prepare(
