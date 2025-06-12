@@ -16,7 +16,7 @@ export const command: Command = {
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const userRemoved = 
 			ZipGameDatabase.getInstance()
-							.removeFromDenylist(interaction.options.getString('user_id', true));
+							.removeFromDenyList(interaction.options.getString('user_id', true));
 
 		if (!userRemoved) {
 			await interaction.reply({
