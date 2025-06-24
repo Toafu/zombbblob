@@ -306,6 +306,10 @@ client.on("channelUpdate", async (oldChannel, newChannel) => {
 		return;
 	}
 	
+	if (newChannel.id === Channels.server_lock_explanation) {
+		return;
+	}
+
 	const possibleRolesForStudent = await getPossibleRolesForStudent(newChannel.guild);
 	if (!(possibleRolesForStudent).some(role => canCommunicate(newChannel, role))) {
 		await newChannel.permissionOverwrites.delete(Roles.ExamLocked);
